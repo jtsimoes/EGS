@@ -1,9 +1,5 @@
 # Messages
 
-To install all the requirements, simply type in the terminal:
-
-    $ pip install -r requirements.txt
-
 To run, simply type in the terminal:
 
     $ node .
