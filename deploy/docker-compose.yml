@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  frontend_service:
+    image: frontend
+    hostname: frontend
+    container_name: frontend
+  
+  payment_service:
+    image: payment
+    hostname: payment
+    container_name: payment
+  kong:
+    image: kong
+    volumes:
+      - "./config:/usr/local/kong/declarative"
+    # kong enviroment configuration
+    environment:
+      - KONG_DATABASE=off # database disabled (for login info it must have a database)
+      - KONG_DECLARATIVE_CONFIG=usr/local/kong/declarative/kong.yml # kong configuratio file
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout # log for the kong proxy access
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout # log for the kong admin access
+      - KONG_PROXY_ERROR_LOG=/dev/stderr # log for the kong proxy errors
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr # log for the kong admin errors
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl # listen to ports 8001 and 8444 with ssl enabled
+      - KONG_ADMIN_GUI_URL=http://localhost:8002
+      - KONG_LOG_LEVEL=debug # log level
+      - KONG_PLUGINS=bundled # plugins
+    
+    # expose necessary ports
+    ports:
+    - "8000:8000/tcp" # http port
+    - "127.0.0.1:7990:8001/tcp" # access through http
+    - "8443:8443/tcp" # https port
+    - "127.0.0.1:8444:8444/tcp" # access through https

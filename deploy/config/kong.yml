@@ -1,0 +1,29 @@
+_format_version: "3.0"
+_transform: true # para se quiser guarda as passwords
+
+# Declare services and their paths
+services:
+- host: payment
+  name: paymentAPI
+  port: 8004
+  protocol: http
+  routes:
+    - name: payment
+      paths: 
+      - /
+      - /checkout/orders/{id}
+      - /checkout/orders
+      - /payments/authorizations/{authorization_id}
+      - /payments/authorizations/{authorization_id}/capture
+      strip_path: true
+
+- host: frontend
+  name: frontendAPI
+  port: 8080
+  protocol: http
+  routes:
+  - name: frontend
+    paths:
+    - /
+    - /items/{id}
+    strip_path: true
