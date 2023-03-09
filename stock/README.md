@@ -26,15 +26,7 @@ Uvicorn
 
 
 ```
-sudo apt-get install python3.7
-```
-
-```
-pip install fastapi
-```
-
-```
-pip install "uvicorn[standard]"
+pip install -r requirements.txt
 ```
 
 
