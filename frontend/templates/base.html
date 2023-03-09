@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{title}} • Resellr</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', path='favicon-16x16.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='favicon.ico') }}">
+
+    <script src="{{ url_for('static', path='js/jquery-2.0.0.min.js') }}"></script>
+
+    <script src="{{ url_for('static', path='js/bootstrap.bundle.min.js') }}"></script>
+    <link href="{{ url_for('static', path='css/bootstrap.css') }}" rel="stylesheet">
+
+    <script src="{{ url_for('static', path='js/smart-cart.js') }}"></script>
+
+    <link href="{{ url_for('static', path='css/fontawesome.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', path='css/ui.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='js/script.js') }}"></script>
+</head>
+
+<body>
+
+    <header class="section-header">
+        <section class="header-main border-bottom">
+            <div class="container">
+
+                <!-- SMARTCART PLUGIN -->
+				<div id="smartcart" class="d-none"></div>
+                
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-3 col-sm-4 col-md-4 col-5">
+                        <a class="navbar-brand" href="{{ url_for('index') }}" title="Página inicial">
+                            <img src="{{ url_for('static', path='images/logo.png') }}" class="logo" alt="Resellr" width="30"
+                                style="margin-right: 0;"><span class="font-weight-bolder text-primary"
+                                style="vertical-align: -12px;line-height: 0; font-size: 1.3rem;">esellr</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-4 col-xl-5 col-sm-8 col-md-4 d-none d-md-block">
+                        <form action="search.html" class="search">
+                            <div class="input-group w-100">
+                                <input type="search" name="q" autocomplete="off" class="form-control" style="width:55%;"
+                                    placeholder="Pesquisar produto..." required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-3 col-sm-8 col-md-4 col-7">
+                        <div class="d-flex justify-content-end">
+                            <a href="cart.html" class="widget-header mr-3" data-toggle="tooltip" data-placement="bottom"
+                                title="Carrinho">
+                                <div class="icon">
+                                    <i class="icon-sm rounded-circle border fa fa-shopping-cart"></i>
+                                    <span class="notify">0</span>
+                                </div>
+                            </a>
+
+                            <div class="widget-header dropdown">
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                                    <div class="icon icon-sm rounded-circle border" data-toggle="tooltip"
+                                        data-placement="bottom" title="Menu">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="sr-only">Ações</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="account_customer.html">Conta</a>
+                                    <a class="dropdown-item" href="orders.html">Encomendas</a>
+                                    <hr class="dropdown-divider">
+                                    <a class="dropdown-item" href="#">Definições</a>
+                                    <hr class="dropdown-divider">
+                                    <a class="dropdown-item" href="logout.html">Terminar sessão</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="navbar navbar-expand-md navbar-main border-bottom d-md-none">
+            <div class="container justify-content-center">
+                <form action="search.html" class="col-12 col-sm-8 my-2">
+                    <div class="input-group">
+                        <input type="search" name="q" autocomplete="off" class="form-control"
+                            placeholder="Pesquisar produto..." required>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </nav>
+
+    </header>
+
+    {% block body %}{% endblock %}
+
+    <footer class="section-footer border-top shadow pt-2 pb-2">
+        <div class="container">
+            <section class="footer-copyright d-flex align-items-center justify-content-between">
+                <p class="mt-0 pt-3 text-muted">© 2023 Resellr</p>
+                <div class="mt-0">
+                    <a href="mailto:resellr@ua.pt" class="btn btn-light">
+                        <img src="{{ url_for('static', path='images/icons/support.png') }}" alt="" width="25"
+                            style="filter: contrast(0.4);">
+                        <span class="ml-1 text-secondary">Apoio ao Cliente</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+
+</body>
+
+</html>

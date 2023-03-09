@@ -1,0 +1,416 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+
+<!-- ========================= SECTION PAGETOP ========================= -->
+<section class="section-pagetop bg-primary border-bottom">
+	<div class="container">
+		<h2 class="title-page text-white">Pagar encomenda</h2>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb text-white">
+				<li class="breadcrumb-item"><a href="index.html" class="text-white">Página inicial</a></li>
+				<li class="breadcrumb-item"><a href="cart.html" class="text-white">Carrinho de compras</a></li>
+				<li class="breadcrumb-item active" aria-current="page">Checkout</li>
+			</ol>
+		</nav>
+	</div>
+</section>
+<!-- ========================= SECTION PAGETOP END// ========================= -->
+
+
+<!-- ============================ MODAL #SUCCESS ================================= -->
+<div class="modal fade" id="success" tabindex="-1" aria-labelledby="successful_order" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="successful_order">Encomenda paga com sucesso</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body text-center">
+				<i class="fas fa-check-circle fa-7x text-success my-3"></i>
+				<h4 class="title mt-4">Obrigado por escolher o BioMarket <br>para as suas compras!</h4>
+				<h5 class="my-4 font-weight-normal">Receberá o seu pedido em breve!</h5>
+				<p class="text-muted my-3">Pode acompanhar a sua encomenda na <br>página <a
+						href="orders.html">"Encomendas"</a> no menu de
+					utilizador.</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ============================ MODAL #SUCCESS END// ================================= -->
+
+
+
+<section class="section-content padding-y bg">
+	<div class="container">
+
+		<!-- ============================ CHECKOUT ================================= -->
+		<div class="row">
+			<main class="col-md-8">
+
+				<form action="#" id="checkout">
+					<article class="card mb-4 mt-3">
+						<div class="card-body">
+							<!-- SMARTCART PLUGIN -->
+							<div id="smartcart"></div>
+						</div>
+					</article>
+
+					<article class="card mb-4">
+						<div class="card-body">
+							<h4 class="card-title mb-4">Informações de contacto</h4>
+							<div class="row">
+								<div class="form-group col-sm-6">
+									<label>Primeiro nome</label>
+									<input type="text" placeholder="Primeiro nome" name="firstname" class="form-control"
+										required>
+								</div>
+								<div class="form-group col-sm-6">
+									<label>Apelido</label>
+									<input type="text" placeholder="Apelido" name="surname" class="form-control"
+										required>
+								</div>
+								<div class="form-group col-sm-6">
+									<label>Número de telemóvel</label>
+									<input type="text" maxlength="9" pattern="^[0-9]*$" title="Apenas dígitos"
+										placeholder="Número de telemóvel" name="phone" class="form-control" required>
+								</div>
+								<div class="form-group col-sm-6">
+									<label>Email</label>
+									<input type="email" placeholder="Email" name="email" class="form-control" required>
+								</div>
+							</div>
+						</div>
+					</article>
+
+					<article class="card mb-4">
+						<div class="card-body">
+							<h4 class="card-title mb-4">Detalhes da entrega</h4>
+							<div class="row">
+								<div class="form-group col-sm-6">
+									<label class="js-check box active">
+										<input type="radio" name="delivery" value="normal" checked>
+										<h6 class="title">Entrega normal</h6>
+										<p class="text-muted">Tempo de espera estimado: 3 a 5 horas</p>
+									</label>
+								</div>
+								<div class="form-group col-sm-6">
+									<label class="js-check box">
+										<input type="radio" name="delivery" value="priority">
+										<h6 class="title text-danger">Entrega prioritária</h6>
+										<p class="text-muted">Tempo de espera estimado: 1 a 2 horas</p>
+									</label>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-sm-5">
+									<label>Distrito</label>
+									<select class="custom-select form-control" required>
+										<option value="" selected disabled>Distrito</option>
+										<option value="Viana do Castelo">Viana do Castelo</option>
+										<option value="Braga">Braga</option>
+										<option value="Vila Real">Vila Real</option>
+										<option value="Bragança">Bragança</option>
+										<option value="Porto">Porto</option>
+										<option value="Aveiro">Aveiro</option>
+										<option value="Viseu">Viseu</option>
+										<option value="Guarda">Guarda</option>
+										<option value="Coimbra">Coimbra</option>
+										<option value="Castelo Branco">Castelo Branco</option>
+										<option value="Leiria">Leiria</option>
+										<option value="Lisboa">Lisboa</option>
+										<option value="Santarém">Santarém</option>
+										<option value="Portalegre">Portalegre</option>
+										<option value="Setúbal">Setúbal</option>
+										<option value="Évora">Évora</option>
+										<option value="Beja">Beja</option>
+										<option value="Faro">Faro</option>
+									</select>
+								</div>
+								<div class="form-group col-sm-7">
+									<label>Concelho</label>
+									<input type="text" placeholder="Concelho" class="form-control" required>
+								</div>
+								<div class="form-group col-sm-5">
+									<label>Código postal</label>
+									<input type="text" placeholder="Código postal" class="form-control" required>
+								</div>
+								<div class="form-group col-sm-7">
+									<label>Freguesia</label>
+									<input type="text" placeholder="Freguesia" class="form-control" required>
+								</div>
+								<div class="form-group col-sm-7">
+									<label>Morada</label>
+									<input type="text" placeholder="Morada" class="form-control" required>
+								</div>
+								<div class="form-group col-sm-2">
+									<label>Nº</label>
+									<input type="text" placeholder="Número" class="form-control">
+								</div>
+								<div class="form-group col-sm-3">
+									<label>Piso</label>
+									<input type="text" placeholder="Piso" class="form-control">
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="form-group col-12">
+									<label>Mensagem para o produtor</label>
+									<textarea placeholder="Nota opcional para o produtor"
+										class="form-control"></textarea>
+								</div>
+							</div>
+						</div>
+					</article>
+
+					<!-- ============================ PAYMENTS ================================= -->
+					<article class="accordion" id="accordion_pay">
+						<!-- PayPal -->
+						<div class="card">
+							<header class="card-header">
+								<img src="{{ url_for('static', path='images/misc/payment-paypal.png') }}" class="float-right" height="24"
+									alt="PayPal">
+								<label class="form-check collapsed" data-toggle="collapse" data-target="#paypal">
+									<input class="form-check-input" name="payment_option" type="radio" value="paypal"
+										checked>
+									<h6 class="form-check-label">PayPal</h6>
+								</label>
+							</header>
+							<div id="paypal" class="collapse show" data-parent="#accordion_pay">
+								<div class="card-body">
+									<p class="alert alert-info">Este método de pagamento necessita que tenha uma conta
+										PayPal associada a um cartão ou conta bancária válida.</p>
+									<p class="text-muted">Assim que pagar esta encomenda, será redirecionado para o
+										site do PayPal onde poderá iniciar sessão na sua conta e utilizá-la para
+										autorizar o pagamento desta compra.</p>
+									<p class="text-center">
+										<a href="https://www.paypal.com/" target="_blank">
+											<img src="{{ url_for('static', path='images/misc/btn-paypal.png') }}" height="32" alt="PayPal">
+										</a>
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<!-- MB Way -->
+						<div class="card">
+							<header class="card-header">
+								<img src="{{ url_for('static', path='images/misc/payment-mbway.png') }}" class="float-right" height="24"
+									alt="MB Way">
+								<label class="form-check" data-toggle="collapse" data-target="#mbway">
+									<input class="form-check-input" name="payment_option" type="radio" value="mbway">
+									<h6 class="form-check-label">MB Way</h6>
+								</label>
+							</header>
+							<div id="mbway" class="collapse" data-parent="#accordion_pay">
+								<div class="card-body">
+									<p class="alert alert-info">Este método de pagamento necessita que tenha instalado a
+										aplicação MB Way no seu telemóvel e que a tenha associado a um cartão bancário
+										válido.</p>
+									<p class="text-muted">Digite o seu número e irá receber uma notificação no seu
+										telemóvel imediatamente após pagar esta encomenda. Precisará apenas de
+										validar o pagamento desta compra através de um PIN ou impressão digital.</p>
+									<input type="text" maxlength="9" pattern="^[0-9]*$" title="Apenas dígitos"
+										class="form-control mr-3" style="max-width: 250px"
+										placeholder="Número de telemóvel" name="phone_number">
+								</div>
+							</div>
+						</div>
+
+						<!-- Multibanco -->
+						<div class="card">
+							<header class="card-header">
+								<img src="{{ url_for('static', path='images/misc/payment-bank.png') }}" class="float-right" height="24"
+									alt="Multibanco">
+								<label class="form-check" data-toggle="collapse" data-target="#bank">
+									<input class="form-check-input" name="payment_option" type="radio" value="bank">
+									<h6 class="form-check-label">Multibanco</h6>
+								</label>
+							</header>
+							<div id="bank" class="collapse" data-parent="#accordion_pay">
+								<div class="card-body">
+									<p class="text-muted">Após finalizar a compra, dirija-se a uma caixa multibanco e
+										introduza os seguintes dados na operação "Pagamento de Serviços/Compras":</p>
+									<dl class="dlist-align">
+										<dt class="font-weight-bold">Entidade:</dt>
+										<dd>12345</dd>
+									</dl>
+									<dl class="dlist-align">
+										<dt class="font-weight-bold">Referência:</dt>
+										<dd>123 456 789</dd>
+									</dl>
+									<dl class="dlist-align">
+										<dt class="font-weight-bold">Montante:</dt>
+										<dd class="total"></dd>
+									</dl>
+								</div>
+							</div>
+						</div>
+
+						<!-- Credit card -->
+						<div class="card">
+							<header class="card-header">
+								<img src="{{ url_for('static', path='images/misc/payment-card.png') }}" class="float-right" height="24"
+									alt="Cartão de crédito">
+								<label class="form-check" data-toggle="collapse" data-target="#card">
+									<input class="form-check-input" name="payment_option" type="radio" value="card">
+									<h6 class="form-check-label">Cartão de crédito</h6>
+								</label>
+							</header>
+							<div id="card" class="collapse" data-parent="#accordion_pay">
+								<div class="card-body">
+									<p class="alert alert-info">Esta compra aparecerá no extrato do seu cartão de
+										crédito como "PAGAMENTO *BIOMARKET".</p>
+									<div class="form-inline">
+										<div class="input-group mr-3">
+											<input type="text" maxlength="19" pattern="^[0-9]*$" title="Apenas dígitos"
+												class="form-control" placeholder="Número do cartão de crédito"
+												name="card_number">
+											<div class="input-group-append">
+												<span class="input-group-text">
+													<i class="fab fa-cc-visa"></i> &nbsp; <i
+														class="fab fa-cc-mastercard"></i> &nbsp; <i
+														class="fab fa-cc-amex"></i>
+												</span>
+											</div>
+										</div>
+										<input type="text" maxlength="5" class="form-control mr-3"
+											style="max-width: 100px" placeholder="MM/AA" name="card_expiration">
+										<input type="password" pattern="^[0-9]*$" title="Apenas dígitos" minlength="3"
+											maxlength="3" class="form-control mr-2" style="max-width: 100px"
+											placeholder="CVC" name="card_cvc">
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</article>
+					<!-- ============================ PAYMENTS END//  ================================= -->
+
+				</form>
+
+			</main>
+			<aside class="col-md-4">
+				<div class="pt-3 sticky-top">
+					<div class="card shadow">
+						<div class="card-body">
+							<dl class="dlist-align">
+								<dt class="text-muted">Itens:</dt>
+								<dd class="sc-cart-count"></dd>
+							</dl>
+							<dl class="dlist-align">
+								<dt class="text-muted">Entrega:</dt>
+								<dd class="delivery">Normal</dd>
+							</dl>
+							<dl class="dlist-align">
+								<dt class="text-muted">Pagamento:</dt>
+								<dd class="payment">PayPal</dd>
+							</dl>
+							<hr>
+							<dl class="dlist-align">
+								<dt>Total:</dt>
+								<dd class="text-danger sc-cart-subtotal"></dd>
+							</dl>
+							<dl class="dlist-align">
+								<dt>Desconto:</dt>
+								<dd class="text-success">-0,00€</dd>
+							</dl>
+							<dl class="dlist-align">
+								<dt>Envio:</dt>
+								<dd class="shipping text-primary">3,00€</dd>
+							</dl>
+							<hr>
+							<dl class="dlist-align">
+								<dt class="h5 mb-0">A pagar:</dt>
+								<dd class="h5 mb-0 font-weight-bolder total"></dd>
+							</dl>
+							<hr>
+							<p class="small mb-3 text-muted">Por favor confirme todos os dados introduzidos antes de
+								pagar a sua encomenda.</p>
+							<button type="submit" form="checkout"
+								class="btn btn-primary btn-block sc-cart-checkout">Pagar encomenda <i
+									class="fas fa-dolly ml-1"></i></button>
+							<a href="cart.html" class="btn btn-light btn-block mt-2">Cancelar/alterar a
+								encomenda</a>
+
+						</div>
+					</div>
+				</div>
+			</aside>
+		</div>
+		<!-- ============================ CHECKOUT END// ================================= -->
+
+	</div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function () {
+		$('#smartcart').smartCart({
+			lang: {
+				cartTitle: 'Resumo da encomenda',
+				cartEmpty: 'Ainda não foi efetuada nenhuma encomenda!'
+			},
+			toolbarSettings: {
+				showRemoveButton: false,
+				changeQuantity: false
+			},
+			cartHeaderTemplate: '<tr class="small text-uppercase"><th >Produto</th><th width="100">Quantidade</th><th width="120">Preço</th></tr>'
+		});
+
+		$('#button-minus, #button-plus').prop('disabled', true);
+
+		// Update total value (when page loads)
+		var sum = Number($('.shipping').text().replace(/\s+/g, '').replace(/\,/g, '.').replace(/\€/g, '')) + Number($('.sc-cart-subtotal').text().replace(/\s+/g, '').replace(/\,/g, '.').replace(/\€/g, ''));
+		$('.total').text(sum.toFixed(2).replace(/\./g, ',') + '€');
+
+		$('input[name=delivery]').change(function () {
+			var delivery = $(this).val();
+			if (delivery == "normal") {
+				$('.delivery').text("Normal");
+				$('.shipping').text("3,00€");
+			} else if (delivery == "priority") {
+				$('.delivery').text("Prioritária");
+				$('.shipping').text("6,50€");
+			}
+
+			// Update total value (when delivery method changes)
+			var sum = Number($('.shipping').text().replace(/\s+/g, '').replace(/\,/g, '.').replace(/\€/g, '')) + Number($('.sc-cart-subtotal').text().replace(/\s+/g, '').replace(/\,/g, '.').replace(/\€/g, ''));
+			$('.total').text(sum.toFixed(2).replace(/\./g, ',') + '€');
+		});
+		$('input[name=payment_option]').change(function () {
+			$('input[name^=card_], input[name=phone_number]').prop('required', false).val('');
+			var payment_option = $(this).val();
+			if (payment_option == "paypal") {
+				$('.payment').text("PayPal");
+			} else if (payment_option == "mbway") {
+				$('.payment').text("MB Way");
+				$('input[name=phone_number]').prop('required', true);
+			} else if (payment_option == "bank") {
+				$('.payment').text("Multibanco");
+			} else if (payment_option == "card") {
+				$('.payment').text("Cartão de crédito");
+				$('input[name^=card_]').prop('required', true);
+			}
+		});
+
+		// If form is submitted successfully, show success modal and remove all items from cart
+		$('#checkout').submit(function (e) {
+			e.preventDefault();
+			$('#success').modal('show');
+			$('#smartcart').smartCart('clear');
+		});
+
+		// Detect when success modal is closed and redirect the user to index page
+		$('#success').on('hidden.bs.modal', function (e) {
+			window.location.replace("index.html");
+		});
+	});
+</script>
+{% endblock %}
