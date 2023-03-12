@@ -6,6 +6,6 @@ To install the requirements, run this on the terminal:
 
 To run the API, simply type this on the terminal:
 
-    $ npm rum devStart
+    $ npm run devStart
 
 The app then should be running on 'localhost' at port 3000
