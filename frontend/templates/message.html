@@ -238,3 +238,12 @@
 </section>
 
 {% endblock %}
+
+{% block scripts %}
+
+<script>
+    let element = document.querySelector(".chat-box");
+    element.scrollTop = element.scrollHeight;
+</script>
+
+{% endblock %}
