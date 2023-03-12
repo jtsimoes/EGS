@@ -1,5 +1,9 @@
 # Messages
 
+To install all the requirements, simply type in the terminal:
+
+    $ npm install
+
 To run, simply type in the terminal:
 
     $ node .
