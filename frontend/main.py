@@ -83,11 +83,27 @@ async def item(request: Request, id: str):
     return templates.TemplateResponse("item.html", {"request": request, "title": title, "details": details})
 
 
+@app.get("/messages", response_class=HTMLResponse)
+async def messages(request: Request):
+    messages = "TODO"
+
+    title = "Mensagens"
+    return templates.TemplateResponse("messages.html", {"request": request, "title": title, "messages": messages})
+
+
+@app.get("/messages/{id}", response_class=HTMLResponse)
+async def message(request: Request, id: str):
+    message = "TODO"
+
+    title = "NOME DO UTILIZADOR AQUI"
+    return templates.TemplateResponse("message.html", {"request": request, "title": title, "message": message})
+
+
 @app.get("/checkout", response_class=HTMLResponse)
 async def checkout(request: Request):
     title = "Checkout"
     return templates.TemplateResponse("checkout.html", {"request": request, "title": title})
 
 if __name__ == "__main__":
-    ##### TODO: using 'reload=True' for development environment only, remove for production
+    # TODO: using 'reload=True' for development environment only, remove for production
     uvicorn.run("main:app", host="127.0.0.1", port=80, reload=True)
