@@ -12,7 +12,9 @@
                 <div class="bg-white">
 
                     <div class="bg px-4 py-2">
-                        <p class="h5 mb-0 py-1">Mensagens</p>
+                        <p class="h5 mb-0 py-1">Mensagens
+                            <a href="javascript:alert('TODO');" class="text-gray float-right"><i class="fas fa-fw fa-plus"></i></a>
+                        </p>
                     </div>
 
                     <div class="messages-box">
@@ -31,6 +33,7 @@
                                             <small class="small font-weight-bold">25 Dec</small>
                                         </div>
                                         <p class="font-italic mb-0 text-small">Goodbye world!</p>
+                                        <button class="btn btn-danger rounded-circle delete-chat" title="Apagar conversa"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
                             </a>
@@ -50,6 +53,7 @@
                                         </div>
                                         <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet,
                                             consectetur. incididunt ut labore.</p>
+                                        <button class="btn btn-danger rounded-circle delete-chat" title="Apagar conversa"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
                             </a>
@@ -65,6 +69,7 @@
                                         <p class="font-italic text-muted mb-0 text-small">consectetur adipisicing elit,
                                             sed
                                             do eiusmod tempor incididunt ut labore.</p>
+                                        <button class="btn btn-danger rounded-circle delete-chat" title="Apagar conversa"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
                             </a>
@@ -80,6 +85,7 @@
                                         <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet,
                                             consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.
                                         </p>
+                                        <button class="btn btn-danger rounded-circle delete-chat" title="Apagar conversa"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
                             </a>
@@ -95,6 +101,7 @@
                                         <p class="font-italic text-muted mb-0 text-small">consectetur adipisicing elit,
                                             sed
                                             do eiusmod tempor incididunt ut labore.</p>
+                                        <button class="btn btn-danger rounded-circle delete-chat" title="Apagar conversa"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
                             </a>
@@ -110,6 +117,7 @@
                                         <p class="font-italic text-muted mb-0 text-small">Quis nostrud exercitation
                                             ullamco
                                             laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                        <button class="btn btn-danger rounded-circle delete-chat" title="Apagar conversa"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
                             </a>
@@ -125,6 +133,7 @@
                                         <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet,
                                             consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.
                                         </p>
+                                        <button class="btn btn-danger rounded-circle delete-chat" title="Apagar conversa"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
                             </a>
@@ -140,6 +149,7 @@
                                         <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet,
                                             consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.
                                         </p>
+                                        <button class="btn btn-danger rounded-circle delete-chat" title="Apagar conversa"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </div>
                             </a>
@@ -150,7 +160,7 @@
             </div>
             <!-- Chat Box-->
             <div class="col-7 px-0">
-                <div class="p-4 chat-box bg-white">
+                <div class="px-4 pt-4 pb-2 chat-box bg-white">
                     <!-- Sender Message-->
                     <div class="media w-50 mb-3"><img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg"
                             alt="user" width="50" class="rounded-circle">
@@ -244,6 +254,14 @@
 <script>
     let element = document.querySelector(".chat-box");
     element.scrollTop = element.scrollHeight;
+
+    $('.delete-chat').click(function (e) {
+        e.preventDefault();
+        if (!confirm('Tem certeza que deseja apagar esta conversa?')) {
+            return false;
+        }
+        $(this).parent().parent().parent().remove();
+    });
 </script>
 
 {% endblock %}
