@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+  <title>Chatbox Example</title>
+    <style>
+      /* CSS for the chatbox */
+      #chatbox {
+        width: 300px;
+        height: 300px;
+        border: 1px solid black;
+        overflow: auto;
+      }
+      #message-input {
+        width: 25%;
+      }
+    </style>
+  <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+</head>
+<body>
+  <h1>Resellr</h1>
+
+  <div id="chatbox">
+  </div>
+  <form id='message-form'>
+    <input type="text" id="message-input" placeholder="Type your message here...">
+    <button type="submit">Send</button>
+  </form>
+
+  <script src="javascript/messageSending.js"></script>
+</body>
