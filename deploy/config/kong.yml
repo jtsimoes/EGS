@@ -1,29 +1,68 @@
 _format_version: "3.0"
 _transform: true # para se quiser guarda as passwords
 
+
 # Declare services and their paths
 services:
-- host: payment
-  name: paymentAPI
-  port: 8004
-  protocol: http
-  routes:
-    - name: payment
-      paths: 
-      - /
-      - /checkout/orders/{id}
-      - /checkout/orders
-      - /payments/authorizations/{authorization_id}
-      - /payments/authorizations/{authorization_id}/capture
+  # authentication
+  - host: authentication
+    name: authentication-service
+    url: http://0.0.0.0:5000
+    routes:
+    - name: auth-route
+      paths:
+        - /
+        - /authorize
+        - /oauth2callback
       strip_path: true
+ 
 
-- host: frontend
-  name: frontendAPI
-  port: 8080
-  protocol: http
-  routes:
-  - name: frontend
-    paths:
-    - /
-    - /items/{id}
-    strip_path: true
+# Configure the Kong database
+
+#payment API
+#  - host: payment
+#    name: paymentAPI
+#    port: 8004
+#    protocol: http
+#    routes:
+#    - name: payment
+#     paths: 
+#      - /
+#      - /checkout/orders/{id}
+#      - /checkout/orders
+#      - /payments/authorizations/{authorization_id}
+#     - /payments/authorizations/{authorization_id}/capture
+#      strip_path: true
+
+# FrontEnd API
+#  - host: frontend
+#    name: frontendAPI
+#    port: 8080
+#    protocol: http
+#    routes:
+#    - name: frontend
+#      paths:
+#      - /
+#      - /items/{id}
+#      strip_path: true   
+
+# oauth2 plugin
+plugins:
+  - name: oauth2
+    config:
+      enable_authorization_code_grant: true
+      enable_client_credentials_grant: true
+      enable_implicit_grant: true
+      enable_password_grant: true
+      global_credentials: true
+      access_token_expiration: 3600
+      scopes:
+        - email
+      storage: postgresql
+      pg:
+        host: 127.0.0.1
+        port: 5432
+        user: kong
+        password: kong
+        database: kong
+  
