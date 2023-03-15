@@ -216,10 +216,11 @@
 						<figure class="card card-product-grid sc-product-item">
 							<div class="img-wrap">
 								<a href="/items/{{ item.id }}">
-									<span class="badge badge-warning text-uppercase">Novidade</span>
-									<!--<span class="badge badge-danger text-uppercase">Promoção</span>-->
-									<img src="{{ item.IMAGE or 'https://www.slntechnologies.com/wp-content/uploads/2017/08/ef3-placeholder-image.jpg' }}"
-										alt="" data-name="product_image">
+									<span class="badge badge-warning badge-pill text-uppercase">Novidade</span>
+									{% if item.old_price %}
+									<span class="badge badge-danger badge-pill text-uppercase">Promoção</span>
+									{% endif %}
+									<img src="{{ item.image }}" alt="" data-name="product_image">
 									<a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Zoom</a>
 								</a>
 							</div>
@@ -227,21 +228,16 @@
 								<a href="/items/{{ item.id }}">
 									<p class="title font-weight-semibold mb-1" data-name="product_name">{{ item.name }}
 									</p>
-									<p class="small text-muted mb-3">Vendedor: <span data-name="product_desc">{{
-											item.user or "Username#123" }}</span></p>
+									<p class="small text-muted mb-3">Vendedor:
+										<span data-name="product_desc">{{item.user }}</span>
+									</p>
 									<div class="price-wrap mb-3">
-										<span class="price">{{ item.price or "5,50" }}€</span>
-										<del class="price-old">{{ item.price or "6,50" }}€</del>
-										<small class="text-muted"> /unidade</small>
+										<var class="price">{{ item.price }}</var>
+										{% if item.old_price: %}
+										<del class="price-old">{{ item.old_price }}</del>
+										{% endif %}
 									</div>
 								</a>
-								<div class="form-inline mb-3 product${products[key].id}">
-									<label class="small mr-2" for="quantity">Quantidade: </label>
-									<input type="number" class="form-control form-control-sm" id="quantity"
-										name="product_quantity" min="1" max="{{ item.quantity }}" value="1"
-										title="Quantidade disponível para compra: {{ item.quantity }}"
-										autocomplete="off">
-								</div>
 								<button
 									class="btn btn-block btn-primary sc-add-to-cart product${products[key].id}">Adicionar
 									ao carrinho</button>
@@ -250,10 +246,8 @@
 								<button class="btn btn-block btn-primary unavailable product${products[key].id}"
 									style="display: none;" disabled>Indisponível</button>
 							</figcaption>
-							<input name="product_price" value="${products[key].price.replace(" ,", "." )}"
-								type="hidden">
-							<input name="product_id" value="${products[key].id}" type="hidden">
-							<input name="product_quantity_max" value="${products[key].quantity_left}" type="hidden">
+							<input name="product_price" value="{{ item.price }}" type="hidden">
+							<input name="product_id" value="{{ item.id }}" type="hidden">
 						</figure>
 					</div>
 					{% endfor %}
@@ -285,6 +279,7 @@
 
 <script>
 	$(document).ready(function () {
+		/*
 		// Total of products that customer can buy from the chosen producer
 		var counter = 0;
 
@@ -304,6 +299,7 @@
 				counter++;
 			}
 		}
+		*/
 
 		$('#smartcart').smartCart();
 
@@ -316,19 +312,6 @@
 			unique_key = $(this).parent().closest('.sc-added-item').data('product-unique-key');
 			$('#smartcart').smartCart('remove', unique_key);
 			$(this).hide().prev('.sc-add-to-cart').show();
-		});
-
-		$(".product input[name=product_quantity").on("input", function () {
-			let current_value = $(this).val();
-			let max_value = $(this).attr("max");
-
-			if (isNaN(current_value) || current_value < 1) {
-				$(this).val(1);
-			} else if (current_value > parseInt(max_value)) {
-				$(this).val(max_value);
-			} else {
-				$(this).val(current_value);
-			}
 		});
 
 		// Get value entered on search input and filter products instantaneously, hiding those that do not contain that keywords on title
