@@ -9,8 +9,8 @@
 		<h2 class="title-page text-white">Pagar encomenda</h2>
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb text-white">
-				<li class="breadcrumb-item"><a href="index.html" class="text-white">Página inicial</a></li>
-				<li class="breadcrumb-item"><a href="cart.html" class="text-white">Carrinho de compras</a></li>
+				<li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-white">Página inicial</a></li>
+				<li class="breadcrumb-item"><a href="{{ url_for('cart') }}" class="text-white">Carrinho de compras</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Checkout</li>
 			</ol>
 		</nav>
@@ -31,7 +31,7 @@
 			</div>
 			<div class="modal-body text-center">
 				<i class="fas fa-check-circle fa-7x text-success my-3"></i>
-				<h4 class="title mt-4">Obrigado por escolher o BioMarket <br>para as suas compras!</h4>
+				<h4 class="title mt-4">Obrigado por escolher a Resellr <br>para as suas compras!</h4>
 				<h5 class="my-4 font-weight-normal">Receberá o seu pedido em breve!</h5>
 				<p class="text-muted my-3">Pode acompanhar a sua encomenda na <br>página <a
 						href="orders.html">"Encomendas"</a> no menu de
@@ -159,8 +159,8 @@
 							<hr>
 							<div class="row">
 								<div class="form-group col-12">
-									<label>Mensagem para o produtor</label>
-									<textarea placeholder="Nota opcional para o produtor"
+									<label>Mensagem para o vendedor</label>
+									<textarea placeholder="Nota opcional para o vendedor"
 										class="form-control"></textarea>
 								</div>
 							</div>
@@ -264,7 +264,7 @@
 							<div id="card" class="collapse" data-parent="#accordion_pay">
 								<div class="card-body">
 									<p class="alert alert-info">Esta compra aparecerá no extrato do seu cartão de
-										crédito como "PAGAMENTO *BIOMARKET".</p>
+										crédito como "PAGAMENTO *RESELLR*".</p>
 									<div class="form-inline">
 										<div class="input-group mr-3">
 											<input type="text" maxlength="19" pattern="^[0-9]*$" title="Apenas dígitos"
@@ -334,7 +334,7 @@
 							<button type="submit" form="checkout"
 								class="btn btn-primary btn-block sc-cart-checkout">Pagar encomenda <i
 									class="fas fa-dolly ml-1"></i></button>
-							<a href="cart.html" class="btn btn-light btn-block mt-2">Cancelar/alterar a
+							<a href="{{ url_for('cart') }}" class="btn btn-light btn-block mt-2">Cancelar/alterar a
 								encomenda</a>
 
 						</div>
@@ -359,12 +359,9 @@
 			},
 			toolbarSettings: {
 				showRemoveButton: false,
-				changeQuantity: false
 			},
-			cartHeaderTemplate: '<tr class="small text-uppercase"><th >Produto</th><th width="100">Quantidade</th><th width="120">Preço</th></tr>'
+			cartHeaderTemplate: '<tr class="small text-uppercase"><th>Produto</th><th width="1">Preço</th></tr>'
 		});
-
-		$('#button-minus, #button-plus').prop('disabled', true);
 
 		// Update total value (when page loads)
 		var sum = Number($('.shipping').text().replace(/\s+/g, '').replace(/\,/g, '.').replace(/\€/g, '')) + Number($('.sc-cart-subtotal').text().replace(/\s+/g, '').replace(/\,/g, '.').replace(/\€/g, ''));
@@ -409,7 +406,7 @@
 
 		// Detect when success modal is closed and redirect the user to index page
 		$('#success').on('hidden.bs.modal', function (e) {
-			window.location.replace("index.html");
+			window.location.replace("{{ url_for('index') }}");
 		});
 	});
 </script>

@@ -6,6 +6,9 @@
 <section class="section-content padding-y bg">
 	<div class="container">
 
+		<!-- SMARTCART PLUGIN -->
+		<div id="smartcart" class="d-none"></div>
+
 		<header class="mt-5 pt-5 mb-5 text-center">
 			<h1 class="border-bottom pb-3 mt-5">Ups... &#9785;</h1>
 			<h4 class="pt-3 lead">Lamentamos mas parece que a página que procura não existe ou já não está disponível</h4>
@@ -16,4 +19,12 @@
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function () {
+		$('#smartcart').smartCart();
+	});
+</script>
 {% endblock %}

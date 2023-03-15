@@ -29,10 +29,6 @@
     <header class="section-header">
         <section class="header-main border-bottom">
             <div class="container">
-
-                <!-- SMARTCART PLUGIN -->
-				<div id="smartcart" class="d-none"></div>
-                
                 <div class="row align-items-center justify-content-between">
                     <div class="col-lg-3 col-sm-4 col-md-4 col-5">
                         <a class="navbar-brand" href="{{ url_for('index') }}" title="Página inicial">
@@ -56,19 +52,19 @@
                     </div>
                     <div class="col-lg-3 col-sm-8 col-md-4 col-7">
                         <div class="d-flex justify-content-end">
-                            <a href="cart.html" class="widget-header mr-3" data-toggle="tooltip" data-placement="bottom"
+                            <a href="{{ url_for('cart') }}" class="widget-header mr-3" data-toggle="tooltip" data-placement="bottom"
                                 title="Carrinho">
                                 <div class="icon">
                                     <i class="icon-sm rounded-circle border fa fa-shopping-cart"></i>
-                                    <span class="notify">0</span>
+                                    <span class="notify sc-cart-count">0</span>
                                 </div>
                             </a>
 
-                            <a href="/messages/" class="widget-header mr-3" data-toggle="tooltip" data-placement="bottom"
+                            <a href="{{ url_for('messages') }}" class="widget-header mr-3" data-toggle="tooltip" data-placement="bottom"
                                 title="Mensagens">
                                 <div class="icon">
                                     <i class="icon-sm rounded-circle border fa fa-envelope"></i>
-                                    <span class="notify">1</span>
+                                    <span class="notify">5</span>
                                 </div>
                             </a>
 

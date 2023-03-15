@@ -6,6 +6,9 @@
 <section class="section-content padding-y bg">
 	<div class="container">
 
+		<!-- SMARTCART PLUGIN -->
+		<div id="smartcart" class="d-none"></div>
+
 		<header class="mt-5 pt-5 mb-5 text-center">
 			<h1 class="border-bottom pb-3 mt-5">D'oh!... &#129301;</h1>
 			<h4 class="pt-3 lead">Algo correu mal ao tentar realizar a operação que pediu</h4>
@@ -16,4 +19,12 @@
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function () {
+		$('#smartcart').smartCart();
+	});
+</script>
 {% endblock %}

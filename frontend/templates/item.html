@@ -22,6 +22,9 @@
 <section class="section-content padding-y bg">
 	<div class="container">
 
+		<!-- SMARTCART PLUGIN -->
+		<div id="smartcart" class="d-none"></div>
+
 		<!-- ============================ PRODUCT DETAIL ================================= -->
 		<div id="product-detail">
 			<div class="card sc-product-item">
@@ -65,7 +68,8 @@
 								</div>
 								<figcaption class="info">
 									<p class="font-weight-bold mb-0 pb-0">
-										<a href="#" title="Ver mais produtos deste vendedor">{{ details.user }}</a>
+										<a href="#" title="Ver mais produtos deste vendedor" data-name="product_desc">{{
+											details.user }}</a>
 									</p>
 									<div class="rating-wrap">
 										<ul class="rating-stars">
@@ -130,8 +134,8 @@
 												class="fas fa-shopping-cart fa-fw"></i></button>
 										<button type="button" class="btn btn-outline-secondary ml-xl-2 mb-2 px-3">
 											Perguntar ao vendedor <i class="fas fa-paper-plane fa-fw"></i></button>
-										<button type="button" class="btn btn-danger ml-xl-2 mb-2 px-4" id="add-wishlist"><i
-												class="far fa-heart fa-fw"></i></button>
+										<button type="button" class="btn btn-danger ml-xl-2 mb-2 px-4"
+											id="add-wishlist"><i class="far fa-heart fa-fw"></i></button>
 										{% else %}
 										<button type="button" class="btn btn-primary btn-block"
 											disabled>Vendido</button>
@@ -141,7 +145,6 @@
 							</form>
 							<input name="product_price" value="{{ details.price }}" type="hidden">
 							<input name="product_id" value="{{ details.id }}" type="hidden">
-							<input name="product_quantity_max" value="{{ details.quantity }}" type="hidden">
 						</article>
 					</main>
 				</div>

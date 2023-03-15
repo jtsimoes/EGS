@@ -6,10 +6,21 @@
 <section class="section-content padding-y bg">
 	<div class="container">
 
+		<!-- SMARTCART PLUGIN -->
+		<div id="smartcart" class="d-none"></div>
+
 		TODO
 
 	</div>
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function () {
+		$('#smartcart').smartCart();
+	});
+</script>
 {% endblock %}
