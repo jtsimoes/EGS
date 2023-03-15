@@ -22,38 +22,24 @@
                     <div class="aside"><img src="{product_image}" class="border rounded img-sm" alt=""></div>
                     <figcaption class="info">
                         <a href="product.html?id={product_id}" class="title text-dark sc-cart-item-name">{product_name}</a>
-                        <p class="text-muted small sc-cart-item-desc">Produtor: {product_desc}</p>
+                        <p class="text-muted small sc-cart-item-desc">Vendedor: {product_desc}</p>
                     </figcaption>
                 </figure>
-            </td>
-            <td class="align-middle sc-cart-item-quantity">
-                <div class="input-group input-spinner mb-3 mb-lg-1">
-                    <div class="input-group-prepend">
-                        <button class="btn btn-light" type="button" id="button-minus">&#8722;</button>
-                    </div>
-                    <div class="input-group-append input-group-prepend">
-                        {product_quantity}
-                    </div>
-                    <div class="input-group-append">
-                        <button class="btn btn-light" type="button" id="button-plus">+</button>
-                    </div>
-                </div>
             </td>
             <td class="align-middle"> 
                 <div class="price-wrap"> 
                     <var class="price sc-cart-item-amount">{product_total}</var> 
-                    <small class="text-muted sc-cart-item-price">{product_price} /kg</small> 
                 </div>
             </td>
         `,
-        cartHeaderTemplate: '<tr class="small text-uppercase"><th>Produto</th><th width="100">Quantidade</th><th width="120">Preço</th><th class="text-right" width="100"></th></tr>',
+        cartHeaderTemplate: '<tr class="small text-uppercase"><th>Produto</th><th width="1">Preço</th><th width="1"></th></tr>',
         productContainerSelector: '.sc-product-item',
         productElementSelector: '*', // input, textarea, select, div, p
         addCartSelector: '.sc-add-to-cart',
         transitionsDuration: 0,
         quantityOptions: {
             min: 1,
-            max: 99,
+            max: 1,
             step: 1
         },
         paramSettings: { // Map the paramters
@@ -77,7 +63,7 @@
         storageSettings: {
             persistentCart: true, // Make cart persistent. Notice: If the given 'storageApi'-object is broken, the persistent cart is disabled.
             storageApi: localStorage, // Storage object: localStorage, sessionStorage or custom object implementing Web Storage API.
-            storageKey: 'biomarket_cart'
+            storageKey: 'resellr_cart'
         },
         submitSettings: {
             submitType: 'form', // form, paypal, ajax
@@ -98,7 +84,7 @@
             showClearButton: true,
             showCartSummary: true,
             showRemoveButton: true,
-            changeQuantity: true,
+            changeQuantity: false,
             checkoutButtonStyle: 'default', // default, paypal, image
             checkoutButtonImage: '', // image for the checkout button
             toolbarExtraButtons: [] // Extra buttons to show on toolbar, array of jQuery input/buttons elements
