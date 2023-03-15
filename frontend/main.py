@@ -111,6 +111,10 @@ async def message(request: Request, id: str):
     title = "NOME DO UTILIZADOR AQUI"
     return templates.TemplateResponse("message.html", {"request": request, "title": title, "message": message})
 
+@app.get("/cart", response_class=HTMLResponse)
+async def cart(request: Request):
+    title = "Carinho"
+    return templates.TemplateResponse("cart.html", {"request": request, "title": title})
 
 @app.get("/checkout", response_class=HTMLResponse)
 async def checkout(request: Request):
