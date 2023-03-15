@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import HTTPException
 
-app = FastAPI(openapi_url=None)
+app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
