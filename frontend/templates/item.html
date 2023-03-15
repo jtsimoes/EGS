@@ -43,90 +43,99 @@
 
 							{% if details.availability %}
 							<ul class="list-check pt-1">
-								<li class="text-success">Disponível para encomenda</li>
+								<li class="text-success">Disponível</li>
 							</ul>
 							{% else %}
 							<ul class="list-dots pt-1">
-								<li class="text-muted">Indisponível de momento</li>
+								<li class="text-muted">Indisponível</li>
 							</ul>
 							{% endif %}
-
-							<div class="rating-wrap my-3">
-								<ul class="rating-stars">
-									<li style="width:{{ details.rating * 100 / 5 }}%" class="stars-active">
-										<img src="{{ url_for('static', path='images/icons/stars-active.svg') }}" alt="">
-									</li>
-									<li>
-										<img src="{{ url_for('static', path='images/icons/stars-disable.svg') }}"
-											alt="">
-									</li>
-								</ul>
-								<small class="label-rating">{{ details.rating }}</small>
-								<i class="dot"></i>
-								<small class="label-rating text-muted"><i class="fas fa-comment-dots"></i> {{
-									details.reviews }}
-									avaliaç{{ 'ão' if details.reviews == 1 else 'ões' }}
-								</small>
-								<i class="dot"></i>
-								<small class="label-rating text-primary"><i class="fas fa-shopping-basket"></i>
-									{{ details.orders }} encomenda{{ '' if details.orders == 1 else 's' }}</small>
-							</div>
 
 							<div class="mb-3">
 								<var class="price h4">{{ details.price.replace('.',',') }}€</var>
 								{% if details.old_price %}
 								<del class="price-old">{{ details.old_price.replace('.',',') }}€</del>
 								{% endif %}
-								<small class="text-muted"> /unidade</small>
 							</div>
+
+							<figure class="itemside mb-3">
+								<div class="aside">
+									<img class="icon icon-sm rounded-circle"
+										src="{{ url_for('static', path='images/misc/avatar.jpg') }}">
+								</div>
+								<figcaption class="info">
+									<p class="font-weight-bold mb-0 pb-0">
+										<a href="#" title="Ver mais produtos deste vendedor">{{ details.user }}</a>
+									</p>
+									<div class="rating-wrap">
+										<ul class="rating-stars">
+											<li style="width:{{ details.rating * 100 / 5 }}%" class="stars-active">
+												<img src="{{ url_for('static', path='images/icons/stars-active.svg') }}"
+													alt="">
+											</li>
+											<li>
+												<img src="{{ url_for('static', path='images/icons/stars-disable.svg') }}"
+													alt="">
+											</li>
+										</ul>
+										<small class="label-rating">{{ details.rating }}</small>
+										<i class="dot"></i>
+										<small class="label-rating text-muted"><i class="fas fa-comment-dots"></i> {{
+											details.reviews }}
+											avaliaç{{ 'ão' if details.reviews == 1 else 'ões' }}
+										</small>
+										<i class="dot"></i>
+										<small class="label-rating text-primary"><i class="fas fa-shopping-basket"></i>
+											{{ details.orders }} venda{{ '' if details.orders == 1 else 's' }}</small>
+									</div>
+								</figcaption>
+							</figure>
 
 							<p class="text-justify">{{ details.description }}</p>
 
 							<dl class="row">
-								<dt class="col">Produtor:</dt>
-								<dd class="col-sm-9" data-name="product_desc"><a
-										href="buy.html?producer={{ details.user }}"
-										title="Ver mais produtos deste produtor">{{ details.user }}</a></dd>
+								<dt class="col">Categoria:</dt>
+								<dd class="col-sm-9"><a href="#" title="Ver mais produtos nesta categoria">{{
+										details.category }}</a></dd>
 							</dl>
 							<dl class="row">
-								<dt class="col">Categoria:</dt>
-								<dd class="col-sm-9">{{ details.category }}</dd>
+								<dt class="col">Estado:</dt>
+								<dd class="col-sm-9">{{ details.condition }}</dd>
+							</dl>
+							<dl class="row">
+								<dt class="col">Publicado:</dt>
+								<dd class="col-sm-9">
+									<span id="date">{{ details.date }}</span>
+									<small id="date-full" class="text-muted">({{ details.date }})</small>
+								</dd>
+							</dl>
+							<dl class="row">
+								<dt class="col">Localização:</dt>
+								<dd class="col-sm-9">{{ details.location }}</dd>
 							</dl>
 
 							<hr>
 							<form id="product" action="checkout.html">
 								<div class="row justify-content-between align-items-end">
-									<div class="col-md flex-grow-0">
-										<label>Quantidade:</label>
-										<div class="input-group input-spinner mb-3 mb-lg-1">
-											<div class="input-group-prepend">
-												<button class="btn btn-light" type="button"
-													id="button-minus">&#8722;</button>
-											</div>
-											<div class="input-group-append input-group-prepend">
-												<input type="number" id="product_quantity" name="product_quantity"
-													class="btn btn-light font-weight-bolder no-controls" value="1"
-													min="1" max="{{details.quantity}}"
-													title="Quantidade disponível para compra: {{details.quantity}}"
-													autocomplete="off" required>
-											</div>
-											<div class="input-group-append">
-												<button class="btn btn-light" type="button" id="button-plus">+</button>
-											</div>
-										</div>
-									</div>
-									<div class="col-12 col-lg">
-										<button type="submit" class="btn btn-primary mb-1 sc-add-to-cart">Comprar
+									<div class="col-12 text-center">
+										{% if details.availability %}
+										<button type="submit"
+											class="btn btn-primary btn-block mb-2 sc-add-to-cart">Comprar
 											agora</button>
 										<button type="button" id="add-cart"
-											class="btn btn-outline-primary ml-xl-2 mb-1 sc-add-to-cart">Adicionar ao
-											carrinho <i class="fas fa-shopping-cart"></i></button>
-										<button type="button"
-											class="btn btn-outline-danger ml-xl-2 mb-1 sc-remove-from-cart"
+											class="btn btn-outline-primary mb-2 sc-add-to-cart">Adicionar ao
+											carrinho <i class="fas fa-shopping-cart fa-fw"></i></button>
+										<button type="button" class="btn btn-outline-danger mb-2 sc-remove-from-cart"
 											style="display: none;">Remover do carrinho <i
-												class="fas fa-shopping-cart"></i></button>
-										<button type="button" class="btn btn-primary btn-block ml-xl-2 mb-1 unavailable"
-											style="display: none;" disabled>Indisponível para compra</button>
+												class="fas fa-shopping-cart fa-fw"></i></button>
+										<button type="button" class="btn btn-outline-secondary ml-xl-2 mb-2 px-3">
+											Perguntar ao vendedor <i class="fas fa-paper-plane fa-fw"></i></button>
+										<button type="button" class="btn btn-danger ml-xl-2 mb-2 px-4" id="add-wishlist"><i
+												class="far fa-heart fa-fw"></i></button>
+										{% else %}
+										<button type="button" class="btn btn-primary btn-block"
+											disabled>Vendido</button>
+										{% endif %}
 									</div>
 								</div>
 							</form>
@@ -163,44 +172,30 @@
 {% block scripts %}
 <script>
 	$(document).ready(function () {
-
 		// Related products counter
 		var i = 0;
-		var quantity_left = {{ details.quantity }};
 
-	/*
-
-
-			var availability = "available";
-			var quantity_left = {{details.quantity}};
-			if (quantity_left < 1) {
-				availability = "unavailable";
-			}
-
-			var ratings = 0;								// Sum of all ratings
-			var reviews = 0; 								// Total number of reviews
-			for (var number in products[key].feedback) {
-				if (products[key].feedback.hasOwnProperty(number)) {
-					ratings += parseInt(products[key].feedback[number].rating); // Append each individual rating
-					reviews++;
+		/*
+				var ratings = 0;								// Sum of all ratings
+				var reviews = 0; 								// Total number of reviews
+				for (var number in products[key].feedback) {
+					if (products[key].feedback.hasOwnProperty(number)) {
+						ratings += parseInt(products[key].feedback[number].rating); // Append each individual rating
+						reviews++;
+					}
 				}
-			}
-			var rating = 0; 								// Average rating
-			if (reviews != 0) {
-				rating = (ratings / reviews).toFixed(1);
-			}
-			var stars = (rating * 100 / 5).toFixed(2);			// Width of rating stars icons of in percentage
+				var rating = 0; 								// Average rating
+				if (reviews != 0) {
+					rating = (ratings / reviews).toFixed(1);
+				}
+				var stars = (rating * 100 / 5).toFixed(2);			// Width of rating stars icons of in percentage
+	
+				$("#product-detail").append(`
+						
+					`);
+		*/
 
-			$("#product-detail").append(`
-					
-				`);
-
-			if (quantity_left < 1) {
-				$('.sc-add-to-cart').hide();
-				$('#product_quantity, #button-plus, #button-minus').prop('disabled', true);
-				$('.unavailable').show();
-			}
-
+		/*
 			$("#product-feedback").append(`
 					<header class="section-heading">
 						<h3>Feedback</h3>  
@@ -265,8 +260,42 @@
 
 		$('#smartcart').smartCart();
 
+		let date = new Date($('#date').text()).getTime();
+		let string = new Intl.RelativeTimeFormat('pt-PT', {
+			numeric: 'auto',
+			style: 'long'
+		}).format(Math.ceil((date - new Date().getTime()) / (1000 * 60 * 60 * 24)), 'day');
+		if (string == 'hoje') {
+			string = new Intl.RelativeTimeFormat('pt-PT', {
+				numeric: 'auto',
+				style: 'long'
+			}).format(Math.ceil((date - new Date().getTime()) / (1000 * 60 * 60)), 'hour');
+		}
+		if (string == 'esta hora') {
+			string = new Intl.RelativeTimeFormat('pt-PT', {
+				numeric: 'auto',
+				style: 'long'
+			}).format(Math.ceil((date - new Date().getTime()) / (1000 * 60)), 'minute');
+		}
+		if (string == 'este minuto') {
+			string = 'agora mesmo'
+		}
+		$('#date').text(string.charAt(0).toUpperCase() + string.slice(1));
+
+		$('#date-full').text('(' + new Intl.DateTimeFormat('pt-PT', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: 'numeric',
+			minute: 'numeric'
+		}).format(date) + ')');
+
 		$('#add-cart.sc-add-to-cart').click(function () {
 			$(this).hide().next('.sc-remove-from-cart').show();
+		});
+
+		$('#add-wishlist').click(function () {
+			$(this).children('i').toggleClass('fas far');
 		});
 
 		$('.sc-remove-from-cart').click(function () {
@@ -274,58 +303,6 @@
 			unique_key = $(this).parent().closest('.sc-added-item').data('product-unique-key');
 			$('#smartcart').smartCart('remove', unique_key);
 			$(this).hide().prev('#add-cart.sc-add-to-cart').show();
-		});
-
-		$("#product #button-minus").click(function () {
-			let value = $('#product input[name=product_quantity]').val();
-
-			if (value > 1) {
-				$('#product input[name=product_quantity]').val(--value);
-			} else {
-				$('#product input[name=product_quantity]').val(1);
-			}
-
-			if (value == 1) {
-				$(this).prop('disabled', true);
-			} else {
-				$(this).prop('disabled', false);
-			}
-			$(this).parent().parent().find('#button-plus').prop('disabled', false);
-		});
-		$("#product #button-plus").click(function () {
-			let value = $('#product input[name=product_quantity]').val();
-
-			if (value < parseInt(quantity_left)) {
-				$('#product input[name=product_quantity]').val(++value);
-			} else {
-				$('#product input[name=product_quantity]').val(quantity_left);
-			}
-
-			if (value == quantity_left) {
-				$(this).prop('disabled', true);
-			} else {
-				$(this).prop('disabled', false);
-			}
-			$(this).parent().parent().find('#button-minus').prop('disabled', false);
-		});
-
-		$("#product input[name=product_quantity").on("input", function () {
-			let current_value = $(this).val();
-			let max_value = $(this).attr("max");
-
-			if (isNaN(current_value) || current_value <= 1) {
-				$(this).val(1);
-				$(this).parent().parent().find('#button-minus').prop('disabled', true);
-				$(this).parent().parent().find('#button-plus').prop('disabled', false);
-			} else if (current_value >= parseInt(max_value)) {
-				$(this).val(max_value);
-				$(this).parent().parent().find('#button-plus').prop('disabled', true);
-				$(this).parent().parent().find('#button-minus').prop('disabled', false);
-			} else {
-				$(this).val(current_value);
-				$(this).parent().parent().find('#button-minus').prop('disabled', false);
-				$(this).parent().parent().find('#button-plus').prop('disabled', false);
-			}
 		});
 	});
 </script>
