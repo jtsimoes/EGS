@@ -1,0 +1,6 @@
+{	
+    "services":{
+        "name":"athorization-api",
+	    "url": "http://localhost:5000"
+    }
+}

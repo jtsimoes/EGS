@@ -2,8 +2,8 @@ FROM python:3.12.0a5-slim-bullseye
 
 COPY ./ .
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 CMD [ "python", "paymentAPI.py"]
 
-# build: docker build -t payment -f .\DockerFile.payment ..\payment\
+# build: docker build -t payment -f deploy\DockerFile.payment ..\payment\
