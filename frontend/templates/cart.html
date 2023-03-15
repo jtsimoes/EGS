@@ -8,7 +8,7 @@
 		<h2 class="title-page text-white">Ver carrinho</h2>
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb text-white">
-				<li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-white">Página inicial</a></li>
+				<li class="breadcrumb-item"><a href="/" class="text-white">Página inicial</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Carrinho de compras</li>
 			</ol>
 		</nav>
@@ -53,10 +53,10 @@
 							</dl>
 							<hr class="mb-4">
 
-							<a href="{{ url_for('index') }}" class="btn btn-light btn-block">Continuar a comprar</a>
+							<a href="/" class="btn btn-light btn-block">Continuar a comprar</a>
 							<button class="btn btn-danger btn-block sc-cart-clear" type="button">Limpar
 								carrinho</button>
-							<a class="sc-cart-checkout" href="{{ url_for('checkout') }}"><button
+							<a class="sc-cart-checkout" href="/checkout"><button
 									class="btn btn-primary btn-block mt-2 sc-cart-checkout" type="button">Checkout
 									<i class="fas fa-clipboard-check ml-1"></i></button></a>
 						</div>

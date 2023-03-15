@@ -9,8 +9,8 @@
 		<h2 class="title-page text-white">Pagar encomenda</h2>
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb text-white">
-				<li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-white">Página inicial</a></li>
-				<li class="breadcrumb-item"><a href="{{ url_for('cart') }}" class="text-white">Carrinho de compras</a></li>
+				<li class="breadcrumb-item"><a href="/" class="text-white">Página inicial</a></li>
+				<li class="breadcrumb-item"><a href="/cart" class="text-white">Carrinho de compras</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Checkout</li>
 			</ol>
 		</nav>
@@ -172,7 +172,7 @@
 						<!-- PayPal -->
 						<div class="card">
 							<header class="card-header">
-								<img src="{{ url_for('static', path='images/misc/payment-paypal.png') }}" class="float-right" height="24"
+								<img src="/static/images/misc/payment-paypal.png" class="float-right" height="24"
 									alt="PayPal">
 								<label class="form-check collapsed" data-toggle="collapse" data-target="#paypal">
 									<input class="form-check-input" name="payment_option" type="radio" value="paypal"
@@ -189,7 +189,7 @@
 										autorizar o pagamento desta compra.</p>
 									<p class="text-center">
 										<a href="https://www.paypal.com/" target="_blank">
-											<img src="{{ url_for('static', path='images/misc/btn-paypal.png') }}" height="32" alt="PayPal">
+											<img src="/static/images/misc/btn-paypal.png" height="32" alt="PayPal">
 										</a>
 									</p>
 								</div>
@@ -199,7 +199,7 @@
 						<!-- MB Way -->
 						<div class="card">
 							<header class="card-header">
-								<img src="{{ url_for('static', path='images/misc/payment-mbway.png') }}" class="float-right" height="24"
+								<img src="/static/images/misc/payment-mbway.png" class="float-right" height="24"
 									alt="MB Way">
 								<label class="form-check" data-toggle="collapse" data-target="#mbway">
 									<input class="form-check-input" name="payment_option" type="radio" value="mbway">
@@ -224,7 +224,7 @@
 						<!-- Multibanco -->
 						<div class="card">
 							<header class="card-header">
-								<img src="{{ url_for('static', path='images/misc/payment-bank.png') }}" class="float-right" height="24"
+								<img src="/static/images/misc/payment-bank.png" class="float-right" height="24"
 									alt="Multibanco">
 								<label class="form-check" data-toggle="collapse" data-target="#bank">
 									<input class="form-check-input" name="payment_option" type="radio" value="bank">
@@ -254,7 +254,7 @@
 						<!-- Credit card -->
 						<div class="card">
 							<header class="card-header">
-								<img src="{{ url_for('static', path='images/misc/payment-card.png') }}" class="float-right" height="24"
+								<img src="/static/images/misc/payment-card.png" class="float-right" height="24"
 									alt="Cartão de crédito">
 								<label class="form-check" data-toggle="collapse" data-target="#card">
 									<input class="form-check-input" name="payment_option" type="radio" value="card">
@@ -334,7 +334,7 @@
 							<button type="submit" form="checkout"
 								class="btn btn-primary btn-block sc-cart-checkout">Pagar encomenda <i
 									class="fas fa-dolly ml-1"></i></button>
-							<a href="{{ url_for('cart') }}" class="btn btn-light btn-block mt-2">Cancelar/alterar a
+							<a href="/cart" class="btn btn-light btn-block mt-2">Cancelar/alterar a
 								encomenda</a>
 
 						</div>
@@ -406,7 +406,7 @@
 
 		// Detect when success modal is closed and redirect the user to index page
 		$('#success').on('hidden.bs.modal', function (e) {
-			window.location.replace("{{ url_for('index') }}");
+			window.location.replace("/");
 		});
 	});
 </script>
