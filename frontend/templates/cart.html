@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<!-- ========================= SECTION PAGETOP ========================= -->
+<section class="section-pagetop bg-primary border-bottom">
+	<div class="container">
+		<h2 class="title-page text-white">Ver carrinho</h2>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb text-white">
+				<li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-white">Página inicial</a></li>
+				<li class="breadcrumb-item active" aria-current="page">Carrinho de compras</li>
+			</ol>
+		</nav>
+	</div>
+</section>
+<!-- ========================= SECTION PAGETOP END// ========================= -->
+
+
+<section class="section-content padding-y bg" style="min-height:84vh">
+	<div class="container">
+
+		<div class="row">
+			<aside class="col-lg-9">
+				<div class="mt-3 card">
+					<article class="card-body">
+						<!-- SMARTCART PLUGIN -->
+						<div id="smartcart"></div>
+					</article>
+				</div>
+			</aside>
+			<aside class="col-lg-3">
+				<div class="pt-3 sticky-top">
+					<div class="card shadow mb-4">
+						<div class="card-body pb-2">
+							<div class="form-group">
+								<label class="mb-3">Tem um cupão de desconto?</label>
+								<div class="input-group">
+									<input type="text" class="form-control" name="coupon" placeholder="Código do cupão">
+									<span class="input-group-append">
+										<button class="btn btn-primary">Aplicar</button>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="card shadow">
+						<div class="card-body">
+							<dl class="dlist-align">
+								<dt class="h4">Total:</dt>
+								<dd class="h4 font-weight-bolder text-right sc-cart-subtotal"></dd>
+							</dl>
+							<hr class="mb-4">
+
+							<a href="{{ url_for('index') }}" class="btn btn-light btn-block">Continuar a comprar</a>
+							<button class="btn btn-danger btn-block sc-cart-clear" type="button">Limpar
+								carrinho</button>
+							<a class="sc-cart-checkout" href="{{ url_for('checkout') }}"><button
+									class="btn btn-primary btn-block mt-2 sc-cart-checkout" type="button">Checkout
+									<i class="fas fa-clipboard-check ml-1"></i></button></a>
+						</div>
+					</div>
+				</div>
+			</aside>
+		</div>
+
+	</div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function () {
+		$('#smartcart').smartCart();
+	});
+
+	$(".sc-cart-clear").click(function () {
+		if (confirm("Tem a certeza que pretende limpar o carrinho?")) {
+			$('#smartcart').smartCart('clear');
+		} else {
+			return false;
+		}
+	});
+</script>
+{% endblock %}
