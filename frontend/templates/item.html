@@ -55,9 +55,9 @@
 							{% endif %}
 
 							<div class="mb-3">
-								<var class="price h4">{{ details.price.replace('.',',') }}€</var>
+								<var class="price h4">{{ details.price }}</var>
 								{% if details.old_price %}
-								<del class="price-old">{{ details.old_price.replace('.',',') }}€</del>
+								<del class="price-old">{{ details.old_price }}</del>
 								{% endif %}
 							</div>
 
@@ -262,6 +262,14 @@
 			*/
 
 		$('#smartcart').smartCart();
+
+		$('.price, .price-old').each(function () {
+			let price = $(this).text();
+			$(this).text(new Intl.NumberFormat('pt-PT', {
+				style: 'currency',
+				currency: 'EUR'
+			}).format(price));
+		});
 
 		let date = new Date($('#date').text()).getTime();
 		let string = new Intl.RelativeTimeFormat('pt-PT', {

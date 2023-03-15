@@ -303,6 +303,14 @@
 
 		$('#smartcart').smartCart();
 
+		$('.price, .price-old').each(function () {
+			let price = $(this).text();
+			$(this).text(new Intl.NumberFormat('pt-PT', {
+				style: 'currency',
+				currency: 'EUR'
+			}).format(price));
+		});
+
 		$('.sc-add-to-cart').click(function () {
 			$(this).hide().next('.sc-remove-from-cart').show();
 		});
