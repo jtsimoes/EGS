@@ -19,16 +19,24 @@ async def not_found_error(request: Request, exc: HTTPException):
     title = "404"
     return templates.TemplateResponse("404.html", {"request": request, "title": title}, status_code=404)
 
+
 @app.exception_handler(502)
 async def bad_gateway_error(request: Request, exc: HTTPException):
     title = "502"
     return templates.TemplateResponse("502.html", {"request": request, "title": title}, status_code=502)
 
 
-@app.get("/")
-async def index():
-    ##### TODO: create index page design
-    return {"message": "Welcome to main page!"}
+@app.exception_handler(504)
+async def gateway_timeout_error(request: Request, exc: HTTPException):
+    title = "504"
+    return templates.TemplateResponse("502.html", {"request": request, "title": title}, status_code=504)
+
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    # TODO: create index page design
+    title = "Página inicial"
+    return templates.TemplateResponse("index.html", {"request": request, "title": title})
 
 
 @app.get("/items", response_class=HTMLResponse)
@@ -36,7 +44,8 @@ async def items(request: Request):
 
     # API call to get all items
     try:
-        callAPI = requests.get("http://localhost:8000/products")    ##### TODO: Endpoint to get all items on stock database
+        # TODO: Endpoint to get all items on stock database
+        callAPI = requests.get("http://localhost:8000/products")
         callAPI.close()
     except:
         raise HTTPException(status_code=504)
@@ -59,27 +68,31 @@ async def item(request: Request, id: str):
 
     details = {
         "id": id,
+        "date": "2023-03-10 02:34:00",
         "name": "Nome do item",
         "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nisl sit amet nisl. Nullam auctor, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nisl sit amet nisl. Nullam auctor, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nisl sit amet nisl.",
-        "user": "Utilizador#1234",
+        "user": "Nome do Utilizador",
         "category": "Carros",
         # float needed for correct formatting?? depends on the database
         "old_price": "{:.2f}".format(float(20)),
         # float needed for correct formatting?? depends on the database
         "price": "{:.2f}".format(float(10.3)),
         # float needed for correct formatting?? depends on the database
+        # TODO: Move this to user profile
         "rating": float("{:.1f}".format(float(4.46))),
-        "orders": 420,
-        "reviews": 68,
+        "orders": 420,  # TODO: Move this to user profile
+        "reviews": 68,  # TODO: Move this to user profile
         "image": "https://www.slntechnologies.com/wp-content/uploads/2017/08/ef3-placeholder-image.jpg",
-        "quantity": 5,
-        "availability": 2
+        "quantity": 5,  # TODO: Remove this
+        "location": "Aradas - Aveiro",
+        "condition": "Usado",
+        "availability": 1
     }
     details = json.dumps(details)
 
     details = json.loads(details)
 
-    title = "Item"
+    title = details["name"]
     return templates.TemplateResponse("item.html", {"request": request, "title": title, "details": details})
 
 
