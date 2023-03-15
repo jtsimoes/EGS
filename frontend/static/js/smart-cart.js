@@ -490,7 +490,7 @@
          */
         _hasCartChange: function () {
             $('.sc-cart-count', this.cartElement).text(this.cart.length);
-            $('.sc-cart-count, .notify').text(this.cart.length);
+            $('.sc-cart-count').text(this.cart.length);
             $('.sc-cart-subtotal', this.element).text(this._getCartSubtotal());
 
             if (this.cart.length === 0) {
