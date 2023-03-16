@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{title}} • Resellr</title>
+    <title>{% block title %}{% endblock %} • Resellr</title>
 
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
@@ -77,12 +77,9 @@
                                     <span class="sr-only">Ações</span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="account_customer.html">Conta</a>
-                                    <a class="dropdown-item" href="orders.html">Encomendas</a>
+                                    <a class="dropdown-item" href="/profile">Perfil</a>
                                     <hr class="dropdown-divider">
-                                    <a class="dropdown-item" href="#">Definições</a>
-                                    <hr class="dropdown-divider">
-                                    <a class="dropdown-item" href="logout.html">Terminar sessão</a>
+                                    <a class="dropdown-item" href="/logout">Terminar sessão</a>
                                 </div>
                             </div>
                         </div>

@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import HTTPException
 
-app = FastAPI()
+app = FastAPI(title="Resellr", description="Buy & Sell", version="1.0")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -16,20 +16,17 @@ templates = Jinja2Templates(directory="templates")
 
 @app.exception_handler(404)
 async def not_found_error(request: Request, exc: HTTPException):
-    title = "404"
-    return templates.TemplateResponse("404.html", {"request": request, "title": title}, status_code=404)
+    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
 
 
 @app.exception_handler(502)
 async def bad_gateway_error(request: Request, exc: HTTPException):
-    title = "502"
-    return templates.TemplateResponse("502.html", {"request": request, "title": title}, status_code=502)
+    return templates.TemplateResponse("502.html", {"request": request}, status_code=502)
 
 
 @app.exception_handler(504)
 async def gateway_timeout_error(request: Request, exc: HTTPException):
-    title = "504"
-    return templates.TemplateResponse("502.html", {"request": request, "title": title}, status_code=504)
+    return templates.TemplateResponse("502.html", {"request": request}, status_code=504)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -37,6 +34,7 @@ async def index(request: Request):
     # TODO: create index page design
     title = "Página inicial"
     return templates.TemplateResponse("index.html", {"request": request, "title": title})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/items", response_class=HTMLResponse)
@@ -74,8 +72,7 @@ async def items(request: Request):
             "image": "https://img.joomcdn.net/57e3cb5b80a268ab3c8c28d13f7bcac81f21cc71_1024_1024.jpeg",     "price": "3.5"}
     ]
 
-    title = "Lista"
-    return templates.TemplateResponse("items.html", {"request": request, "title": title, "items": items})
+    return templates.TemplateResponse("items.html", {"request": request, "items": items})
 
 
 @app.get("/items/{id}", response_class=HTMLResponse)
@@ -107,36 +104,31 @@ async def item(request: Request, id: str):
 
     details = json.loads(details)
 
-    title = details["name"]
-    return templates.TemplateResponse("item.html", {"request": request, "title": title, "details": details})
+    return templates.TemplateResponse("item.html", {"request": request, "details": details})
 
 
 @app.get("/messages", response_class=HTMLResponse)
 async def messages(request: Request):
     messages = "TODO"
 
-    title = "Mensagens"
-    return templates.TemplateResponse("messages.html", {"request": request, "title": title, "messages": messages})
+    return templates.TemplateResponse("messages.html", {"request": request, "messages": messages})
 
 
 @app.get("/messages/{id}", response_class=HTMLResponse)
 async def message(request: Request, id: str):
     message = "TODO"
 
-    title = "NOME DO UTILIZADOR AQUI"
-    return templates.TemplateResponse("message.html", {"request": request, "title": title, "message": message})
+    return templates.TemplateResponse("message.html", {"request": request, "message": message})
 
 
 @app.get("/cart", response_class=HTMLResponse)
 async def cart(request: Request):
-    title = "Carinho"
-    return templates.TemplateResponse("cart.html", {"request": request, "title": title})
+    return templates.TemplateResponse("cart.html", {"request": request})
 
 
 @app.get("/checkout", response_class=HTMLResponse)
 async def checkout(request: Request):
-    title = "Checkout"
-    return templates.TemplateResponse("checkout.html", {"request": request, "title": title})
+    return templates.TemplateResponse("checkout.html", {"request": request})
 
 if __name__ == "__main__":
     # TODO: using 'reload=True' for development environment only, remove for production
