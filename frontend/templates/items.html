@@ -218,7 +218,7 @@
 						<figure class="card card-product-grid sc-product-item">
 							<div class="img-wrap">
 								<a href="/items/{{ item.id }}">
-									<span class="badge badge-warning badge-pill text-uppercase">Novidade</span>
+									<span class="badge badge-warning badge-pill text-uppercase d-none">Novidade</span>
 									{% if item.old_price %}
 									<span class="badge badge-danger badge-pill text-uppercase">Promoção</span>
 									{% endif %}
@@ -230,8 +230,16 @@
 								<a href="/items/{{ item.id }}">
 									<p class="title font-weight-semibold mb-1" data-name="product_name">{{ item.name }}
 									</p>
-									<p class="small text-muted mb-3">Vendedor:
-										<span data-name="product_desc">{{item.user }}</span>
+									<p class="small text-muted mb-1">
+										<i class="fas fa-user fa-fw"></i>
+										<span data-name="product_desc">{{ item.user }}</span>
+									</p>
+									<p class="small text-muted mb-1">
+										<i class="fas fa-map-marker-alt fa-fw"></i> {{ item.location }}
+									</p>
+									<p class="small text-muted mb-2">
+										<i class="fas fa-clock fa-fw"></i>
+										<span class="date">{{ item.date }}</span>
 									</p>
 									<div class="price-wrap mb-3">
 										<var class="price">{{ item.price }}</var>
@@ -240,13 +248,13 @@
 										{% endif %}
 									</div>
 								</a>
-								<button
-									class="btn btn-block btn-primary sc-add-to-cart product${products[key].id}">Adicionar
-									ao carrinho</button>
+								{% if item.availability %}
+								<button class="btn btn-block btn-primary sc-add-to-cart">Adicionar ao carrinho</button>
 								<button class="btn btn-block btn-danger sc-remove-from-cart"
 									style="display: none;">Remover do carrinho</button>
-								<button class="btn btn-block btn-primary unavailable product${products[key].id}"
-									style="display: none;" disabled>Indisponível</button>
+								{% else %}
+								<button class="btn btn-block btn-primary" disabled>Indisponível</button>
+								{% endif %}
 							</figcaption>
 							<input name="product_price" value="{{ item.price }}" type="hidden">
 							<input name="product_id" value="{{ item.id }}" type="hidden">
@@ -281,29 +289,48 @@
 
 <script>
 	$(document).ready(function () {
-		/*
-		// Total of products that customer can buy from the chosen producer
-		var counter = 0;
-
-		for (var key in products) {
-			// Search through all the products in the list and display only the products that are for sale by the chosen producer
-			if (products.hasOwnProperty(key) && products[key].producer == searchParams.get('producer')) {
-				$("#buy").append(`
-						
-					`);
-
-				if (products[key].quantity_left < 1) {
-					$('.sc-add-to-cart.product' + products[key].id).hide();
-					$('.form-inline.product' + products[key].id).css("visibility", "hidden");
-					$('.unavailable.product' + products[key].id).show();
-				}
-
-				counter++;
-			}
-		}
-		*/
-
 		$('#smartcart').smartCart();
+
+		$('.date').each(function () {
+			let date = new Date($(this).text());
+
+			if (new Date() - date < 1000 * 60 * 60 * 24) {
+				$(this).parent().parent().parent().parent().parent().find('.badge.badge-warning').removeClass('d-none');
+			}
+
+			let string = new Intl.RelativeTimeFormat('pt-PT', {
+				numeric: 'always',
+				style: 'long'
+			}).format(Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24 * 30 * 12)), 'year');
+			if (string == 'há 0 anos') {
+				string = new Intl.RelativeTimeFormat('pt-PT', {
+					numeric: 'always',
+					style: 'long'
+				}).format(Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24 * 30)), 'month');
+			}
+			if (string == 'há 0 meses') {
+				string = new Intl.RelativeTimeFormat('pt-PT', {
+					numeric: 'always',
+					style: 'long'
+				}).format(Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24)), 'day');
+			}
+			if (string == 'há 0 dias') {
+				string = new Intl.RelativeTimeFormat('pt-PT', {
+					numeric: 'always',
+					style: 'long'
+				}).format(Math.ceil((date - new Date()) / (1000 * 60 * 60)), 'hour');
+			}
+			if (string == 'há 0 horas') {
+				string = new Intl.RelativeTimeFormat('pt-PT', {
+					numeric: 'always',
+					style: 'long'
+				}).format(Math.ceil((date - new Date()) / (1000 * 60)), 'minute');
+			}
+			if (string == 'há 0 minutos') {
+				string = 'agora mesmo'
+			}
+			$(this).text(string);
+		});
 
 		$('.price, .price-old').each(function () {
 			let price = $(this).text();
