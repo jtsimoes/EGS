@@ -70,9 +70,8 @@
 								</div>
 								<figcaption class="info">
 									<p class="font-weight-bold mb-0 pb-0">
-										<a href="/profiles/TODO" title="Ver mais produtos deste vendedor"
-											data-name="product_desc">{{
-											details.user }}</a>
+										<a href="/profiles/TODO" data-name="product_desc">
+											{{ details.user }}</a>
 									</p>
 									<div class="rating-wrap">
 										<ul class="rating-stars">
@@ -96,12 +95,15 @@
 								</figcaption>
 							</figure>
 
-							<p class="text-justify">{{ details.description }}</p>
+							<p class="text-justify">{{ details.description | truncate(200, False, '...') }}
+								<a href="#details" class="text-muted small">(ler descrição completa)</a>
+							</p>
 
 							<dl class="row">
 								<dt class="col">Categoria:</dt>
 								<dd class="col-sm-9">
-									<a href="/items?category=TODO" title="Ver mais produtos nesta categoria">{{ details.category }}</a>
+									<a href="/items?category=TODO" title="Ver mais anúncios nesta categoria">
+										{{ details.category }}</a>
 								</dd>
 							</dl>
 							<dl class="row">
@@ -157,19 +159,104 @@
 
 
 
-		<!-- ============================ PRODUCT FEEDBACK & RELATED PRODUCTS ================================= -->
-		<div class="row mt-4 justify-content-between">
-			<div class="col-md-8 pr-5" id="product-feedback"></div>
 
-			<div class="col-md-4 pt-5 mt-3" id="section-related" style="display: none;">
-				<div class="card mt-5">
-					<div class="card-body" id="product-related">
-						<h5 class="card-title mb-4">Produtos sugeridos</h5>
-					</div>
+
+
+		<div class="row mt-5" id="details">
+			<div class="col-lg-8">
+				<!-- =================== COMPONENT SPECS ====================== -->
+				<div class="card">
+					<article class="card-body">
+						<h5 class="card-title mb-4">Detalhes adicionais</h5>
+						<p>{{ details.description }}</p>
+
+						<ul class="list-check cols-two">
+							<li>Some great feature name here</li>
+							<li>Lorem ipsum dolor sit amet, consectetur</li>
+							<li>Duis aute irure dolor in reprehenderit</li>
+							<li>Optical heart sensor</li>
+							<li>Easy fast and ver good</li>
+							<li>Some great feature name here</li>
+							<li>Modern style and design</li>
+						</ul>
+						<hr>
+						<dl class="row">
+							<dt class="col-sm-3">Display</dt>
+							<dd class="col-sm-9">13.3-inch LED-backlit display with IPS</dd>
+
+							<dt class="col-sm-3">Processor</dt>
+							<dd class="col-sm-9">2.3GHz dual-core Intel Core i5</dd>
+
+							<dt class="col-sm-3">Camera</dt>
+							<dd class="col-sm-9">720p FaceTime HD camera</dd>
+
+							<dt class="col-sm-3">Memory</dt>
+							<dd class="col-sm-9">8 GB RAM or 16 GB RAM</dd>
+
+							<dt class="col-sm-3">Graphics</dt>
+							<dd class="col-sm-9">Intel Iris Plus Graphics 640</dd>
+						</dl>
+
+					</article>
 				</div>
+				<!-- =================== COMPONENT SPECS END// ================== -->
+			</div>
+			<div class="col-lg-4">
+				<!-- =================== COMPONENT SELLER ====================== -->
+				<article class="card">
+					<div class="card-body">
+						<h5 class="card-title mb-4">Acerca do vendedor</h5>
+						<div class="mb-3 text-center">
+							<img src="/static/images/misc/avatar.jpg" width="130" height="130"
+								class="img-thumbnail rounded-circle">
+						</div>
+						<div class="mb-3 text-center">
+							<a href="/profiles/TODO" class="h5 title">{{ details.user }}</a>
+							<div class="rating-wrap mb-3">
+								<ul class="rating-stars">
+									<li class="stars-active" style="width:{{ details.rating * 100 / 5 }}%;">
+										<img src="/static/images/icons/stars-active.svg" alt="">
+									</li>
+									<li>
+										<img src="/static/images/icons/stars-disable.svg" alt="">
+									</li>
+								</ul>
+								<span class="label-rating text-muted">{{ details.rating }}</span>
+								<p class="small text-muted mt-1">(com base em {{ details.reviews }} avaliaç{{ 'ão' if
+									details.reviews == 1
+									else 'ões' }})</p>
+							</div>
+						</div>
+						<div class="my-4 text-center">
+							<ul class="cols-two mb-2" style="padding-inline-start: 0;">
+								<p class="mb-0"><i class="fas fa-map-marker-alt fa-fw text-secondary"></i> Cacia
+									(Aveiro)
+								</p>
+								<p class="mb-0"><i class="fas fa-shopping-basket fa-fw text-secondary"></i>
+									{{ details.orders }} venda{{ '' if details.orders == 1 else 's' }}
+								</p>
+							</ul>
+							<p><i class="fas fa-clock fa-fw text-secondary"></i>
+								Registado desde <time id="date-registration">{{ details.registration }}</time>
+							</p>
+						</div>
+						<div class="d-flex justify-content-around mb-2">
+							<a href="tel:{{ details.phone }}" title="Ligar {{ details.phone }}"
+								class="btn btn-success w-100 mr-2">
+								Chamada<i class="ml-2 fa fa-phone"></i>
+							</a>
+							<a href="/messages/TODO" class="btn btn-warning w-100">
+								Mensagem<i class="ml-2 fa fa-comment-dots"></i>
+							</a>
+						</div>
+						<a href="/profiles/TODO" class="btn w-100 btn-outline-primary">Ver mais anúncios deste
+							vendedor</a>
+					</div>
+				</article>
+				<!-- =================== COMPONENT SELLER END// ================== -->
 			</div>
 		</div>
-		<!-- ============================ PRODUCT FEEDBACK & RELATED PRODUCTS END// ================================= -->
+
 
 	</div>
 </section>
@@ -180,71 +267,6 @@
 {% block scripts %}
 <script>
 	$(document).ready(function () {
-		// Related products counter
-		var i = 0;
-
-		/*
-			$("#product-feedback").append(`
-				<header class="section-heading">
-					<h3>Feedback</h3>  
-					<div class="rating-wrap">
-						<ul class="rating-stars stars-lg">
-							<li style="width:${stars}%" class="stars-active">
-								<img src="images/icons/stars-active.svg" alt="">
-							</li>
-							<li>
-								<img src="images/icons/starts-disable.svg" alt="">
-							</li>
-						</ul>
-						<strong class="label-rating text-lg">${rating}<span class="text-muted ml-1"> | <i class="fas fa-comment-dots ml-1 mr-1"></i> ${reviews} avaliaç${reviews != 1 ? "ões" : "ão"}</span></strong>
-					</div>
-				</header>
-			`);
-		
-			$("#product-feedback").append(`
-				<article class="box mb-3">
-					<div class="icontext w-100">
-						<img src="${products[key].feedback[count].avatar}" class="img-xs icon rounded-circle" alt="">
-						<div class="text">
-							<span class="date text-muted float-right">${products[key].feedback[count].date}</span>  
-							<h6 class="mb-1">${products[key].feedback[count].name}</h6>
-							<ul class="rating-stars">
-								<li style="width:${(products[key].feedback[count].rating * 100 / 5).toFixed(0)}%" class="stars-active">
-									<img src="images/icons/stars-active.svg" alt="">
-								</li>
-								<li>
-									<img src="images/icons/starts-disable.svg" alt="">
-								</li>
-							</ul>
-							<span class="label-rating text-warning">${products[key].feedback[count].rating}</span>
-						</div>
-					</div>
-					<p class="mt-3">${products[key].feedback[count].comment}</p>	
-				</article>
-			`);
-				
-			
-
-		
-			// Show 3 random suggested products from the products list
-			if (i < 3) {
-				$("#product-related").append(`
-						<article class="itemside mb-3">
-							<a href="product.html?id=${products[key].id}" class="aside">
-								<img src="${products[key].image}" width="96" height="96" class="img-sm img-thumbnail">
-								<div class="info">
-									<a href="product.html?id=${products[key].id}" class="title mb-1">${products[key].name}</a>
-									<p class="text-muted small my-1">Produtor: ${products[key].producer}</p>
-									<strong class="price">${products[key].price}€<small class="text-muted"> /kg</small></strong>
-								</div>
-							</a>
-						</article>
-					`);
-				i++;
-			}
-
-			*/
-
 		$('#smartcart').smartCart();
 
 		$('.price, .price-old').each(function () {
@@ -287,7 +309,7 @@
 		if (string == 'este minuto') {
 			string = 'agora mesmo'
 		}
-		$('#date').text(string.charAt(0).toUpperCase() + string.slice(1));
+		$('#date').text(string);
 
 		$('#date-full').text('(' + new Intl.DateTimeFormat('pt-PT', {
 			year: 'numeric',
@@ -296,6 +318,13 @@
 			hour: 'numeric',
 			minute: 'numeric'
 		}).format(date) + ')');
+
+		let since = new Date($('#date-registration').text());
+		$('#date-registration').text(new Intl.DateTimeFormat('pt-PT', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		}).format(since));
 
 		$('#add-cart.sc-add-to-cart').click(function () {
 			$(this).hide().next('.sc-remove-from-cart').show();

@@ -94,9 +94,11 @@ async def item(request: Request, id: str):
         "rating": float("{:.1f}".format(float(4.46))),
         "orders": 420,  # TODO: Move this to user profile
         "reviews": 68,  # TODO: Move this to user profile
+        "phone": 123456789,  # TODO: Move this to user profile
+        "registration": "2022-01-10 02:34:00",  # TODO: Move this to user profile
         "image": "https://www.slntechnologies.com/wp-content/uploads/2017/08/ef3-placeholder-image.jpg",
         "quantity": 5,  # TODO: Remove this
-        "location": "Aradas - Aveiro",
+        "location": "Aradas (Aveiro)",
         "condition": "Usado",
         "availability": 1
     }
