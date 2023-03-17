@@ -36,6 +36,9 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "title": title})
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/logout")
+async def logout():
+    return RedirectResponse(url='//localhost:5000/authorize')
 
 @app.get("/items", response_class=HTMLResponse)
 async def items(request: Request):
