@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block body %}
+
+<!-- ========================= SECTION PAGETOP ========================= -->
+<section class="section-pagetop bg-primary border-bottom">
+	<div class="container">
+		<h2 class="title-page text-white">O meu perfil</h2>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb text-white">
+				<li class="breadcrumb-item"><a href="/" class="text-white">Página inicial</a></li>
+				<li class="breadcrumb-item active" aria-current="page">Perfil</li>
+			</ol>
+		</nav>
+	</div>
+</section>
+<!-- ========================= SECTION PAGETOP END// ========================= -->
+
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y bg">
+	<div class="container">
+
+		<!-- SMARTCART PLUGIN -->
+		<div id="smartcart" class="d-none"></div>
+
+		<div class="row">
+			<aside class="col-md-4">
+				<div class="sticky-top pt-3">
+					<article class="card shadow">
+						<div class="card-body">
+							<div class="mb-3 text-center">
+								<img src="{{ profile.avatar }}" width="130" height="130" alt=""
+									class="img-thumbnail rounded-circle">
+							</div>
+							<div class="mb-3 text-center">
+								<a href="/profiles/{{ profile.id }}" class="h5 title">{{ profile.name }}
+									<br><span class="h6 text-muted">@{{ profile.id }}</span>
+								</a>
+								<div class="rating-wrap mb-3">
+									<ul class="rating-stars">
+										<li class="stars-active" style="width:{{ profile.rating * 100 / 5 }}%;">
+											<img src="/static/images/icons/stars-active.svg" alt="">
+										</li>
+										<li>
+											<img src="/static/images/icons/stars-disable.svg" alt="">
+										</li>
+									</ul>
+									<span class="label-rating text-muted">{{ profile.rating }}</span>
+									<p class="small text-muted mt-1">(com base em
+										{{ profile.reviews }} avaliaç{{ 'ão' if profile.reviews == 1 else 'ões' }})
+									</p>
+								</div>
+							</div>
+							<div class="my-4">
+								<p class="mb-2">
+									<i class="fas fa-phone-alt fa-fw text-secondary"></i> {{ profile.phone }}
+								</p>
+								<p class="mb-2">
+									<i class="fas fa-envelope fa-fw text-secondary"></i> {{ profile.email }}
+								</p>
+								<p class="mb-2">
+									<i class="fas fa-map-marker-alt fa-fw text-secondary"></i> {{ profile.location }}
+								</p>
+								<p class="mb-2">
+									<i class="fas fa-comments-dollar fa-fw text-secondary"></i>
+									{{ profile.amount_sales }} venda{{ '' if profile.amount_sales == 1 else 's' }}
+								</p>
+								<p class="mb-2">
+									<i class="fas fa-shopping-basket fa-fw text-secondary"></i>
+									{{ profile.amount_purchases }} compra{{ '' if profile.amount_purchases == 1 else 's'
+									}}
+								</p>
+								<p class="mb-2">
+									<i class="fas fa-clock fa-fw text-secondary"></i>
+									Registado desde <time id="date-registration">{{ profile.registration }}</time>
+								</p>
+							</div>
+							<a href="#" class="btn w-100 btn-outline-primary">
+								Editar perfil<i class="fas fa-user-edit ml-2"></i>
+							</a>
+						</div>
+					</article>
+				</div>
+			</aside>
+			<main class="col-md-8">
+				<!-- =========================  SALES ========================= -->
+				<header class="border-bottom mb-4 mt-4 pb-3">
+					<div class="form-inline">
+						<span class="mr-md-auto ml-2 ml-sm-0">
+							Atualmente tem <b>{{ items|length }}</b> items seus à venda
+						</span>
+						<select class="mx-2 my-2 my-sm-0 form-control">
+							<option value="" disabled selected>Ordenar por...</option>
+							<optgroup label="Relevância">
+								<option>Mais relevante</option>
+							</optgroup>
+							<optgroup label="Data">
+								<option>Mais recente</option>
+								<option>Mais antigo</option>
+							</optgroup>
+							<optgroup label="Preço">
+								<option>Mais barato</option>
+								<option>Mais caro</option>
+							</optgroup>
+						</select>
+						<div class="ml-2 ml-sm-0 btn-group">
+							<button class="btn btn-outline-secondary" data-toggle="tooltip" title="Vista de lista"
+								id="list_view">
+								<i class="fa fa-bars"></i>
+							</button>
+							<button class="btn btn-outline-secondary active" data-toggle="tooltip"
+								title="Vista de grelha" id="grid_view">
+								<i class="fa fa-th"></i>
+							</button>
+						</div>
+					</div>
+				</header>
+
+				<div class="row" id="buy">
+
+					{% for item in items %}
+					<div class="col-lg-4 col-sm-6 product{% if not item.availability %} inactive{% endif %}">
+						<figure class="card card-product-grid sc-product-item">
+							<div class="img-wrap">
+								<a href="/items/{{ item.id }}">
+									<span class="badge badge-warning badge-pill text-uppercase d-none">Novidade</span>
+									{% if item.old_price %}
+									<span class="badge badge-danger badge-pill text-uppercase">Promoção</span>
+									{% endif %}
+									<img src="{{ item.image }}" alt="">
+									<a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Zoom</a>
+								</a>
+							</div>
+							<figcaption class="info-wrap">
+								<a href="/items/{{ item.id }}">
+									<p class="title font-weight-semibold mb-1">{{ item.name }}
+									</p>
+									<p class="small text-muted mb-1">
+										<i class="fas fa-user fa-fw"></i>
+										<span>{{ item.user }}</span>
+									</p>
+									<p class="small text-muted mb-1">
+										<i class="fas fa-map-marker-alt fa-fw"></i> {{ item.location }}
+									</p>
+									<p class="small text-muted mb-2">
+										<i class="fas fa-clock fa-fw"></i>
+										<span class="date">{{ item.date }}</span>
+									</p>
+									<div class="price-wrap mb-3">
+										<var class="price">{{ item.price }}</var>
+										{% if item.old_price: %}
+										<del class="price-old">{{ item.old_price }}</del>
+										{% endif %}
+									</div>
+								</a>
+								{% if item.availability %}
+								<button class="btn btn-block btn-danger">Retirar anúncio</button>
+								{% else %}
+								<button class="btn btn-block btn-primary" disabled>Anúncio terminado</button>
+								{% endif %}
+
+							</figcaption>
+						</figure>
+					</div>
+					{% endfor %}
+
+				</div>
+
+				<nav class="mt-4 d-flex justify-content-center" aria-label="Page navigation">
+					<ul class="pagination">
+						<li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+						<li class="page-item active"><a class="page-link" href="#">1</a></li>
+						<li class="page-item"><a class="page-link" href="#">2</a></li>
+						<li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+						<li class="page-item"><a class="page-link" href="#">9</a></li>
+						<li class="page-item"><a class="page-link" href="#">Seguinte</a></li>
+					</ul>
+				</nav>
+				<!-- =========================  SALES END// ========================= -->
+
+			</main>
+		</div>
+
+	</div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+	$(document).ready(function () {
+		$('#smartcart').smartCart();
+
+		$('.date').each(function () {
+			let date = new Date($(this).text());
+
+			if (new Date() - date < 1000 * 60 * 60 * 24) {
+				$(this).parent().parent().parent().parent().parent().find('.badge.badge-warning').removeClass('d-none');
+			}
+
+			let string = new Intl.RelativeTimeFormat('pt-PT', {
+				numeric: 'always',
+				style: 'long'
+			}).format(Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24 * 30 * 12)), 'year');
+			if (string == 'há 0 anos') {
+				string = new Intl.RelativeTimeFormat('pt-PT', {
+					numeric: 'always',
+					style: 'long'
+				}).format(Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24 * 30)), 'month');
+			}
+			if (string == 'há 0 meses') {
+				string = new Intl.RelativeTimeFormat('pt-PT', {
+					numeric: 'always',
+					style: 'long'
+				}).format(Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24)), 'day');
+			}
+			if (string == 'há 0 dias') {
+				string = new Intl.RelativeTimeFormat('pt-PT', {
+					numeric: 'always',
+					style: 'long'
+				}).format(Math.ceil((date - new Date()) / (1000 * 60 * 60)), 'hour');
+			}
+			if (string == 'há 0 horas') {
+				string = new Intl.RelativeTimeFormat('pt-PT', {
+					numeric: 'always',
+					style: 'long'
+				}).format(Math.ceil((date - new Date()) / (1000 * 60)), 'minute');
+			}
+			if (string == 'há 0 minutos') {
+				string = 'agora mesmo'
+			}
+			$(this).text(string);
+		});
+
+		let since = new Date($('#date-registration').text());
+		$('#date-registration').text(new Intl.DateTimeFormat('pt-PT', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		}).format(since));
+
+		$('.price, .price-old').each(function () {
+			let price = $(this).text();
+			$(this).text(new Intl.NumberFormat('pt-PT', {
+				style: 'currency',
+				currency: 'EUR'
+			}).format(price));
+		});
+	});
+</script>
+
+{% endblock %}

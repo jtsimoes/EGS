@@ -1954,6 +1954,12 @@ body.loading .loading-modal {
   color: #e4606d
 }
 
+.inactive {
+  pointer-events: none;
+  opacity: 0.6;
+  filter: grayscale(1);
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }

@@ -109,6 +109,43 @@ async def item(request: Request, id: str):
     return templates.TemplateResponse("item.html", {"request": request, "details": details})
 
 
+@app.get("/profiles", response_class=HTMLResponse)
+async def profiles(request: Request):
+    profiles = "TODO"
+
+    return templates.TemplateResponse("404.html", {"request": request, "profiles": profiles})
+
+
+@app.get("/profiles/{id}", response_class=HTMLResponse)
+async def profile(request: Request, id: str):
+    profile = {
+        "id": id,
+        "name": "Nome do Utilizador",
+        "email": "utilizador@user.pt",
+        "rating": float("{:.1f}".format(float(4.46))),
+        "amount_sales": 420,
+        "amount_purchases": 333,
+        "reviews": 68,
+        "phone": 123456789,
+        "registration": "2022-01-10 02:34:00",
+        "location": "Aradas (Aveiro)",
+        "avatar": "https://www.w3schools.com/howto/img_avatar.png"
+    }
+
+    items = [
+        {"id": 1, "name": "Óculos de sol",              "user": profile["id"],   "location": "Lisboa (Lisboa)",      "date": "2023-03-16 19:37:00",
+            "image": "https://magento.opticalia.com/media/catalog/product/cache/e4be6767ec9b37c1ae8637aee2f57a6a/v/t/vts560910.png",     "price": "10",   "old_price": "15",  "availability": 1},
+        {"id": 2, "name": "Relógio de pulso",           "user": profile["id"],   "location": "Mafra (Lisboa)",       "date": "2023-02-10 12:34:00",
+            "image": "https://5.imimg.com/data5/KC/PC/MY-38629861/dummy-chronograph-watch-500x500.jpg",     "price": "1.4",  "availability": 0},
+        {"id": 3, "name": "Cadeira de escritório",      "user": profile["id"],     "location": "Lisboa (Lisboa)",      "date": "2022-03-10 12:34:00",
+            "image": "https://1616346425.rsc.cdn77.org/temp/1615370739_6c9e04b9c72b4bcb5c03e722bff91b05.jpg",     "price": "2.99",    "old_price": "3.99",  "availability": 1},
+        {"id": 4, "name": "Smartphone",                 "user": profile["id"],      "location": "Oeiras (Lisboa)",     "date": "2023-03-01 12:34:00",
+            "image": "https://www.hisense.pt/wp-content/uploads/2019/06/H30-ICE-BLUE-1-2.png",     "price": "6.5",  "availability": 1}
+    ]
+
+    return templates.TemplateResponse("profile.html", {"request": request, "profile": profile, "items": items})
+
+
 @app.get("/messages", response_class=HTMLResponse)
 async def messages(request: Request):
     messages = "TODO"
