@@ -9,7 +9,10 @@ var pusher = new Pusher('0274fca38b4154a8b349', {
   cluster: 'eu'
 });
 
-var channel = pusher.subscribe('chat');
+var convId = document.getElementById('chatbox').getAttribute("value");
+var channelName = 'chat' + convId;
+var channel = pusher.subscribe(channelName);
+
 channel.bind('message', function(data) {
   // Update the UI with the new message
   const message = data.msg;
@@ -43,7 +46,9 @@ form.addEventListener('submit', (event) => {
   const message = messageInput.value;
 
   // Send a POST request to the server with the message data
-  fetch('messages', {
+  var convId = document.getElementById('chatbox').getAttribute("value");
+  var path = '/messages/' + convId;
+  fetch(path, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

@@ -18,12 +18,20 @@
 <body>
   <h1>Resellr</h1>
 
-  <div id="chatbox">
+  <h1><%= conversationId %></h1>
+  <% Object.keys(filteredMsgTable).forEach(function(key) { %>
+    <li> Message<%= key %>:</li>
+    <% Object.keys(filteredMsgTable[key]).forEach(function(msgInfo) { %>
+      <li><%= msgInfo %>: <%= filteredMsgTable[key][msgInfo] %></li>
+    <% }); %>
+  <% }); %>
+
+  <div id="chatbox" value=<%=conversationId%>>
   </div>
   <form id='message-form'>
     <input type="text" id="message-input" placeholder="Type your message here...">
     <button type="submit">Send</button>
   </form>
 
-  <script src="javascript/messageSending.js"></script>
+  <script src="../messageSending.js"></script>
 </body>
