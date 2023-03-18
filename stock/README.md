@@ -38,10 +38,10 @@ uvicorn stockAPI:app --reload
 
 To change the port use --port
 ```
-uvicorn main:app --reload --port 8080
+uvicorn stockAPI:app --reload --port 8080
 ```
 
 To change the host use --host
 ```
-uvicorn main:app --reload --host 0.0.0.0
+uvicorn stpckAPI:app --reload --host 0.0.0.0
 ```
