@@ -2,6 +2,8 @@
 
 To install all the requirements, simply type in the terminal:
 
+    $ sudo mysql
+    $ source ../db/dbInit.sql
     $ npm install
 
 To run, simply type in the terminal:
