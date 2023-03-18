@@ -23,7 +23,7 @@ const config = {
     host: 'localhost',
     user: 'user',
     password: 'password',
-    database: 'ResselrMessages'
+    database: 'ResellrMessages'
   };
 
 // define userId (while no auth is implemented)

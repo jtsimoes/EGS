@@ -1,9 +1,9 @@
--- Create the ResselrMessages database
-DROP DATABASE IF EXISTS ResselrMessages;
-CREATE DATABASE ResselrMessages;
+-- Create the ResellrMessages database
+DROP DATABASE IF EXISTS ResellrMessages;
+CREATE DATABASE ResellrMessages;
 
--- Switch to the ResselrMessages database
-USE ResselrMessages;
+-- Switch to the ResellrMessages database
+USE ResellrMessages;
 
 -- Create the ConvTable table
 CREATE TABLE ConvTable (
@@ -53,4 +53,4 @@ VALUES
 
 -- Create new user and grant permissions
 CREATE USER 'user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON ResselrMessages.* TO 'user'@'localhost';
+GRANT ALL PRIVILEGES ON ResellrMessages.* TO 'user'@'localhost';
