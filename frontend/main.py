@@ -1,17 +1,71 @@
 import uvicorn
-import json
-import requests
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+import json  # TODO: necessary?
+import requests  # TODO: necessary?
+from functools import lru_cache  # TODO: for cache
+from fastapi import FastAPI, Request, Depends
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import HTTPException
+from sqlalchemy.orm import Session
+import config  # TODO: for cache
+import crud
+import models
+import schemas
+from database import SessionLocal, engine
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Resellr", description="Buy & Sell", version="1.0")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
+
+
+@lru_cache()
+def get_settings():
+    return config.Settings()
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+# TODO: Testing POST new user
+@app.post("/users/", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    # db_user = crud.get_user_by_email(db, email=user.email)
+    # if db_user:
+    # raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_user(db=db, user=user)
+
+
+# TODO: Testing GET all users
+@app.get("/users/", response_model=list[schemas.User])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_all_users(db, skip=skip, limit=limit)
+    return users
+
+
+# TODO: Testing GET single user
+@app.get("/users/{user_id}", response_model=schemas.User)
+def read_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+# TODO: Testing POST new item
+@app.post("/items/new", response_model=schemas.Item)
+def create_item_for_user(item: schemas.ItemCreate, db: Session = Depends(get_db)):
+    return crud.create_item(db=db, item=item)
 
 
 @app.exception_handler(404)
@@ -30,18 +84,22 @@ async def gateway_timeout_error(request: Request, exc: HTTPException):
 
 
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
+async def index(request: Request, settings: config.Settings = Depends(get_settings)):
     # TODO: create index page design
-    title = "Página inicial"
-    return templates.TemplateResponse("index.html", {"request": request, "title": title})
+    test = settings.HELLO_WORLD
+    print("-------------->"+test)
     return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.get("/logout")
 async def logout():
     return RedirectResponse(url='//localhost:5000/authorize')
 
+
 @app.get("/items", response_class=HTMLResponse)
-async def items(request: Request):
+async def items(request: Request, page: int = 0, limit: int = 9, db: Session = Depends(get_db)):
+    items = crud.get_all_items(db, page=page, limit=limit)
+    total = crud.count_items(db)
 
     # API call to get all items
     # try:
@@ -58,7 +116,7 @@ async def items(request: Request):
     # Convert API response to JSON
     # items = callAPI.json()
 
-    items = [
+    deprecated = [
         {"id": 1, "name": "Óculos de sol",              "user": "Sofia Oliveira",   "location": "Aradas (Aveiro)",      "date": "2023-03-16 19:37:00",
             "image": "https://magento.opticalia.com/media/catalog/product/cache/e4be6767ec9b37c1ae8637aee2f57a6a/v/t/vts560910.png",     "price": "10",   "old_price": "15",  "availability": 1},
         {"id": 2, "name": "Relógio de pulso",           "user": "Gabriel Santos",   "location": "Mafra (Lisboa)",       "date": "2023-02-10 12:34:00",
@@ -75,41 +133,16 @@ async def items(request: Request):
             "image": "https://img.joomcdn.net/57e3cb5b80a268ab3c8c28d13f7bcac81f21cc71_1024_1024.jpeg",     "price": "3.5",  "availability": 0}
     ]
 
-    return templates.TemplateResponse("items.html", {"request": request, "items": items})
+    return templates.TemplateResponse("items.html", {"request": request, "items": items, "page": page, "limit": limit, "total": total})
 
 
-@app.get("/items/{id}", response_class=HTMLResponse)
-async def item(request: Request, id: str):
-    if not "item found":    # check if item exists, if not return error
-        raise HTTPException(status_code=404)
+@app.get("/items/{item_id}", response_class=HTMLResponse)
+async def item(request: Request, item_id: int, db: Session = Depends(get_db)):
+    item = crud.get_item_by_id(db, item_id=item_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
 
-    details = {
-        "id": id,
-        "date": "2023-03-10 02:34:00",
-        "name": "Nome do item",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nisl sit amet nisl. Nullam auctor, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nisl sit amet nisl. Nullam auctor, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nisl sit amet nisl.",
-        "user": "Nome do Utilizador",
-        "category": "Carros",
-        "old_price": "20",
-        "price": "10.3",
-        # float needed for correct formatting?? depends on the database
-        # TODO: Move this to user profile
-        "rating": float("{:.1f}".format(float(4.46))),
-        "orders": 420,  # TODO: Move this to user profile
-        "reviews": 68,  # TODO: Move this to user profile
-        "phone": 123456789,  # TODO: Move this to user profile
-        "registration": "2022-01-10 02:34:00",  # TODO: Move this to user profile
-        "image": "https://www.slntechnologies.com/wp-content/uploads/2017/08/ef3-placeholder-image.jpg",
-        "quantity": 5,  # TODO: Remove this
-        "location": "Aradas (Aveiro)",
-        "condition": "Usado",
-        "availability": 1
-    }
-    details = json.dumps(details)
-
-    details = json.loads(details)
-
-    return templates.TemplateResponse("item.html", {"request": request, "details": details})
+    return templates.TemplateResponse("item.html", {"request": request, "item": item})
 
 
 @app.get("/profiles", response_class=HTMLResponse)
@@ -119,34 +152,13 @@ async def profiles(request: Request):
     return templates.TemplateResponse("404.html", {"request": request, "profiles": profiles})
 
 
-@app.get("/profiles/{id}", response_class=HTMLResponse)
-async def profile(request: Request, id: str):
-    profile = {
-        "id": id,
-        "name": "Nome do Utilizador",
-        "email": "utilizador@user.pt",
-        "rating": float("{:.1f}".format(float(4.46))),
-        "amount_sales": 420,
-        "amount_purchases": 333,
-        "reviews": 68,
-        "phone": 123456789,
-        "registration": "2022-01-10 02:34:00",
-        "location": "Aradas (Aveiro)",
-        "avatar": "https://www.w3schools.com/howto/img_avatar.png"
-    }
+@app.get("/profiles/{user_username}", response_class=HTMLResponse)
+async def profile(request: Request, user_username: str, db: Session = Depends(get_db)):
+    user = crud.get_user_by_username(db, user_username=user_username)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
 
-    items = [
-        {"id": 1, "name": "Óculos de sol",              "user": profile["id"],   "location": "Lisboa (Lisboa)",      "date": "2023-03-16 19:37:00",
-            "image": "https://magento.opticalia.com/media/catalog/product/cache/e4be6767ec9b37c1ae8637aee2f57a6a/v/t/vts560910.png",     "price": "10",   "old_price": "15",  "availability": 1},
-        {"id": 2, "name": "Relógio de pulso",           "user": profile["id"],   "location": "Mafra (Lisboa)",       "date": "2023-02-10 12:34:00",
-            "image": "https://5.imimg.com/data5/KC/PC/MY-38629861/dummy-chronograph-watch-500x500.jpg",     "price": "1.4",  "availability": 0},
-        {"id": 3, "name": "Cadeira de escritório",      "user": profile["id"],     "location": "Lisboa (Lisboa)",      "date": "2022-03-10 12:34:00",
-            "image": "https://1616346425.rsc.cdn77.org/temp/1615370739_6c9e04b9c72b4bcb5c03e722bff91b05.jpg",     "price": "2.99",    "old_price": "3.99",  "availability": 1},
-        {"id": 4, "name": "Smartphone",                 "user": profile["id"],      "location": "Oeiras (Lisboa)",     "date": "2023-03-01 12:34:00",
-            "image": "https://www.hisense.pt/wp-content/uploads/2019/06/H30-ICE-BLUE-1-2.png",     "price": "6.5",  "availability": 1}
-    ]
-
-    return templates.TemplateResponse("profile.html", {"request": request, "profile": profile, "items": items})
+    return templates.TemplateResponse("profile.html", {"request": request, "user": user})
 
 
 @app.get("/messages", response_class=HTMLResponse)
