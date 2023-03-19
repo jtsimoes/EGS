@@ -19,9 +19,12 @@
         cartItemTemplate: `
             <td class="align-middle">
                 <figure class="itemside align-items-center">
-                    <div class="aside"><img src="{product_image}" class="border rounded img-sm" alt=""></div>
+                    <div class="aside">
+                        <a href="/items/{product_id}">
+                            <img src="{product_image}" class="border rounded img-sm" alt=""></div>
+                        </a>
                     <figcaption class="info">
-                        <a href="product.html?id={product_id}" class="title text-dark sc-cart-item-name">{product_name}</a>
+                        <a href="/items/{product_id}" class="title text-dark font-weight-bold sc-cart-item-name">{product_name}</a>
                         <p class="text-muted small sc-cart-item-desc">Vendedor: {product_desc}</p>
                     </figcaption>
                 </figure>
