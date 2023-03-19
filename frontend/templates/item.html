@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ details.name }}{% endblock %}
+{% block title %}{{ item.title }}{% endblock %}
 
 {% block body %}
 
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg-primary border-bottom">
 	<div class="container">
-		<h2 class="title-page text-white">Item "{{ details.name }}"</h2>
+		<h2 class="title-page text-white">Item "{{ item.title }}"</h2>
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb text-white">
 				<li class="breadcrumb-item"><a href="index.html" class="text-white">Página inicial</a></li>
@@ -34,19 +34,19 @@
 					<aside class="col-md-6">
 						<article class="gallery-wrap">
 							<div class="img-big-wrap">
-								<a href="#"><img src="{{details.image}}" class="img-fluid h-auto" alt=""
+								<a href="#"><img src="{{ item.image }}" class="img-fluid h-auto" alt=""
 										data-name="product_image"></a>
 							</div>
 							<div class="thumbs-wrap">
-								<a href="#" class="item-thumb"><img src="{{details.image}}" alt=""></a>
+								<a href="#" class="item-thumb"><img src="{{ item.image }}" alt=""></a>
 							</div>
 						</article>
 					</aside>
 					<main class="col-md-6 border-left">
 						<article class="content-body">
-							<h2 class="title" data-name="product_name">{{details.name}}</h2>
+							<h2 class="title" data-name="product_name">{{ item.title }}</h2>
 
-							{% if details.availability %}
+							{% if item.is_available %}
 							<ul class="list-check pt-1">
 								<li class="text-success">Disponível</li>
 							</ul>
@@ -57,9 +57,9 @@
 							{% endif %}
 
 							<div class="mb-3">
-								<var class="price h4">{{ details.price }}</var>
-								{% if details.old_price %}
-								<del class="price-old">{{ details.old_price }}</del>
+								<var class="price h4">{{ item.price }}</var>
+								{% if item.old_price %}
+								<del class="price-old">{{ item.old_price }}</del>
 								{% endif %}
 							</div>
 
@@ -71,31 +71,23 @@
 								<figcaption class="info">
 									<p class="font-weight-bold mb-0 pb-0">
 										<a href="/profiles/TODO" data-name="product_desc">
-											{{ details.user }}</a>
+											{{ item.owner.name }}</a>
 									</p>
 									<div class="rating-wrap">
 										<ul class="rating-stars">
-											<li style="width:{{ details.rating * 100 / 5 }}%" class="stars-active">
+											<li style="width:{{ item.owner.rating * 100 / 5 }}%" class="stars-active">
 												<img src="/static/images/icons/stars-active.svg" alt="">
 											</li>
 											<li>
 												<img src="/static/images/icons/stars-disable.svg" alt="">
 											</li>
 										</ul>
-										<small class="label-rating">{{ details.rating }}</small>
-										<i class="dot"></i>
-										<small class="label-rating text-muted"><i class="fas fa-comment-dots"></i> {{
-											details.reviews }}
-											avaliaç{{ 'ão' if details.reviews == 1 else 'ões' }}
-										</small>
-										<i class="dot"></i>
-										<small class="label-rating text-primary"><i class="fas fa-shopping-basket"></i>
-											{{ details.orders }} venda{{ '' if details.orders == 1 else 's' }}</small>
+										<small class="label-rating">{{ item.owner.rating }}</small>
 									</div>
 								</figcaption>
 							</figure>
 
-							<p class="text-justify">{{ details.description | truncate(200, False, '...') }}
+							<p class="text-justify">{{ item.description | truncate(200, False, '...') }}
 								<a href="#details" class="text-muted small">(ler descrição completa)</a>
 							</p>
 
@@ -103,29 +95,29 @@
 								<dt class="col">Categoria:</dt>
 								<dd class="col-sm-9">
 									<a href="/items?category=TODO" title="Ver mais anúncios nesta categoria">
-										{{ details.category }}</a>
+										{{ item.category_id }}</a>
 								</dd>
 							</dl>
 							<dl class="row">
 								<dt class="col">Estado:</dt>
-								<dd class="col-sm-9">{{ details.condition }}</dd>
+								<dd class="col-sm-9">{{ item.condition }}</dd>
 							</dl>
 							<dl class="row">
 								<dt class="col">Publicado:</dt>
 								<dd class="col-sm-9">
-									<span id="date">{{ details.date }}</span>
-									<small id="date-full" class="text-muted">({{ details.date }})</small>
+									<span id="date">{{ item.date }}</span>
+									<small id="date-full" class="text-muted">({{ item.date }})</small>
 								</dd>
 							</dl>
 							<dl class="row">
 								<dt class="col">Localização:</dt>
-								<dd class="col-sm-9">{{ details.location }}</dd>
+								<dd class="col-sm-9">{{ item.location }}</dd>
 							</dl>
 
 							<hr>
 							<div class="row justify-content-between align-items-end">
 								<div class="col-12 text-center">
-									{% if details.availability %}
+									{% if item.is_available %}
 									<a href="/checkout" class="btn btn-primary btn-block mb-2 sc-add-to-cart">
 										Comprar agora
 									</a>
@@ -148,8 +140,8 @@
 								</div>
 							</div>
 
-							<input name="product_price" value="{{ details.price }}" type="hidden">
-							<input name="product_id" value="{{ details.id }}" type="hidden">
+							<input name="product_price" value="{{ item.price }}" type="hidden">
+							<input name="product_id" value="{{ item.id }}" type="hidden">
 						</article>
 					</main>
 				</div>
@@ -168,7 +160,7 @@
 				<div class="card">
 					<article class="card-body">
 						<h5 class="card-title mb-4">Detalhes adicionais</h5>
-						<p>{{ details.description }}</p>
+						<p>{{ item.description }}</p>
 
 						<ul class="list-check cols-two">
 							<li>Some great feature name here</li>
@@ -211,20 +203,22 @@
 								class="img-thumbnail rounded-circle">
 						</div>
 						<div class="mb-3 text-center">
-							<a href="/profiles/TODO" class="h5 title">{{ details.user }}</a>
+							<a href="/profiles/{{ item.owner.username }}" class="h5 title">
+								{{ item.owner.name }}
+								<br><span class="h6 text-muted">@{{ item.owner.username }}</span>
+							</a>
 							<div class="rating-wrap mb-3">
 								<ul class="rating-stars">
-									<li class="stars-active" style="width:{{ details.rating * 100 / 5 }}%;">
+									<li class="stars-active" style="width:{{ item.owner.rating * 100 / 5 }}%;">
 										<img src="/static/images/icons/stars-active.svg" alt="">
 									</li>
 									<li>
 										<img src="/static/images/icons/stars-disable.svg" alt="">
 									</li>
 								</ul>
-								<span class="label-rating text-muted">{{ details.rating }}</span>
-								<p class="small text-muted mt-1">(com base em {{ details.reviews }} avaliaç{{ 'ão' if
-									details.reviews == 1
-									else 'ões' }})</p>
+								<span class="label-rating text-muted">{{ item.owner.rating }}</span>
+								<p class="small text-muted mt-1">(com base em {{ item.owner.total_reviews }}
+									avaliaç{{ 'ão' if item.owner.total_reviews == 1 else 'ões' }})</p>
 							</div>
 						</div>
 						<div class="my-4 text-center">
@@ -233,15 +227,15 @@
 									(Aveiro)
 								</p>
 								<p class="mb-0"><i class="fas fa-shopping-basket fa-fw text-secondary"></i>
-									{{ details.orders }} venda{{ '' if details.orders == 1 else 's' }}
+									{{ item.owner.total_sales }} venda{{ '' if item.owner.total_sales == 1 else 's' }}
 								</p>
 							</ul>
 							<p><i class="fas fa-clock fa-fw text-secondary"></i>
-								Registado desde <time id="date-registration">{{ details.registration }}</time>
+								Registado desde <time id="date-registration">{{ item.owner.registration }}</time>
 							</p>
 						</div>
 						<div class="d-flex justify-content-around mb-2">
-							<a href="tel:{{ details.phone }}" title="Ligar {{ details.phone }}"
+							<a href="tel:{{ item.owner.phone }}" title="Ligar {{ item.owner.phone }}"
 								class="btn btn-success w-100 mr-2">
 								Chamada<i class="ml-2 fa fa-phone"></i>
 							</a>
@@ -249,8 +243,9 @@
 								Mensagem<i class="ml-2 fa fa-comment-dots"></i>
 							</a>
 						</div>
-						<a href="/profiles/TODO" class="btn w-100 btn-outline-primary">Ver mais anúncios deste
-							vendedor</a>
+						<a href="/profiles/{{ item.owner.username }}" class="btn w-100 btn-outline-primary">
+							Ver mais anúncios deste vendedor
+						</a>
 					</div>
 				</article>
 				<!-- =================== COMPONENT SELLER END// ================== -->

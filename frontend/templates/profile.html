@@ -32,53 +32,54 @@
 					<article class="card shadow">
 						<div class="card-body">
 							<div class="mb-3 text-center">
-								<img src="{{ profile.avatar }}" width="130" height="130" alt=""
-									class="img-thumbnail rounded-circle">
+								<img src="{{ user.avatar or '/static/images/misc/avatar.jpg' }}" width="130"
+									height="130" alt="" class="img-thumbnail rounded-circle">
 							</div>
 							<div class="mb-3 text-center">
-								<a href="/profiles/{{ profile.id }}" class="h5 title">{{ profile.name }}
-									<br><span class="h6 text-muted">@{{ profile.id }}</span>
+								<a href="/profiles/{{ user.username }}" class="h5 title">{{ user.name }}
+									<br><span class="h6 text-muted">@{{ user.username }}</span>
 								</a>
 								<div class="rating-wrap mb-3">
 									<ul class="rating-stars">
-										<li class="stars-active" style="width:{{ profile.rating * 100 / 5 }}%;">
+										<li class="stars-active" style="width:{{ user.rating * 100 / 5 }}%;">
 											<img src="/static/images/icons/stars-active.svg" alt="">
 										</li>
 										<li>
 											<img src="/static/images/icons/stars-disable.svg" alt="">
 										</li>
 									</ul>
-									<span class="label-rating text-muted">{{ profile.rating }}</span>
+									<span class="label-rating text-muted">{{ user.rating }}</span>
 									<p class="small text-muted mt-1">(com base em
-										{{ profile.reviews }} avaliaç{{ 'ão' if profile.reviews == 1 else 'ões' }})
+										{{ user.total_reviews }} avaliaç{{ 'ão' if user.total_reviews == 1 else 'ões'
+										}})
 									</p>
 								</div>
 							</div>
 							<div class="my-4">
 								<p class="mb-2">
-									<i class="fas fa-phone-alt fa-fw text-secondary"></i> {{ profile.phone }}
+									<i class="fas fa-phone-alt fa-fw text-secondary"></i> {{ user.phone }}
 								</p>
 								<p class="mb-2">
-									<i class="fas fa-envelope fa-fw text-secondary"></i> {{ profile.email }}
+									<i class="fas fa-envelope fa-fw text-secondary"></i> {{ user.email }}
 								</p>
 								<p class="mb-2">
-									<i class="fas fa-map-marker-alt fa-fw text-secondary"></i> {{ profile.location }}
+									<i class="fas fa-map-marker-alt fa-fw text-secondary"></i> {{ user.location }}
 								</p>
 								<p class="mb-2">
 									<i class="fas fa-comments-dollar fa-fw text-secondary"></i>
-									{{ profile.amount_sales }} venda{{ '' if profile.amount_sales == 1 else 's' }}
+									{{ user.total_sales }} venda{{ '' if user.total_sales == 1 else 's' }}
 								</p>
 								<p class="mb-2">
 									<i class="fas fa-shopping-basket fa-fw text-secondary"></i>
-									{{ profile.amount_purchases }} compra{{ '' if profile.amount_purchases == 1 else 's'
+									{{ user.total_purchases }} compra{{ '' if user.total_purchases == 1 else 's'
 									}}
 								</p>
 								<p class="mb-2">
 									<i class="fas fa-clock fa-fw text-secondary"></i>
-									Registado desde <time id="date-registration">{{ profile.registration }}</time>
+									Registado desde <time id="date-registration">{{ user.registration }}</time>
 								</p>
 							</div>
-							<a href="#" class="btn w-100 btn-outline-primary">
+							<a href="#" class="btn w-100 btn-primary">
 								Editar perfil<i class="fas fa-user-edit ml-2"></i>
 							</a>
 						</div>
@@ -89,8 +90,10 @@
 				<!-- =========================  SALES ========================= -->
 				<header class="border-bottom mb-4 mt-4 pb-3">
 					<div class="form-inline">
+						{% if user.items|length != 0 %}
 						<span class="mr-md-auto ml-2 ml-sm-0">
-							Atualmente tem <b>{{ items|length }}</b> items seus à venda
+							Atualmente tem <b>{{ user.items|length }}</b>
+							item{{ '' if user.items|length == 1 else 's' }} à venda
 						</span>
 						<select class="mx-2 my-2 my-sm-0 form-control">
 							<option value="" disabled selected>Ordenar por...</option>
@@ -116,13 +119,26 @@
 								<i class="fa fa-th"></i>
 							</button>
 						</div>
+						{% else %}
+						<span class="mr-md-auto ml-2 ml-sm-0">
+							Atualmente não tem <b>nenhum</b> item à venda
+						</span>
+						{% endif %}
 					</div>
 				</header>
 
 				<div class="row" id="buy">
 
-					{% for item in items %}
-					<div class="col-lg-4 col-sm-6 product{% if not item.availability %} inactive{% endif %}">
+					<div class="col-lg-4 col-sm-6 pb-4">
+						<div class="card h-100 mb-5">
+							<button class="btn btn-block btn-light h-100">Adicionar novo item para venda
+								<i class="fas fa-plus-circle ml-1"></i>
+							</button>
+						</div>
+					</div>
+
+					{% for item in user.items %}
+					<div class="col-lg-4 col-sm-6 product{% if not item.is_available %} inactive{% endif %}">
 						<figure class="card card-product-grid sc-product-item">
 							<div class="img-wrap">
 								<a href="/items/{{ item.id }}">
@@ -136,11 +152,11 @@
 							</div>
 							<figcaption class="info-wrap">
 								<a href="/items/{{ item.id }}">
-									<p class="title font-weight-semibold mb-1">{{ item.name }}
+									<p class="title font-weight-semibold mb-1">{{ item.title }}
 									</p>
 									<p class="small text-muted mb-1">
 										<i class="fas fa-user fa-fw"></i>
-										<span>{{ item.user }}</span>
+										<span>{{ item.owner.name }}</span>
 									</p>
 									<p class="small text-muted mb-1">
 										<i class="fas fa-map-marker-alt fa-fw"></i> {{ item.location }}
@@ -156,29 +172,17 @@
 										{% endif %}
 									</div>
 								</a>
-								{% if item.availability %}
+								{% if item.is_available %}
 								<button class="btn btn-block btn-danger">Retirar anúncio</button>
 								{% else %}
 								<button class="btn btn-block btn-primary" disabled>Anúncio terminado</button>
 								{% endif %}
-
 							</figcaption>
 						</figure>
 					</div>
 					{% endfor %}
 
 				</div>
-
-				<nav class="mt-4 d-flex justify-content-center" aria-label="Page navigation">
-					<ul class="pagination">
-						<li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-						<li class="page-item active"><a class="page-link" href="#">1</a></li>
-						<li class="page-item"><a class="page-link" href="#">2</a></li>
-						<li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-						<li class="page-item"><a class="page-link" href="#">9</a></li>
-						<li class="page-item"><a class="page-link" href="#">Seguinte</a></li>
-					</ul>
-				</nav>
 				<!-- =========================  SALES END// ========================= -->
 
 			</main>

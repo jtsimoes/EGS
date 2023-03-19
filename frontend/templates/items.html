@@ -175,7 +175,10 @@
 
 				<header class="border-bottom mb-4 mt-4 pb-3">
 					<div class="form-inline">
-						<span class="mr-md-auto ml-2 ml-sm-0"><b>{{ items|length }}</b> items encontrados</span>
+						<span class="mr-md-auto ml-2 ml-sm-0">
+							A mostrar <b>{{ items|length }}</b> de um total de <b>{{ total }}</b>
+							item{{ '' if total == 1 else 's' }} à venda
+						</span>
 						<select class="mx-2 my-2 my-sm-0 form-control">
 							<option value="" disabled selected>Ordenar por...</option>
 							<optgroup label="Relevância">
@@ -211,7 +214,7 @@
 					</div>
 				</header>
 
-				<div class="row" id="buy">
+				<div class="row" id="items">
 
 					{% for item in items %}
 					<div class="col-lg-4 col-sm-6 product">
@@ -228,11 +231,11 @@
 							</div>
 							<figcaption class="info-wrap">
 								<a href="/items/{{ item.id }}">
-									<p class="title font-weight-semibold mb-1" data-name="product_name">{{ item.name }}
+									<p class="title font-weight-semibold mb-1" data-name="product_name">{{ item.title }}
 									</p>
 									<p class="small text-muted mb-1">
 										<i class="fas fa-user fa-fw"></i>
-										<span data-name="product_desc">{{ item.user }}</span>
+										<span data-name="product_desc">{{ item.owner.name }}</span>
 									</p>
 									<p class="small text-muted mb-1">
 										<i class="fas fa-map-marker-alt fa-fw"></i> {{ item.location }}
@@ -248,7 +251,7 @@
 										{% endif %}
 									</div>
 								</a>
-								{% if item.availability %}
+								{% if item.is_available %}
 								<button class="btn btn-block btn-primary sc-add-to-cart">Adicionar ao carrinho</button>
 								<button class="btn btn-block btn-danger sc-remove-from-cart"
 									style="display: none;">Remover do carrinho</button>
@@ -264,16 +267,30 @@
 
 				</div>
 
+				{% if items|length != total %}
 				<nav class="mt-4 d-flex justify-content-center" aria-label="Page navigation">
 					<ul class="pagination">
-						<li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-						<li class="page-item active"><a class="page-link" href="#">1</a></li>
-						<li class="page-item"><a class="page-link" href="#">2</a></li>
-						<li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-						<li class="page-item"><a class="page-link" href="#">9</a></li>
-						<li class="page-item"><a class="page-link" href="#">Seguinte</a></li>
+						{% if page <= 0 %} <li class="page-item disabled"><a class="page-link" href="#">Anterior</a>
+							</li>
+							{% elif page == 1 %}
+							<li class="page-item"><a class="page-link" href="/items">Anterior</a></li>
+							{% else %}
+							<li class="page-item"><a class="page-link" href="/items?page={{ page - 1 }}">Anterior</a>
+							</li>
+							{% endif %}
+
+							<li class="page-item active"><a class="page-link" href="javascript:;">{{ page + 1 }}</a>
+							</li>
+
+							{% if page >= (total/limit - 1) %}
+							<li class="page-item disabled"><a class="page-link" href="#">Seguinte</a></li>
+							{% else %}
+							<li class="page-item"><a class="page-link" href="/items?page={{ page + 1 }}">Seguinte</a>
+							</li>
+							{% endif %}
 					</ul>
 				</nav>
+				{% endif %}
 
 			</main>
 
@@ -354,7 +371,7 @@
 		// Get value entered on search input and filter products instantaneously, hiding those that do not contain that keywords on title
 		$('input[type=search]').on('keyup input', function () {
 			var value = $(this).val().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-			$('div#buy p.title').filter(function () {
+			$('div#items p.title').filter(function () {
 				$(this).closest('div.product').toggle($(this).text().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(value) > -1);
 			});
 			$("#product_filter").html(`A mostrar <b>${filter = $('div.product:not([style*="display: none"])').length}</b> produto${filter != 1 ? "s" : ""} de um total de <b>${counter}</b> encontrados neste produtor`);
