@@ -7,16 +7,114 @@
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg-primary border-bottom">
 	<div class="container">
-		<h2 class="title-page text-white">Itens para venda</h2>
+		{% if category %}
+		<h2 class="title-page text-white">{{ category }}</h2>
+		{% else %}
+		<h2 class="title-page text-white">Todas as categorias</h2>
+		{% endif %}
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb text-white">
-				<li class="breadcrumb-item"><a href="index.html" class="text-white">Página inicial</a></li>
-				<li class="breadcrumb-item active" aria-current="page">Lista de items</li>
+				<li class="breadcrumb-item"><a href="/" class="text-white">Página inicial</a></li>
+				<li class="breadcrumb-item active" aria-current="page">Lista de items para venda</li>
 			</ol>
 		</nav>
 	</div>
 </section>
 <!-- ========================= SECTION PAGETOP END// ========================= -->
+
+<nav class="navbar navbar-main navbar-expand-lg border-bottom">
+	<div class="container">
+		<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#categories"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="navbar-collapse collapse" id="categories" style="">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link pl-0 font-weight-bolder" href="/items">Todas as categorias</a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Bebé e Criança</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#">...</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Lazer</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#">...</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Desporto</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#">...</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Moda</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#">...</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Casa</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#">Móveis</a>
+						<a class="dropdown-item" href="#">...</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Jardim</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#">...</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Tecnologia</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="/items?category=2">Telemóveis</a>
+						<a class="dropdown-item" href="#">Tablets</a>
+						<a class="dropdown-item" href="#">Videojogos e Consolas</a>
+						<a class="dropdown-item" href="#">Computadores e Informática</a>
+						<a class="dropdown-item" href="#">Eletrónica</a>
+						<a class="dropdown-item" href="#">TV, Som e Fotografia</a>
+						<a class="dropdown-item" href="#">Acessórios</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Veículos</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="/items?category=1">Carros</a>
+						<a class="dropdown-item" href="#">Motociclos e Scooters</a>
+						<a class="dropdown-item" href="#">Barcos e Lanchas</a>
+						<a class="dropdown-item" href="#">Autocaravanas e Reboques</a>
+						<a class="dropdown-item" href="#">Outros veículos</a>
+						<a class="dropdown-item" href="#">Peças e Acessórios</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+						aria-expanded="false">Ferramentas</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#">...</a>
+					</div>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Outros</a>
+				</li>
+			</ul>
+		</div> <!-- collapse .// -->
+	</div> <!-- container .// -->
+</nav>
 
 
 <!-- ========================= SECTION CONTENT ========================= -->
@@ -36,19 +134,19 @@
 								<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true"
 									class="">
 									<i class="icon-control fa fa-chevron-down"></i>
-									<h6 class="title">Categoria</h6>
+									<h6 class="title">Estado</h6>
 								</a>
 							</header>
 							<div class="filter-content collapse show" id="collapse_1">
 								<div class="card-body">
 									<label class="checkbox-btn">
 										<input type="checkbox" checked>
-										<span class="btn btn-light">Frutas</span>
+										<span class="btn btn-light">Novo</span>
 									</label>
 
 									<label class="checkbox-btn">
 										<input type="checkbox" checked>
-										<span class="btn btn-light">Vegetais</span>
+										<span class="btn btn-light">Usado</span>
 									</label>
 								</div>
 							</div>
@@ -71,8 +169,8 @@
 										</div>
 										<div class="form-group text-right col-md-6">
 											<label>Máximo</label>
-											<input class="form-control" placeholder="100€" type="number" min="0"
-												max="100" step="5">
+											<input class="form-control" placeholder="1000€" type="number" min="0"
+												max="1000" step="5">
 										</div>
 									</div>
 									<button class="btn btn-block btn-primary">Filtrar</button>
@@ -81,64 +179,13 @@
 						</article>
 						<article class="filter-group">
 							<header class="card-header">
-								<a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true"
-									class="">
-									<i class="icon-control fa fa-chevron-down"></i>
-									<h6 class="title">Avaliações</h6>
-								</a>
-							</header>
-							<div class="filter-content collapse show" id="collapse_4">
-								<div class="card-body">
-									<label class="custom-control custom-checkbox">
-										<input type="checkbox" checked class="custom-control-input">
-										<div class="custom-control-label text-warning">
-											<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-												class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-												class="fa fa-star"></i>
-										</div>
-									</label>
-
-									<label class="custom-control custom-checkbox">
-										<input type="checkbox" checked class="custom-control-input">
-										<div class="custom-control-label text-warning">
-											<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-												class="fa fa-star"></i> <i class="fa fa-star"></i>
-										</div>
-									</label>
-
-									<label class="custom-control custom-checkbox">
-										<input type="checkbox" checked class="custom-control-input">
-										<div class="custom-control-label text-warning">
-											<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-												class="fa fa-star"></i>
-										</div>
-									</label>
-
-									<label class="custom-control custom-checkbox">
-										<input type="checkbox" checked class="custom-control-input">
-										<div class="custom-control-label text-warning">
-											<i class="fa fa-star"></i> <i class="fa fa-star"></i>
-										</div>
-									</label>
-
-									<label class="custom-control custom-checkbox">
-										<input type="checkbox" checked class="custom-control-input">
-										<div class="custom-control-label text-warning">
-											<i class="fa fa-star"></i>
-										</div>
-									</label>
-								</div>
-							</div>
-						</article>
-						<article class="filter-group">
-							<header class="card-header">
-								<a href="#" data-toggle="collapse" data-target="#collapse_5" aria-expanded="false"
+								<a href="#" data-toggle="collapse" data-target="#collapse_5" aria-expanded="true"
 									class="">
 									<i class="icon-control fa fa-chevron-down"></i>
 									<h6 class="title">Mostrar</h6>
 								</a>
 							</header>
-							<div class="filter-content collapse in" id="collapse_5">
+							<div class="filter-content collapse show" id="collapse_5">
 								<div class="card-body">
 									<label class="custom-control custom-radio">
 										<input type="radio" name="myfilter_radio" class="custom-control-input" checked>
@@ -199,14 +246,13 @@
 							</optgroup>
 						</select>
 						<div class="ml-2 ml-sm-0 btn-group">
-							<button class="btn btn-outline-secondary" data-toggle="tooltip" title="Vista de lista"
-								id="list_view">
-								<i class="fa fa-bars"></i>
-							</button>
-							<button class="btn btn-outline-secondary active" data-toggle="tooltip"
-								title="Vista de grelha" id="grid_view">
-								<i class="fa fa-th"></i>
-							</button>
+							<a href="/items?view=list" class="btn btn-light" data-toggle="tooltip"
+								title="Vista de lista">
+								<i class="fas fa-bars"></i>
+							</a>
+							<a href="/items" class="btn btn-light active" data-toggle="tooltip" title="Vista de grelha">
+								<i class="fas fa-th"></i>
+							</a>
 						</div>
 					</div>
 				</header>
