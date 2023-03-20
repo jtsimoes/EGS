@@ -179,26 +179,23 @@
 							A mostrar <b>{{ items|length }}</b> de um total de <b>{{ total }}</b>
 							item{{ '' if total == 1 else 's' }} à venda
 						</span>
-						<select class="mx-2 my-2 my-sm-0 form-control">
+						<select class="mx-2 my-2 my-sm-0 form-control"
+							onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
 							<option value="" disabled selected>Ordenar por...</option>
 							<optgroup label="Relevância">
-								<option>Mais relevante</option>
+								<option value="/items">Mais relevante</option>
 							</optgroup>
 							<optgroup label="Data">
-								<option>Mais recente</option>
-								<option>Mais antigo</option>
+								<option value="/items?sort=date&order=desc">Mais recente</option>
+								<option value="/items?sort=date&order=asc">Mais antigo</option>
 							</optgroup>
-							<optgroup label="Popularidade">
-								<option>Mais vendido</option>
-								<option>Menos vendido</option>
+							<optgroup label="Nome">
+								<option value="/items?sort=title&order=asc">Ascendente</option>
+								<option value="/items?sort=title&order=desc">Descendente</option>
 							</optgroup>
 							<optgroup label="Preço">
-								<option>Mais barato</option>
-								<option>Mais caro</option>
-							</optgroup>
-							<optgroup label="Avaliação">
-								<option>Melhor classificação</option>
-								<option>Pior classificação</option>
+								<option value="/items?sort=price&order=asc">Mais barato</option>
+								<option value="/items?sort=price&order=desc">Mais caro</option>
 							</optgroup>
 						</select>
 						<div class="ml-2 ml-sm-0 btn-group">

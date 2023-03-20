@@ -97,8 +97,8 @@ async def logout():
 
 
 @app.get("/items", response_class=HTMLResponse)
-async def items(request: Request, page: int = 0, limit: int = 9, db: Session = Depends(get_db)):
-    items = crud.get_all_items(db, page=page, limit=limit)
+async def items(request: Request, page: int = 0, limit: int = 9, sort: str = 'id', order: str = 'asc', db: Session = Depends(get_db)):
+    items = crud.get_all_items(db, page=page, limit=limit, sort=sort, order=order)
     total = crud.count_items(db)
 
     # API call to get all items
