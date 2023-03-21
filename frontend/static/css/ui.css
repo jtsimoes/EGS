@@ -897,12 +897,15 @@ a[class*=card]:hover .title {
 }
 
 /* BASE STYLE FOR PRODUCT ITEM */
-[class*=card-product] a.title {
+[class*=card-product] a.title,
+[class*=card-product] p.title {
   color: #212529;
   display: block;
+  transition: 0.2s ease-in-out;
 }
 
-[class*=card-product] a.title:hover {
+[class*=card-product] a:hover a.title,
+[class*=card-product] a:hover p.title {
   color: #3167eb;
 }
 
@@ -993,9 +996,14 @@ a[class*=card]:hover .title {
   opacity: 1;
 }
 
-.card-product-grid:hover {
+.card-product-grid,
+.card-product-list {
+  transition: box-shadow 0.3s;
+}
+
+.card-product-grid:hover,
+.card-product-list:hover {
   box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
-  transition: 0.3s;
 }
 
 .item-slide .card-product-grid {

@@ -246,17 +246,77 @@
 							</optgroup>
 						</select>
 						<div class="ml-2 ml-sm-0 btn-group">
-							<a href="/items?view=list" class="btn btn-light" data-toggle="tooltip"
-								title="Vista de lista">
+							<a href="/items?view=list" class="btn btn-light{{ ' active' if view == 'list' }}"
+								data-toggle="tooltip" title="Vista de lista">
 								<i class="fas fa-bars"></i>
 							</a>
-							<a href="/items" class="btn btn-light active" data-toggle="tooltip" title="Vista de grelha">
+							<a href="/items" class="btn btn-light{{ ' active' if view != 'list' }}"
+								data-toggle="tooltip" title="Vista de grelha">
 								<i class="fas fa-th"></i>
 							</a>
 						</div>
 					</div>
 				</header>
 
+				{% if view == "list" %}
+
+				{% for item in items %}
+				<article class="card card-product-list sc-product-item">
+					<div class="row no-gutters">
+						<aside class="col-md-3">
+							<div class="img-wrap">
+								<a href="/items/{{ item.id }}">
+									<span class="badge badge-warning badge-pill text-uppercase d-none">Novidade</span>
+									{% if item.old_price %}
+									<span class="badge badge-danger badge-pill text-uppercase">Promoção</span>
+									{% endif %}
+									<img src="{{ item.image }}" alt="" data-name="product_image">
+								</a>
+							</div>
+						</aside>
+						<div class="col-md-5">
+							<div class="info-main">
+								<a href="/items/{{ item.id }}">
+									<p class="h5 title mb-3" data-name="product_name">{{ item.title }}</p>
+									<p class="text-body">{{ item.description }}</p>
+								</a>
+							</div>
+						</div>
+						<aside class="col-md-4">
+							<div class="info-aside">
+								<div class="price-wrap mb-3">
+									<span class="price h5">{{ item.price }}</span>
+									{% if item.old_price: %}
+									<del class="price-old">{{ item.old_price }}</del>
+									{% endif %}
+								</div>
+								<p class="small text-muted mb-1">
+									<i class="fas fa-user fa-fw"></i>
+									<span data-name="product_desc">{{ item.owner.name }}</span>
+								</p>
+								<p class="small text-muted mb-1">
+									<i class="fas fa-map-marker-alt fa-fw"></i> {{ item.location }}
+								</p>
+								<p class="small text-muted mb-3">
+									<i class="fas fa-clock fa-fw"></i>
+									<span class="date">{{ item.date }}</span>
+								</p>
+								{% if item.is_available %}
+								<button class="btn btn-block btn-primary sc-add-to-cart">Adicionar ao carrinho</button>
+								<button class="btn btn-block btn-danger sc-remove-from-cart"
+									style="display: none;">Remover do carrinho</button>
+								{% else %}
+								<button class="btn btn-block btn-primary" disabled>Indisponível</button>
+								{% endif %}
+							</div>
+						</aside>
+					</div>
+					<input name="product_price" value="{{ item.price }}" type="hidden">
+					<input name="product_id" value="{{ item.id }}" type="hidden">
+				</article>
+				{% endfor %}
+
+				{% else %}
 				<div class="row" id="items">
 
 					{% for item in items %}
@@ -274,7 +334,7 @@
 							</div>
 							<figcaption class="info-wrap">
 								<a href="/items/{{ item.id }}">
-									<p class="title font-weight-semibold mb-1" data-name="product_name">{{ item.title }}
+									<p class="title h5 mb-2" data-name="product_name">{{ item.title }}
 									</p>
 									<p class="small text-muted mb-1">
 										<i class="fas fa-user fa-fw"></i>
@@ -309,6 +369,7 @@
 					{% endfor %}
 
 				</div>
+				{% endif %}
 
 				{% if items|length != total %}
 				<nav class="mt-4 d-flex justify-content-center" aria-label="Page navigation">

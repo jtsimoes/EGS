@@ -97,7 +97,7 @@ async def logout():
 
 
 @app.get("/items", response_class=HTMLResponse)
-async def items(request: Request, page: int = 0, limit: int = 9, sort: str = 'id', order: str = 'asc', db: Session = Depends(get_db)):
+async def items(request: Request, view: str = "grid", page: int = 0, limit: int = 9, sort: str = 'id', order: str = 'asc', db: Session = Depends(get_db)):
     items = crud.get_all_items(db, page=page, limit=limit, sort=sort, order=order)
     total = crud.count_items(db)
 
@@ -133,7 +133,7 @@ async def items(request: Request, page: int = 0, limit: int = 9, sort: str = 'id
             "image": "https://img.joomcdn.net/57e3cb5b80a268ab3c8c28d13f7bcac81f21cc71_1024_1024.jpeg",     "price": "3.5",  "availability": 0}
     ]
 
-    return templates.TemplateResponse("items.html", {"request": request, "items": items, "page": page, "limit": limit, "total": total})
+    return templates.TemplateResponse("items.html", {"request": request, "items": items, "view": view, "page": page, "limit": limit, "total": total})
 
 
 @app.get("/items/{item_id}", response_class=HTMLResponse)
