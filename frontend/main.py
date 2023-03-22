@@ -91,9 +91,13 @@ async def index(request: Request, settings: config.Settings = Depends(get_settin
     return templates.TemplateResponse("index.html", {"request": request})
 
 
+@app.get("/login")
+async def login():
+    return RedirectResponse(url='//localhost:8000/authorize')
+
 @app.get("/logout")
 async def logout():
-    return RedirectResponse(url='//localhost:5000/authorize')
+    return RedirectResponse(url='//localhost:8000/logout')
 
 
 @app.get("/items", response_class=HTMLResponse)
