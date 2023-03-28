@@ -1,49 +1,40 @@
 import os
 import requests
 import json
-from flask import Flask, request, redirect, session, url_for
+from flask import Flask, request, redirect, session, url_for, abort
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
-from google.auth.transport.requests import Request
+from google.oauth2 import id_token
+import google
+from pip._vendor import cachecontrol
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "supersecretkey")
+app.secret_key = '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'
+
+GOOGLE_CLIENT_ID = '1090206121272-thig8rckgnrt36io53a125dr8ptd03vg.apps.googleusercontent.com'
 
 # Configure the Google OAuth2 client
 CLIENT_SECRETS_FILE = "client_secret.json"
-SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
+SCOPES = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/cloud-platform.read-only', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/drive.metadata.readonly', 'openid']
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Disable OAuthlib's HTTPS verification in development environment
-flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
-flow.redirect_uri = "http://localhost:5000/oauth2callback"
+flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri="http://localhost:5000/oauth2callback")
 
+def login_is_required(function):
+    def wrapper(*args, **kwargs):
+        if "google_id" not in session:
+            return redirect("authorize")
+        return function()
+    return wrapper
 
 @app.route("/")
 def index():
-    if "credentials" not in session:
-        return redirect("authorize")
+    return "Hello World <a href='/login'><button>Login</button></a>"
 
-    credentials = Credentials.from_authorized_user_info(
-        session["credentials"], scopes=SCOPES
-    )
-
-    # Call the Google Drive API to list the user's files
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {credentials.token}"
-    }
-    r = requests.get("https://www.googleapis.com/drive/v3/files", headers=headers)
-    files = r.json().get("files", [])
-
-    return f"You have {len(files)} files in your Google Drive"
-
-
-@app.route("/authorize")
+@app.route("/login")
 def authorize():
     # Generate the Google OAuth2 authorization URL
-    authorization_url = flow.authorization_url(
-        access_type="offline", include_granted_scopes="true"
-    )[0]
-
+    authorization_url, state = flow.authorization_url()
+    session["state"] = state
     return redirect(authorization_url)
 
 
@@ -52,45 +43,50 @@ def oauth2callback():
     # Handle the Google OAuth2 response
     flow.fetch_token(authorization_response=request.url)
 
-    # Store the user's credentials in the session
-    session["credentials"] = credentials_to_dict(flow.credentials)
-    print(session["credentials"])
-    return redirect(url_for("index"))
-
-
-def credentials_to_dict(credentials):
-    return {
-        "token": credentials.token,
-        "refresh_token": credentials.refresh_token,
-        "token_uri": credentials.token_uri,
-        "client_id": credentials.client_id,
-        "client_secret": credentials.client_secret,
-        "scopes": credentials.scopes,
-    }
+    credentials = flow.credentials
+    request_session = requests.session()
+    cached_session = cachecontrol.CacheControl(request_session)
+    token_request = google.auth.transport.requests.Request(session=cached_session)
+    
+    
+    id_info = id_token.verify_oauth2_token(
+        id_token=credentials.id_token,
+        request = token_request
+    )
+    
+    session["name"] = id_info["name"]
+    session["email"] = id_info["email"]
+    session["google_id"] = id_info["sub"]
+    session["token"] = credentials.token
+    session["refresh_token"] = credentials.refresh_token
+    session["token_uri"] = credentials.token_uri
+    session["client_id"] = credentials.client_id
+    session["client_secret"] = credentials.client_secret
+    session["scopes"] = credentials.scopes
+    
+    
+    return redirect("/user_info")
 
 @app.route("/logout")
 def logout():
-    # Remove the user's credentials from the session
-    if 'credentials' in session:
-        credentials = Credentials.from_authorized_user_info(session['credentials'])
-    revoke_google_tokens(credentials)
+    credentials = Credentials.from_authorized_user_info(
+        info=session['credentials'])
 
+    # Revoke token
+    requests.post('https://oauth2.googleapis.com/revoke',
+                    params={'token': credentials.token},
+                    headers={'content-type': 'application/x-www-form-urlencoded'})
+
+    # Clear session
+    session.clear()
+      
     return redirect(url_for("index"))
 
-def revoke_google_tokens(credentials):
-    # Build and authorize a client object for the credentials.
-    client = credentials.authorize(httplib2.Http())
-    
-    # Revoke the access token associated with the credentials.
-    if credentials.token:
-        revoke_uri = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % credentials.token
-        response = client.request(revoke_uri, method='GET')
-        
-        if response.status == 200:
-            del credentials.token
-            return True
-    
-    return False
+@app.route("/user_info")
+@login_is_required
+def user_info():
+    return f"user: {session['name']}<BR>email: {session['email']}<BR>google_id: {session['google_id']}<BR>token: {session['token']} <BR> \
+    logout <a href='/logout'><button>Logout</button></a>"
 
 if __name__ == "__main__":
     app.run(debug=True)
