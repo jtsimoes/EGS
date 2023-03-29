@@ -13,17 +13,25 @@ var convId = document.getElementById('chatbox').getAttribute("value");
 var channelName = 'chat' + convId;
 var channel = pusher.subscribe(channelName);
 
+var userId = document.getElementById('userid').getAttribute("value");
+
 channel.bind('message', function(data) {
   // Update the UI with the new message
+
   const message = data.msg;
+
+  const user = data.userId;
 
   // Get the chat window element
   const chatWindow = document.getElementById('chatbox');
 
-  // Create a new message element
-  const messageElement = document.createElement('p');
-  messageElement.textContent = message;
-  messageElement.classList.add('message');
+  var messageElement;
+  if(user == userId){
+    messageElement = receiverMessage(message);
+  }
+  else{
+    messageElement = senderMessage(message);
+  }
 
   // Append the message element to the chat window
   chatWindow.appendChild(messageElement);
@@ -71,3 +79,85 @@ form.addEventListener('submit', (event) => {
   // Clear the message input field
   messageInput.value = '';
 });
+
+// create a receiver message HTML element
+function receiverMessage(msg){
+  // create the outer div element
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('media', 'w-50', 'ml-auto', 'mb-3');
+
+  // create the first inner div element
+  const innerDiv1 = document.createElement('div');
+  innerDiv1.classList.add('media-body');
+
+  // create the second inner div element
+  const innerDiv2 = document.createElement('div');
+  innerDiv2.classList.add('bg-primary', 'rounded', 'py-2', 'px-3', 'mb-2');
+
+  // create the paragraph element inside the second inner div
+  const pElement = document.createElement('p');
+  pElement.classList.add('text-small', 'mb-0', 'text-white');
+  pElement.textContent = msg;
+
+  // append the paragraph element to the second inner div
+  innerDiv2.appendChild(pElement);
+
+  // create the second paragraph element inside the media-body div
+  const pElement2 = document.createElement('p');
+  pElement2.classList.add('small', 'text-muted');
+  pElement2.textContent = '12:00 PM | Aug 13';
+
+  // append the second inner div and the second paragraph element to the media-body div
+  innerDiv1.appendChild(innerDiv2);
+  innerDiv1.appendChild(pElement2);
+
+  // append the media-body div to the outer div
+  messageElement.appendChild(innerDiv1);
+
+  return messageElement;
+}
+
+// create a sender message HTML element
+function senderMessage(msg){
+  // create the outer div element
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('media', 'w-50', 'mb-3');
+
+  // create the image element
+  let img = document.createElement("img");
+  img.src = "https://bootstrapious.com/i/snippets/sn-chat/avatar.svg";
+  img.alt = "user";
+  img.width = "50";
+  img.classList.add("rounded-circle");
+
+  // create the first inner div element
+  const innerDiv1 = document.createElement('div');
+  innerDiv1.classList.add('media-body', 'ml-3');
+
+  // create the second inner div element
+  const innerDiv2 = document.createElement('div');
+  innerDiv2.classList.add('bg-light', 'rounded', 'py-2', 'px-3', 'mb-2');
+
+  // create the paragraph element inside the second inner div
+  const pElement1 = document.createElement('p');
+  pElement1.classList.add('text-small', 'mb-0', 'text-muted');
+
+  // append the paragraph element to the second inner div
+  innerDiv2.appendChild(pElement1);
+
+  // create the paragraph element inside the first inner div
+  // create the paragraph element inside the second inner div
+  const pElement2 = document.createElement('p');
+  pElement2.classList.add('small', 'text-muted');
+  pElement2.textContent = msg;
+
+  // append the second inner div and the second paragraph element to the media-body div
+  innerDiv1.appendChild(innerDiv2);
+  innerDiv1.appendChild(pElement2)
+
+  // append the media-body div to the outer div
+  messageElement.appendChild(img);
+  messageElement.appendChild(innerDiv1);
+
+  return messageElement;
+}

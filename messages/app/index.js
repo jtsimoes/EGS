@@ -27,7 +27,7 @@ const config = {
   };
 
 // define userId (while no auth is implemented)
-const user = 2;
+const user = 1;
 
 // GET - responds with the list of conversation of a specific user, defined above
 app.get('/messages', async (req, res) => {
@@ -63,18 +63,26 @@ app.get('/messages', async (req, res) => {
         }
     }
 
-    res.render('index', {filteredConvTable: filteredConvTable});
+    res.render('index', {currentUserId: user, filteredConvTable: filteredConvTable});
 });
 
 // GET - responds with the list of messages of a specific conversation
 app.get('/messages/:conversationId', async (req, res) => {
     const conversationId = parseInt(req.params.conversationId);
+
     const filteredMsgTable = {};
 
     const connection = await mysql.createConnection(config);
 
-    const sql = 'SELECT * FROM MsgTable WHERE conversationId = ' + conversationId;
-    const [rows, fields] = await connection.execute(sql);
+    var sql = 'SELECT * FROM ConvTable WHERE id = ' + conversationId;
+    var [rows, fields] = await connection.execute(sql);
+    if(rows.length == 0) res.redirect('/messages')
+    else if(rows[0].userId1 != user && rows[0].userId2 != user){
+        res.redirect('/messages');
+    }
+
+    sql = 'SELECT * FROM MsgTable WHERE conversationId = ' + conversationId;
+    [rows, fields] = await connection.execute(sql);
 
     for (let i = 0; i < rows.length; i++) {
         const msgInfo = rows[i];
@@ -95,7 +103,7 @@ app.get('/messages/:conversationId', async (req, res) => {
         }
     }
     
-    res.render('conv', {conversationId: conversationId, filteredMsgTable: filteredMsgTable});
+    res.render('conv', {currentUserId: user, conversationId: conversationId, filteredMsgTable: filteredMsgTable});
 });
 
 // POST - takes a message and sends it using Pusher
@@ -104,6 +112,7 @@ app.post('/messages/:conversationId', async (req, res) => {
     channelName = "chat"+req.params.conversationId;
     
     await pusher.trigger(channelName, "message", {
+        userId: user,
         msg: req.body.message
       });
 
