@@ -10,22 +10,20 @@ CREATE TABLE ConvTable (
   id INT NOT NULL AUTO_INCREMENT,
   userId1 INT NOT NULL,
   userName1 VARCHAR(255) NOT NULL,
-  userPicture1 VARCHAR(255) NOT NULL,
   userHidden1 BOOLEAN NOT NULL,
   userId2 INT NOT NULL,
   userName2 VARCHAR(255) NOT NULL,
-  userPicture2 VARCHAR(255) NOT NULL,
   userHidden2 BOOLEAN NOT NULL,
   lastMessage VARCHAR(255) NOT NULL,
   PRIMARY KEY (id)
 );
 
 -- Insert data into the ConvTable table
-INSERT INTO ConvTable (userId1, userName1, userPicture1, userHidden1, userId2, userName2, userPicture2, userHidden2, lastMessage)
+INSERT INTO ConvTable (userId1, userName1, userHidden1, userId2, userName2, userHidden2, lastMessage)
 VALUES
-  (1, 'João Ferreira', 'NA', false, 2, 'José Silva', 'NA', false, 'Claro que sim!'),
-  (3, 'Amélia Rodrigues', 'NA', false, 1, 'João Ferreira', 'NA', true, 'Até breve!'),
-  (2, 'José Silva', 'NA', false, 3, 'Amélia Rodrigues', 'NA', false, 'Como está?');
+  (1, 'João Ferreira', false, 2, 'José Silva', false, 'Claro que sim!'),
+  (3, 'Amélia Rodrigues', false, 1, 'João Ferreira', true, 'Até breve!'),
+  (2, 'José Silva', false, 3, 'Amélia Rodrigues', false, 'Como está?');
 
 -- Create the MsgTable table
 CREATE TABLE MsgTable (
