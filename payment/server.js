@@ -10,17 +10,18 @@ const paypal = require('@paypal/checkout-server-sdk')
 const Environment = process.env.NODE_ENV === 'production' ? paypal.core.LiveEnvironment : paypal.core.SandboxEnvironment
 const paypalClient = new paypal.core.PayPalHttpClient(new Environment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_CLIENT_SECRET))
 
-const storeItems = new Map([
-    [1, { price: 10, name: "yeet"}],
-    [2, { price: 20, name: "yeeeeeet"}],
-])
+// const storeItems = new Map([
+    // [1, { price: 1, name: "yeet"}],
+    // [2, { price: 2, name: "yeeeeeet"}],
+// ])
 
 app.get('/', (req, res) => {
     res.render('index', { paypalClientId: process.env.PAYPAL_CLIENT_ID,})
 })
 
-app.post('/create-order', async (req, res) => {
+app.post('/create-order/:orderId', async (req, res) => {
     const request = new paypal.orders.OrdersCreateRequest()
+    const storeItems = req.params.orderId
     const total = req.body.items.reduce((sum, item) => {
         return sum + storeItems.get(item.id).price * item.quantity
     }, 0)
