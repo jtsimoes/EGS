@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-import config  # TODO: for cache
+#import config  # TODO: for cache
 import crud
 import models
 import schemas
@@ -25,7 +25,8 @@ templates = Jinja2Templates(directory="templates")
 
 @lru_cache()
 def get_settings():
-    return config.Settings()
+    #return config.Settings()
+    return None
 
 
 # Dependency
@@ -84,10 +85,11 @@ async def gateway_timeout_error(request: Request, exc: HTTPException):
 
 
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request, settings: config.Settings = Depends(get_settings)):
+async def index(request: Request):
+#async def index(request: Request, settings: config.Settings = Depends(get_settings)):
     # TODO: create index page design
-    test = settings.HELLO_WORLD
-    print("-------------->"+test)
+    #test = settings.HELLO_WORLD
+    #print("-------------->"+test)
     return templates.TemplateResponse("index.html", {"request": request})
 
 
@@ -101,9 +103,11 @@ async def logout():
 
 
 @app.get("/items", response_class=HTMLResponse)
-async def items(request: Request, view: str = "grid", page: int = 0, limit: int = 9, sort: str = 'id', order: str = 'asc', db: Session = Depends(get_db)):
-    items = crud.get_all_items(db, page=page, limit=limit, sort=sort, order=order)
+async def items(request: Request, category: int = None, view: str = "grid", page: int = 0, limit: int = 9, sort: str = 'id', order: str = 'asc', db: Session = Depends(get_db)):
+    
+    items = crud.get_all_items(db, category, page, limit, sort, order)
     total = crud.count_items(db)
+
 
     # API call to get all items
     # try:
@@ -120,24 +124,7 @@ async def items(request: Request, view: str = "grid", page: int = 0, limit: int 
     # Convert API response to JSON
     # items = callAPI.json()
 
-    deprecated = [
-        {"id": 1, "name": "Óculos de sol",              "user": "Sofia Oliveira",   "location": "Aradas (Aveiro)",      "date": "2023-03-16 19:37:00",
-            "image": "https://magento.opticalia.com/media/catalog/product/cache/e4be6767ec9b37c1ae8637aee2f57a6a/v/t/vts560910.png",     "price": "10",   "old_price": "15",  "availability": 1},
-        {"id": 2, "name": "Relógio de pulso",           "user": "Gabriel Santos",   "location": "Mafra (Lisboa)",       "date": "2023-02-10 12:34:00",
-            "image": "https://5.imimg.com/data5/KC/PC/MY-38629861/dummy-chronograph-watch-500x500.jpg",     "price": "1.4",  "availability": 1},
-        {"id": 3, "name": "Cadeira de escritório",      "user": "Marina Silva",     "location": "Lisboa (Lisboa)",      "date": "2022-03-10 12:34:00",
-            "image": "https://1616346425.rsc.cdn77.org/temp/1615370739_6c9e04b9c72b4bcb5c03e722bff91b05.jpg",     "price": "2.99",    "old_price": "3.99",  "availability": 1},
-        {"id": 4, "name": "Smartphone",                 "user": "Lucas Costa",      "location": "Gouveia (Guarda)",     "date": "2023-03-01 12:34:00",
-            "image": "https://www.hisense.pt/wp-content/uploads/2019/06/H30-ICE-BLUE-1-2.png",     "price": "6.5",  "availability": 1},
-        {"id": 5, "name": "Calças de ganga",            "user": "Amanda Souza",     "location": "Tomar (Santarém)",     "date": "2020-03-10 12:34:00",
-            "image": "https://traquinaskids.pt/42985-large_default/calca-ganga-indigo-tiffosi.jpg",     "price": "9.99",  "availability": 1},
-        {"id": 6, "name": "Caneca de café",             "user": "Pedro Alves",      "location": "Estarreja (Aveiro)",   "date": "2023-03-15 21:34:00",
-            "image": "https://www.awnhillbrindes.com/shopeasy/produtos/resized/SP1052_420x560.png",     "price": "22",  "availability": 1},
-        {"id": 7, "name": "Mala de viagem",             "user": "Bianca Costa",     "location": "Gaia (Porto)",         "date": "2023-03-10 12:34:00",
-            "image": "https://img.joomcdn.net/57e3cb5b80a268ab3c8c28d13f7bcac81f21cc71_1024_1024.jpeg",     "price": "3.5",  "availability": 0}
-    ]
-
-    return templates.TemplateResponse("items.html", {"request": request, "items": items, "view": view, "page": page, "limit": limit, "total": total})
+    return templates.TemplateResponse("items.html", {"request": request, "items": items, "category": category, "view": view, "page": page, "limit": limit, "total": total})
 
 
 @app.get("/items/{item_id}", response_class=HTMLResponse)

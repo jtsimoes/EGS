@@ -8,7 +8,7 @@
 <section class="section-pagetop bg-primary border-bottom">
 	<div class="container">
 		{% if category %}
-		<h2 class="title-page text-white">{{ category }}</h2>
+		<h2 class="title-page text-white">Categoria {{ category }}</h2>
 		{% else %}
 		<h2 class="title-page text-white">Todas as categorias</h2>
 		{% endif %}
@@ -305,7 +305,8 @@
 								</a>
 								<a href="/items?category={{ item.category_id }}"
 									class="tag badge-light rounded-pill text-muted small px-3">
-									<i class="fas fa-tag mr-2"></i>Tecnologia &gt; Telemóveis
+									<i class="fas fa-tag mr-2"></i>Categoria {{ item.category_id }}
+									<!--<i class="fas fa-tag mr-2"></i>Tecnologia &gt; Telemóveis-->
 								</a>
 							</div>
 						</div>
@@ -365,7 +366,8 @@
 									</p>
 									<a href="/items?category={{ item.category_id }}"
 										class="tag badge-light rounded-pill text-muted small mb-3 px-3">
-										<i class="fas fa-tag mr-2"></i>Tecnologia &gt; Telemóveis
+										<i class="fas fa-tag mr-2"></i>Categoria {{ item.category_id }}
+										<!--<i class="fas fa-tag mr-2"></i>Tecnologia &gt; Telemóveis-->
 									</a>
 									<p class="small text-muted mb-1">
 										<i class="fas fa-user fa-fw"></i>
@@ -513,6 +515,49 @@
 		});
 
 	});
+
+
+
+
+
+	/*
+	// Save query parameters before following each link tag
+	$('a').on('click', function (e) {
+		// Get the current URL
+		var url = window.location.href;
+
+		// Check if there are any query parameters in the current URL
+		if (url.indexOf('?') > -1) {
+			// Get the query string from the current URL
+			var queryString = url.split('?')[1];
+
+			// Check if the link already has query parameters
+			if (this.href.indexOf('?') > -1) {
+				// Get the existing query string from the link
+				var existingQueryString = this.href.split('?')[1];
+
+				// Split the existing query string into an array of parameters
+				var existingParams = existingQueryString.split('&');
+
+				// Loop through the existing parameters and remove any that match parameters in the current URL
+				for (var i = 0; i < existingParams.length; i++) {
+					var existingParam = existingParams[i].split('=')[0];
+					if (queryString.indexOf(existingParam) > -1) {
+						existingParams.splice(i, 1);
+						i--;
+					}
+				}
+
+				// Merge the existing query string with the current query string and add any updated parameters
+				queryString = existingParams.join('&') + '&' + queryString;
+			}
+
+			// Add the query string to the link URL
+			this.href = this.href.split('?')[0] + '?' + queryString;
+		}
+	});
+	*/
+
 </script>
 
 {% endblock %}

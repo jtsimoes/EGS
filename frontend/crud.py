@@ -44,12 +44,16 @@ def create_user(db: Session, user: schemas.UserCreate):
 #################### ITEM ####################
 
 
-def get_all_items(db: Session, page: int = 0, limit: int = 100, sort: str = 'id', order: str = 'asc'):
+def get_all_items(db: Session, category: int = None, page: int = 0, limit: int = 100, sort: str = 'id', order: str = 'asc'):
     sort_values = ['id', 'title', 'date', 'price']
     order_values = ['asc', 'desc']
     if sort not in sort_values or order not in order_values:
-        return db.query(models.Item).offset(page).limit(limit).all()
-    return db.query(models.Item).order_by(text(sort + ' ' + order)).offset(page).limit(limit).all()
+        if category is None:
+            return db.query(models.Item).offset(page).limit(limit).all()
+        return db.query(models.Item).filter(models.Item.category_id == category).offset(page).limit(limit).all()
+    if category is None:
+        return db.query(models.Item).order_by(text(sort + ' ' + order)).offset(page).limit(limit).all()
+    return db.query(models.Item).filter(models.Item.category_id == category).order_by(text(sort + ' ' + order)).offset(page).limit(limit).all()
 
 
 def get_items_by_owner_id(db: Session, owner_id: int, page: int = 0, limit: int = 100):
