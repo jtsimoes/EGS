@@ -15,9 +15,9 @@ GOOGLE_CLIENT_ID = '1090206121272-thig8rckgnrt36io53a125dr8ptd03vg.apps.googleus
 
 # Configure the Google OAuth2 client
 CLIENT_SECRETS_FILE = "client_secret.json"
-SCOPES = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/cloud-platform.read-only', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/drive.metadata.readonly', 'openid']
+SCOPES = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid']
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Disable OAuthlib's HTTPS verification in development environment
-flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri="http://localhost:5000/oauth2callback")
+flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri="http://localhost:8000/authorize/oauth2callback")
 
 def login_is_required(function):
     def wrapper(*args, **kwargs):
@@ -28,7 +28,8 @@ def login_is_required(function):
 
 @app.route("/")
 def index():
-    return "Hello World <a href='/login'><button>Login</button></a>"
+    return redirect("login")
+    # return "Hello World <a href='/login'><button>Login</button></a>"
 
 @app.route("/login")
 def authorize():
@@ -65,12 +66,11 @@ def oauth2callback():
     session["scopes"] = credentials.scopes
     
     
-    return redirect("/user_info")
+    return redirect("user_info")
 
 @app.route("/logout")
 def logout():
-    credentials = Credentials.from_authorized_user_info(
-        info=session['credentials'])
+    credentials = Credentials.from_authorized_user_info(session, SCOPES)
 
     # Revoke token
     requests.post('https://oauth2.googleapis.com/revoke',
@@ -80,13 +80,13 @@ def logout():
     # Clear session
     session.clear()
       
-    return redirect(url_for("index"))
+    return redirect("/")
 
 @app.route("/user_info")
 @login_is_required
 def user_info():
-    return f"user: {session['name']}<BR>email: {session['email']}<BR>google_id: {session['google_id']}<BR>token: {session['token']} <BR> \
-    logout <a href='/logout'><button>Logout</button></a>"
+    return f"user: {session['name']}<BR>email: {session['email']}<BR>google_id: {session['google_id']}<BR>token: {session['token']}"
+    # logout <a href='/logout'><button>Logout</button></a>"
 
 if __name__ == "__main__":
     app.run(debug=True)
