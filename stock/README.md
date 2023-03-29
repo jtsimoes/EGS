@@ -5,6 +5,7 @@
 - [About](#about)
 - [Getting Started](#getting_started)
 - [Usage](#usage)
+- [Test Data](#test_data)
 
 ## About <a name = "about"></a>
 
@@ -20,17 +21,23 @@ These instructions will get you a copy of the project up and running on your loc
 Python 3.7+
 FastAPI
 Uvicorn
+SQLAlchemy
 ```
 
-### Installing
+### Installing 
 
 
 ```
 pip install -r requirements.txt
 ```
 
-
 ## Usage <a name = "usage"></a>
+- Create the database
+```
+python3 database.py
+```
+
+- Run the server
 
 ```
 uvicorn stockAPI:app --reload 
@@ -45,3 +52,7 @@ To change the host use --host
 ```
 uvicorn stpckAPI:app --reload --host 0.0.0.0
 ```
+
+## Test Data <a name = "test_data"></a>
+
+If you want to test with my data use the [Database Client](https://database-client.com/) visual studio extension and import the json files

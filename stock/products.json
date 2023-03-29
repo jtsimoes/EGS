@@ -1,0 +1,18 @@
+[
+    {
+        "category_id": "1",
+        "description": "Mostra orgulho pelo Glorioso. Disputa as tuas próximas partidas com a mini bola de futebol do Benfica.",
+        "id": 1,
+        "image": "minibal-n-adidas-benfica.jpg",
+        "name": "Bola SL Benfica",
+        "subcategory_id": "5"
+    },
+    {
+        "category_id": "1",
+        "description": "Bicicleta BTT concebida para crianças dos 6 aos 9 anos (1,20 a 1,35 m) para a prática regular de BTT.",
+        "id": 2,
+        "image": "bicicleta-btt-rockrider-st-500-20-amarelo-neon.jpg",
+        "name": "BICICLETA BTT ROCKRIDER ST 500 20 POLEGADAS CRIANÇA 6-9 Anos Amarelo Néon",
+        "subcategory_id": "1"
+    }
+]
