@@ -1677,6 +1677,11 @@ a {
   z-index: 1100;
 }
 
+.dropdown:hover .dropdown-menu {
+  display: block;
+  margin-top: 0;
+}
+
 /*!
  * jQuery Smart Cart v3.0.6
  * The smart interactive jQuery Shopping Cart plugin with PayPal payment support
