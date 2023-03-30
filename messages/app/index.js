@@ -29,44 +29,16 @@ const config = {
   };
 
 // define userId (while no auth is implemented)
-const user = 2;
+const user = 3;
 
 // GET - responds with the list of conversation of a specific user, defined above
 app.get('/messages', async (req, res) => {
     // create database connection
     const connection = await mysql.createConnection(config);
 
-    // get all conversations our user participates in
-    const sql = 'SELECT * FROM ConvTable WHERE userId1 = ' + user + ' OR userId2 = ' + user;
-    const [rows, fields] = await connection.execute(sql);
+    const filteredConvTable = await filterConvTable(connection);
 
-    // filter the result
-    const filteredConvTable = {};
-    
-    for (let i = 0; i < rows.length; i++) {
-        const convInfo = rows[i];
-        if(convInfo.userId1 == user){
-            if(!convInfo.userHidden1){
-                newConvInfo = {}
-                newConvInfo.otherUserId = convInfo.userId2;
-                newConvInfo.otherUserName = convInfo.userName2;
-                newConvInfo.lastMessage = convInfo.lastMessage;
-                filteredConvTable[convInfo.id] = newConvInfo;
-            }
-        }
-
-        else if(convInfo.userId2 == user){
-            if(!convInfo.userHidden2){
-                newConvInfo = {}
-                newConvInfo.otherUserId = convInfo.userId1;
-                newConvInfo.otherUserName = convInfo.userName1;
-                newConvInfo.lastMessage = convInfo.lastMessage;
-                filteredConvTable[convInfo.id] = newConvInfo;
-            }
-        }
-    }
-
-    res.render('index', {currentUserId: user, filteredConvTable: filteredConvTable});
+    res.render('conv', {currentUserId: user, conversationId: -1, filteredConvTable: filteredConvTable});
 });
 
 // GET - responds with the list of messages of a specific conversation
@@ -89,34 +61,12 @@ app.get('/messages/:conversationId', async (req, res) => {
 
     // if so, render the page
     else{
-        // get all messages from the conversation the user is trying to access
-        sql = 'SELECT * FROM MsgTable WHERE conversationId = ' + conversationId;
-        [rows, fields] = await connection.execute(sql);
 
-        // filter the result
-        const filteredMsgTable = {};
+        const filteredConvTable = await filterConvTable(connection);        
+        const filteredMsgTable = await filterMsgTable(connection, conversationId);
 
-        for (let i = 0; i < rows.length; i++) {
-            const msgInfo = rows[i];
-            newMsgInfo = {};
-            newMsgInfo.senderId = msgInfo.senderId;
-            newMsgInfo.timestamp = msgInfo.timestamp;
-            newMsgInfo.read = msgInfo.read;
-            newMsgInfo.content = msgInfo.content;
-            filteredMsgTable[msgInfo.id] = newMsgInfo;
-        }
-
-        // order it
-        keys = Object.keys(filteredMsgTable);
-        for(i = 1; i < keys.length; i++){
-            if(keys[i] < keys[i-1]){
-                temp = keys[i];
-                keys[i] = keys[i-1];
-                keys[i-1] = temp;
-            }
-        }
-        
-        res.render('conv', {currentUserId: user, conversationId: conversationId, filteredMsgTable: filteredMsgTable});
+        res.render('conv', {currentUserId: user, conversationId: conversationId, 
+                                filteredConvTable: filteredConvTable, filteredMsgTable: filteredMsgTable});
     }
 });
 
@@ -132,6 +82,71 @@ app.post('/messages/:conversationId', async (req, res) => {
 
     res.sendStatus(200);
 });
+
+async function filterConvTable(connection){
+    // get all conversations our user participates in
+    const sql = 'SELECT * FROM ConvTable WHERE userId1 = ' + user + ' OR userId2 = ' + user;
+    const [rows, fields] = await connection.execute(sql);
+
+    // filter the result
+    const filteredConvTable = {};
+    
+    for (let i = 0; i < rows.length; i++) {
+        const convInfo = rows[i];
+        if(convInfo.userId1 == user){
+            if(!convInfo.userHidden1){
+                var newConvInfo = {}
+                newConvInfo.otherUserId = convInfo.userId2;
+                newConvInfo.otherUserName = convInfo.userName2;
+                newConvInfo.lastMessage = convInfo.lastMessage;
+                filteredConvTable[convInfo.id] = newConvInfo;
+            }
+        }
+
+        else if(convInfo.userId2 == user){
+            if(!convInfo.userHidden2){
+                var newConvInfo = {}
+                newConvInfo.otherUserId = convInfo.userId1;
+                newConvInfo.otherUserName = convInfo.userName1;
+                newConvInfo.lastMessage = convInfo.lastMessage;
+                filteredConvTable[convInfo.id] = newConvInfo;
+            }
+        }
+    }
+
+    return filteredConvTable;
+}
+
+async function filterMsgTable(connection, conversationId){
+    // get all messages from the conversation the user is trying to access
+    const sql = 'SELECT * FROM MsgTable WHERE conversationId = ' + conversationId;
+    const [rows, fields] = await connection.execute(sql);
+
+    // filter the result
+    const filteredMsgTable = {};
+
+    for (let i = 0; i < rows.length; i++) {
+        const msgInfo = rows[i];
+        var newMsgInfo = {};
+        newMsgInfo.senderId = msgInfo.senderId;
+        newMsgInfo.timestamp = msgInfo.timestamp;
+        newMsgInfo.read = msgInfo.read;
+        newMsgInfo.content = msgInfo.content;
+        filteredMsgTable[msgInfo.id] = newMsgInfo;
+    }
+
+    // order it
+    keys = Object.keys(filteredMsgTable);
+    for(i = 1; i < keys.length; i++){
+        if(keys[i] < keys[i-1]){
+            temp = keys[i];
+            keys[i] = keys[i-1];
+            keys[i-1] = temp;
+        }
+    }
+
+    return filteredMsgTable;
+}
 
 // Start server
 app.listen(3000, () => {
