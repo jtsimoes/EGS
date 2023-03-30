@@ -105,10 +105,9 @@ async def logout():
 
 @app.get("/items", response_class=HTMLResponse)
 async def items(request: Request, category: int = None, view: str = "grid", page: int = 0, limit: int = 9, sort: str = 'id', order: str = 'asc', db: Session = Depends(get_db)):
-    
+
     items = crud.get_all_items(db, category, page, limit, sort, order)
     total = crud.count_items(db)
-
 
     # API call to get all items
     # try:
@@ -137,11 +136,13 @@ async def item(request: Request, item_id: int, db: Session = Depends(get_db)):
     return templates.TemplateResponse("item.html", {"request": request, "item": item})
 
 
-@app.get("/profiles", response_class=HTMLResponse)
-async def profiles(request: Request):
-    profiles = "TODO"
+@app.get("/profiles")
+async def profiles():
+    # TODO: Instead of showing all users, this endpoint will redirect to the profile of the logged in user
+    #user = current_user.username
+    user = "Username"
 
-    return templates.TemplateResponse("404.html", {"request": request, "profiles": profiles})
+    return RedirectResponse(url="/profiles/"+user)
 
 
 @app.get("/profiles/{user_username}", response_class=HTMLResponse)

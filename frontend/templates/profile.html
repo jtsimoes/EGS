@@ -7,7 +7,12 @@
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg-primary border-bottom">
 	<div class="container">
+		{% if 1 %}
+		{# TODO: if user.username == current_user.username #}
 		<h2 class="title-page text-white">O meu perfil</h2>
+		{% else %}
+		<h2 class="title-page text-white">@{{ user.username }}</h2>
+		{% endif %}
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb text-white">
 				<li class="breadcrumb-item"><a href="/" class="text-white">Página inicial</a></li>
@@ -33,7 +38,7 @@
 						<div class="card-body">
 							<div class="mb-3 text-center">
 								<img src="{{ user.avatar or '/static/images/misc/avatar.jpg' }}" width="130"
-									height="130" alt="" class="img-thumbnail rounded-circle">
+									height="130" alt="" class="avatar img-thumbnail rounded-circle">
 							</div>
 							<div class="mb-3 text-center">
 								<a href="/profiles/{{ user.username }}" class="h5 title">{{ user.name }}
@@ -92,8 +97,14 @@
 					<div class="form-inline">
 						{% if user.items|length != 0 %}
 						<span class="mr-md-auto ml-2 ml-sm-0">
+							{% if 1 %}
+							{# TODO: if user.username == current_user.username #}
 							Atualmente tem <b>{{ user.items|length }}</b>
 							item{{ '' if user.items|length == 1 else 's' }} à venda
+							{% else %}
+							Atualmente este utilizador tem <b>{{ user.items|length }}</b>
+							item{{ '' if user.items|length == 1 else 's' }} à venda
+							{% endif %}
 						</span>
 						<select class="mx-2 my-2 my-sm-0 form-control">
 							<option value="" disabled selected>Ordenar por...</option>
@@ -121,7 +132,12 @@
 						</div>
 						{% else %}
 						<span class="mr-md-auto ml-2 ml-sm-0">
+							{% if 1 %}
+							{# TODO: if user.username == current_user.username #}
 							Atualmente não tem <b>nenhum</b> item à venda
+							{% else %}
+							Este utilizador não está a vender nada de momento
+							{% endif %}
 						</span>
 						{% endif %}
 					</div>
@@ -129,6 +145,8 @@
 
 				<div class="row" id="buy">
 
+					{% if 1 %}
+					{# TODO: if user.username == current_user.username #}
 					<div class="col-lg-4 col-sm-6 pb-4">
 						<div class="card h-100 mb-5">
 							<button class="btn btn-block btn-light h-100">Adicionar novo item para venda
@@ -136,6 +154,7 @@
 							</button>
 						</div>
 					</div>
+					{% endif %}
 
 					{% for item in user.items %}
 					<div class="col-lg-4 col-sm-6 product{% if not item.is_available %} inactive{% endif %}">
