@@ -65,12 +65,12 @@
 
 							<figure class="itemside mb-3">
 								<div class="aside">
-									<img class="icon icon-sm rounded-circle" src="/static/images/misc/avatar.jpg"
+									<img class="avatar icon icon-sm rounded-circle" src="{{ item.owner.avatar }}"
 										alt="">
 								</div>
 								<figcaption class="info">
 									<p class="font-weight-bold mb-0 pb-0">
-										<a href="/profiles/TODO" data-name="product_desc">
+										<a href="/profiles/{{ item.owner.username }}" data-name="product_desc">
 											{{ item.owner.name }}</a>
 									</p>
 									<div class="rating-wrap">
@@ -94,7 +94,7 @@
 							<dl class="row">
 								<dt class="col">Categoria:</dt>
 								<dd class="col-sm-9">
-									<a href="/items?category=TODO" title="Ver mais anúncios nesta categoria">
+									<a href="/items?category={{ item.category_id }}" title="Ver mais anúncios nesta categoria">
 										{{ item.category_id }}</a>
 								</dd>
 							</dl>

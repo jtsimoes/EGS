@@ -1514,7 +1514,9 @@ a[class*=card]:hover .title {
   width: auto;
   display: inline-block;
   cursor: zoom-in;
-
+  -o-object-fit: cover;
+  object-fit: cover;
+  aspect-ratio: 1/1;
 }
 
 .gallery-wrap .thumbs-wrap {
@@ -1903,6 +1905,12 @@ body.loading .loading-modal {
   pointer-events: none;
   opacity: 0.6;
   filter: grayscale(1);
+}
+
+.avatar {
+  -o-object-fit: cover;
+  object-fit: cover;
+  aspect-ratio: 1/1;
 }
 
 ::-webkit-scrollbar {
