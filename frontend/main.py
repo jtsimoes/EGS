@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-#import config  # TODO: for cache
+# import config  # TODO: for cache
 import crud
 import models
 import schemas
@@ -25,7 +25,7 @@ templates = Jinja2Templates(directory="templates")
 
 @lru_cache()
 def get_settings():
-    #return config.Settings()
+    # return config.Settings()
     return None
 
 
@@ -86,20 +86,21 @@ async def gateway_timeout_error(request: Request, exc: HTTPException):
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-#async def index(request: Request, settings: config.Settings = Depends(get_settings)):
+    # async def index(request: Request, settings: config.Settings = Depends(get_settings)):
     # TODO: create index page design
-    #test = settings.HELLO_WORLD
-    #print("-------------->"+test)
+    # test = settings.HELLO_WORLD
+    # print("-------------->"+test)
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/login")
 async def login():
-    return RedirectResponse(url='//localhost:8000/authorize')
+    return RedirectResponse(url="//localhost:8000/authorize")
+
 
 @app.get("/logout")
 async def logout():
-    return RedirectResponse(url='//localhost:8000/logout')
+    return RedirectResponse(url="//localhost:8000/logout")
 
 
 @app.get("/items", response_class=HTMLResponse)
@@ -177,4 +178,4 @@ async def checkout(request: Request):
 
 if __name__ == "__main__":
     # TODO: using 'reload=True' for development environment only, remove for production
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=80, reload=True)
