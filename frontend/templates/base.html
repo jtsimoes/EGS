@@ -52,6 +52,19 @@
                     </div>
                     <div class="col-lg-3 col-sm-8 col-md-4 col-7">
                         <div class="d-flex justify-content-end">
+                            {% if user_not_logged_in %}
+                            <a href="/login" class="widget-header">
+                                <div class="icontext">
+                                    <div class="icon icon-sm border rounded-circle">
+                                        <i class="fa  fa-user"></i>
+                                    </div>
+                                    <div class="text">
+                                        <small>Criar conta ou</small>
+                                        <div>Iniciar sessão</div>
+                                    </div>
+                                </div>
+                            </a>
+                            {% else %}
                             <a href="/cart" class="widget-header mr-3" data-toggle="tooltip" data-placement="bottom"
                                 title="Carrinho">
                                 <div class="icon">
@@ -81,6 +94,7 @@
                                     <a class="dropdown-item" href="/logout">Terminar sessão</a>
                                 </div>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -111,8 +125,7 @@
                 <p class="mt-0 pt-3 text-muted">© 2023 Resellr</p>
                 <div class="mt-0">
                     <a href="mailto:resellr@ua.pt" class="btn btn-light">
-                        <img src="/static/images/icons/support.png" alt="" width="25"
-                            style="filter: contrast(0.4);">
+                        <img src="/static/images/icons/support.png" alt="" width="25" style="filter: contrast(0.4);">
                         <span class="ml-1 text-secondary">Apoio ao Cliente</span>
                     </a>
                 </div>
