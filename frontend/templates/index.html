@@ -4,31 +4,253 @@
 
 {% block body %}
 
-<!-- ========================= SECTION CONTENT ========================= -->
-<section class="section-content padding-y bg">
+<!-- ========================= SECTION INTRO ========================= -->
+<section class="bg-primary shadow-sm" style="background-image: radial-gradient(circle, #3167eb, #2a5edf, #2355d4, #1b4dc8, #1244bd);">
+	<div class="container align-items-center justify-content-center d-flex">
+		<article class="text-center py-5 my-5">
+			<h1 class="display-3 text-white font-weight-bold">Bem-vindo ao&thinsp;
+				<span class="text-nowrap">
+					<img src="/static/images/logo.png" alt="R" width="70" style="vertical-align: baseline; filter: grayscale(1) contrast(10) invert(1);">esellr!
+				</span>
+			</h1>
+			<p class="lead text-white mb-4">Aqui pode <b>vender</b> e <b>comprar</b> tudo que precisar</p>
+			<a href="/items" class="btn btn-light btn-lg text-primary font-weight-bold px-4">Começar agora</a> 
+		</article>
+	</div>
+</section>
+<!-- ========================= SECTION INTRO END// ========================= -->
+
+
+<!-- ========================= SECTION FEATURES ========================= -->
+<section class="section-specials padding-y">
 	<div class="container">
 
 		<!-- SMARTCART PLUGIN -->
 		<div id="smartcart" class="d-none"></div>
 
-		TODO
+		<div class="row">
+			<div class="col-md-6 col-lg-3 my-3">
+					<figure class="itemside">
+						<div class="aside">
+							<span class="icon-sm rounded-circle bg-success">
+								<i class="fas fa-euro-sign white"></i>
+							</span>
+						</div>
+						<figcaption class="info">
+							<h6 class="title">Produtos a bom preço</h6>
+							<p class="text-muted">Aqui encontra uma variedade enorme de produtos novos e usados a um preço justo.</p>
+						</figcaption>
+					</figure>
+			</div>
+			<div class="col-md-6 col-lg-3 my-3">
+					<figure class="itemside">
+						<div class="aside">
+							<span class="icon-sm rounded-circle bg-danger">
+								<i class="fas fa-heart white"></i>
+							</span>
+						</div>
+						<figcaption class="info">
+							<h6 class="title">Interface user-friendly</h6>
+							<p class="text-muted">A nossa loja tem uma plataforma moderna e intuitiva para que seja fácil para si comprar e vender.</p>
+						</figcaption>
+					</figure>
+			</div>
+			<div class="col-md-6 col-lg-3 my-3">
+					<figure class="itemside">
+						<div class="aside">
+							<span class="icon-sm rounded-circle bg-secondary">
+								<i class="fas fa-lock white"></i>
+							</span>
+						</div>
+						<figcaption class="info">
+							<h6 class="title">Pagamentos seguros</h6>
+							<p class="text-muted">Os nossos métodos de pagamento garantem uma alta segurança da sua conta e dados.</p>
+						</figcaption>
+					</figure>
+			</div>
+			<div class="col-md-6 col-lg-3 my-3">
+					<figure class="itemside">
+						<div class="aside">
+							<span class="icon-sm rounded-circle bg-info">
+								<i class="fas fa-headset white"></i>
+							</span>
+						</div>
+						<figcaption class="info">
+							<h6 class="title">Apoio ao cliente 24/7</h6>
+							<p class="text-muted">Sempre que surgir alguma dúvida ou problema, o nosso apoio ao cliente estará online para ajudar.</p>
+						</figcaption>
+					</figure>
+			</div>
+		</div>
 
 	</div>
 </section>
-<!-- ========================= SECTION CONTENT END// ========================= -->
+<!-- ========================= SECTION FEATURES END// ========================= -->
+
+
+<!-- ========================= SECTION BANNER ========================= -->
+<section class="mb-5">
+	<div class="container">
+		<article class="card p-4 bg-primary shadow-sm">
+			<div class="row align-items-center">
+				<div class="col"> 
+					<h4 class="mb-1 text-white">Ainda não és um Resellr?</h4>
+					<p class="mb-0 text-white-50">Cria uma conta (ou inicia sessão) para descobrires os melhores produtos ao melhor preço na nossa loja</p>
+				</div>
+				<div class="col-auto">
+					<a class="btn btn-warning" href="/login">Entrar</a>
+				</div>
+			</div>
+		</article>
+	</div>
+</section>
+<!-- ========================= SECTION BANNER END// ========================= -->
+
+
+<!-- ========================= SECTION CATEGORIES ========================= -->
+<section class="section-name padding-y-sm bg">
+	<div class="container">
+
+		<header class="section-heading">
+			<h3 class="section-title">Categorias</h3>
+		</header>
+			
+		<div class="row justify-content-center text-center">
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-couch text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Lazer</p>
+				</a>
+			</div>
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-futbol text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Desporto</p>
+				</a>
+			</div>
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-tshirt text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Moda</p>
+				</a>
+			</div>
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-home text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Casa</p>
+				</a>
+			</div>
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-seedling text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Jardinagem</p>
+				</a>
+			</div>
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-mobile-alt text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Tecnologia</p>
+				</a>
+			</div>
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-car text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Veículos</p>
+				</a>
+			</div>
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-tools text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Equipamento Profissional</p>
+				</a>
+			</div>
+			<div class="col my-3">
+				<a href="/items?category=TODO" class="item-link text-center">
+					<span class="icon mb-2 icon-md rounded btn btn-light"> 
+						<i class="fas fa-store text-primary" style="vertical-align: 6px;"></i>
+					</span>
+					<p class="text-body">Outras vendas</p>
+				</a>
+			</div>
+		</div>
+
+	</div>
+</section>
+<!-- ========================= SECTION CATEGORIES END// ========================= -->
+
+
+<!-- ========================= SECTION PREVIEW ========================= -->
+<section class="section-name padding-y-sm">
+	<div class="container">
+
+		<header class="section-heading">
+			<a href="/items" class="btn btn-outline-primary float-right">Ver todos</a>
+			<h3 class="section-title">Produtos recentes</h3>
+		</header>
+			
+		<div class="row">
+			<div class="col-md-3">
+				<div href="#" class="card card-product-grid">
+					<a href="#" class="img-wrap"> <img src="https://via.placeholder.com/800x600.jpg"> </a>
+					<figcaption class="info-wrap">
+						<a href="#" class="title">Just another product name</a>
+						<div class="price mt-1">179.00 €</div>
+					</figcaption>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div href="#" class="card card-product-grid">
+					<a href="#" class="img-wrap"> <img src="https://via.placeholder.com/800x600.jpg"> </a>
+					<figcaption class="info-wrap">
+						<a href="#" class="title">Some item name here</a>
+						<div class="price mt-1">280.00 €</div>
+					</figcaption>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div href="#" class="card card-product-grid">
+					<a href="#" class="img-wrap"> <img src="https://via.placeholder.com/800x600.jpg"> </a>
+					<figcaption class="info-wrap">
+						<a href="#" class="title">Great product name here</a>
+						<div class="price mt-1">56.00 €</div>
+					</figcaption>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div href="#" class="card card-product-grid">
+					<a href="#" class="img-wrap"> <img src="https://via.placeholder.com/800x600.jpg"> </a>
+					<figcaption class="info-wrap">
+						<a href="#" class="title">Just another product name</a>
+						<div class="price mt-1">179.00 €</div>
+					</figcaption>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</section>
+<!-- ========================= SECTION PREVIEW END// ========================= -->
 
 {% endblock %}
 
 {% block scripts %}
 <script>
-
-
-
-	//redirect to checkout page
-	window.location.href = '/items/';
-
-
-
 	$(document).ready(function () {
 		$('#smartcart').smartCart();
 	});
