@@ -295,7 +295,10 @@
 									</div>
 								</a>
 								{% if item.is_available %}
-								<button class="btn btn-block btn-danger">Retirar anúncio</button>
+								<form action="/items/delete/{{ item.id }}" method="post"
+									onsubmit="return confirm('Tem a certeza que pretende apagar permanentemente este anúncio?\nTenha em atenção que esta ação é irreversível.');">
+									<button type="submit" class="btn btn-block btn-danger">Retirar anúncio</button>
+								</form>
 								{% else %}
 								<button class="btn btn-block btn-primary" disabled>Anúncio terminado</button>
 								{% endif %}

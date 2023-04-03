@@ -81,7 +81,6 @@ async def gateway_timeout_error(request: Request, exc: HTTPException):
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     # async def index(request: Request, settings: config.Settings = Depends(get_settings)):
-    # TODO: create index page design
     # test = settings.HELLO_WORLD
     # print("-------------->"+test)
     return templates.TemplateResponse("index.html", {"request": request})
@@ -144,6 +143,14 @@ async def item(request: Request, item_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Item not found")
 
     return templates.TemplateResponse("item.html", {"request": request, "item": item})
+
+
+@app.post("/items/delete/{item_id}")
+async def delete_item(item_id: int, db: Session = Depends(get_db)):
+    if not crud.delete_item(db, item_id):
+        raise HTTPException(status_code=502, detail="Item not deleted")
+
+    return RedirectResponse(url="/profiles", status_code=303)
 
 
 @app.get("/profiles")
