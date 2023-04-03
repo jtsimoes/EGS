@@ -4,6 +4,108 @@
 
 {% block body %}
 
+<!-- ========================= MODAL ========================= -->
+<div class="modal fade" id="new" tabindex="-1" aria-labelledby="new_item" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+		<div class="modal-content shadow-lg">
+
+			<div class="modal-header">
+
+				<h5 class="modal-title mx-3" id="new_item">Adicionar novo item para venda</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+
+			</div>
+
+			<div class="modal-body">
+
+				<form class="my-3 mx-3" action="/items" method="post">
+					<div class="form-group form-row">
+						<label class="col-md-3 col-form-label">Título</label>
+						<div class="col">
+							<input class="form-control" placeholder="Título do item" type="text" name="title" required>
+						</div>
+					</div>
+
+					<div class="form-group form-row">
+						<label class="col-md-3 col-form-label">Estado</label>
+						<div class="col-sm-9 pt-2">
+							<label class="custom-control custom-radio custom-control-inline">
+								<input class="custom-control-input" type="radio" name="condition" value="Novo" checked>
+								<span class="custom-control-label">Novo</span>
+							</label>
+							<label class="custom-control custom-radio custom-control-inline">
+								<input class="custom-control-input" type="radio" name="condition" value="Usado">
+								<span class="custom-control-label">Usado</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group form-row">
+						<label class="col-md-3 col-form-label">Preço</label>
+						<div class="col">
+							<input class="form-control" placeholder="Preço em €" type="number" min="0.01" max="1000"
+								step="0.01" name="price" required>
+						</div>
+					</div>
+
+					<div class="form-group form-row">
+						<label class="col-md-3 col-form-label">Descrição</label>
+						<div class="col">
+							<textarea class="form-control" placeholder="Pequena descrição sobre o item" rows="4"
+								name="description" required></textarea>
+						</div>
+					</div>
+
+					<div class="form-group form-row">
+						<label class="col-md-3 col-form-label">Categoria</label>
+						<div class="col">
+							<select class="form-control" name="category_id" required>
+								<option value="" disabled selected>Categoria e subcategoria</option>
+								<optgroup label="Categoria A:"></optgroup>
+								<option value="1">Subcategoria 1</option>
+								<option value="2">Subcategoria 2</option>
+								<option value="3">Subcategoria 3</option>
+								<optgroup label="Categoria B:"></optgroup>
+								<option value="4">Subcategoria 1</option>
+								<option value="5">Subcategoria 2</option>
+								<optgroup label="Categoria C:"></optgroup>
+								<option value="6">Subcategoria 1</option>
+								<option value="7">Subcategoria 2</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group form-row">
+						<label class="col-md-3 col-form-label">Localização</label>
+						<div class="col">
+							<input class="form-control" placeholder="Concelho (Distrito)" type="text" name="location"
+								required>
+						</div>
+					</div>
+
+					<div class="form-group form-row align-items-center">
+						<label class="col-md-3 col-form-label">Imagem ilustrativa</label>
+						<div class="col">
+							<div class="dropzone form-control">
+								<div class="info text-muted"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group pt-3">
+						<button type="submit" class="btn btn-primary btn-block">Publicar novo item para venda</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ========================= MODAL END// ========================= -->
+
+
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg-primary border-bottom">
 	<div class="container">
@@ -149,7 +251,8 @@
 					{# TODO: if user.username == current_user.username #}
 					<div class="col-lg-4 col-sm-6 pb-4">
 						<div class="card h-100 mb-5">
-							<button class="btn btn-block btn-light h-100">Adicionar novo item para venda
+							<button class="btn btn-block btn-light h-100" data-toggle="modal"
+								data-target="#new">Adicionar novo item para venda
 								<i class="fas fa-plus-circle ml-1"></i>
 							</button>
 						</div>
@@ -215,6 +318,8 @@
 
 {% block scripts %}
 
+<script src="/static/js/imgur.js"></script>
+
 <script>
 	$(document).ready(function () {
 		$('#smartcart').smartCart();
@@ -273,6 +378,18 @@
 				style: 'currency',
 				currency: 'EUR'
 			}).format(price));
+		});
+
+		var feedback = function (res) {
+			if (res.success === true) {
+				var get_link = res.data.link.replace(/^http:\/\//i, 'https://');
+				document.querySelector('.status').classList.add('mt-2');
+				document.querySelector('.status').innerHTML = 'Imagem: ' + '<br><input name="image" class="image-url form-control text-center mt-1 mb-2" readonly value=\"' + get_link + '\"/>' + '<img class="img rounded" alt="" src=\"' + get_link + '\"/>';
+			}
+		};
+		new Imgur({
+			clientid: '4409588f10776f7',
+			callback: feedback
 		});
 	});
 </script>
