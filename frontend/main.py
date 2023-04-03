@@ -2,7 +2,7 @@ import uvicorn
 import json  # TODO: necessary?
 import requests  # TODO: necessary?
 from functools import lru_cache  # TODO: for cache
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -63,12 +63,6 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-# TODO: Testing POST new item
-@app.post("/items/new", response_model=schemas.Item)
-def create_item_for_user(item: schemas.ItemCreate, db: Session = Depends(get_db)):
-    return crud.create_item(db=db, item=item)
-
-
 @app.exception_handler(404)
 async def not_found_error(request: Request, exc: HTTPException):
     return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
@@ -101,6 +95,22 @@ async def login():
 @app.get("/logout")
 async def logout():
     return RedirectResponse(url="//localhost:8000/logout")
+
+
+@app.post("/items")
+async def new_item(title: str = Form(...), description: str = Form(...), price: str = Form(...), image: str = Form("/static/images/misc/item.jpg"),
+                   location: str = Form(...), condition: str = Form(...), category_id: str = Form(...), db: Session = Depends(get_db)):
+    try:
+        item = schemas.ItemCreate(title=title, description=description, price=price, image=image, location=location, condition=condition,
+                                  owner_id=3,               # TODO: Obtain owner/user ID from login session
+                                  category_id=category_id,  # TODO: Obtain category ID from categories API
+                                  product_id=99999999999)   # TODO: Obtain product ID from products API
+
+        new_item = crud.create_item(db=db, item=item)
+    except:
+        raise HTTPException(status_code=502, detail="Item not created")
+
+    return RedirectResponse(url="/items/" + str(new_item.id), status_code=303)
 
 
 @app.get("/items", response_class=HTMLResponse)
@@ -139,7 +149,7 @@ async def item(request: Request, item_id: int, db: Session = Depends(get_db)):
 @app.get("/profiles")
 async def profiles():
     # TODO: Instead of showing all users, this endpoint will redirect to the profile of the logged in user
-    #user = current_user.username
+    # user = current_user.username
     user = "Username"
 
     return RedirectResponse(url="/profiles/"+user)
