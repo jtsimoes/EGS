@@ -94,7 +94,8 @@
 							<dl class="row">
 								<dt class="col">Categoria:</dt>
 								<dd class="col-sm-9">
-									<a href="/items?category={{ item.category_id }}" title="Ver mais anúncios nesta categoria">
+									<a href="/items?category={{ item.category_id }}"
+										title="Ver mais anúncios nesta categoria">
 										{{ item.category_id }}</a>
 								</dd>
 							</dl>
@@ -221,13 +222,23 @@
 									avaliaç{{ 'ão' if item.owner.total_reviews == 1 else 'ões' }})</p>
 							</div>
 						</div>
-						<div class="my-4 text-center">
+						<div class="my-4 px-3">
 							<ul class="cols-two mb-2" style="padding-inline-start: 0;">
-								<p class="mb-0"><i class="fas fa-map-marker-alt fa-fw text-secondary"></i> Cacia
+								<p class="mb-0 float-left"><i class="fas fa-clipboard-list fa-fw text-secondary"></i>
+									{{ item.owner.items|length }} ite{{ 'm' if item.owner.items|length == 1 else 'ns' }}
+									à venda
+								</p>
+								<p class="mb-0 float-right mr-2"><i class="fas fa-comments-dollar fa-fw text-secondary"></i>
+									{{ item.owner.total_sales }} venda{{ '' if item.owner.total_sales == 1 else 's' }}
+								</p>
+							</ul>
+							<ul class="cols-two mb-2" style="padding-inline-start: 0;">
+								<p class="mb-0 float-left"><i class="fas fa-map-marker-alt fa-fw text-secondary"></i> Cacia
 									(Aveiro)
 								</p>
-								<p class="mb-0"><i class="fas fa-shopping-basket fa-fw text-secondary"></i>
-									{{ item.owner.total_sales }} venda{{ '' if item.owner.total_sales == 1 else 's' }}
+								<p class="mb-0 float-right mr-2"><i class="fas fa-shopping-basket fa-fw text-secondary"></i>
+									{{ item.owner.total_purchases }} compra{{ '' if item.owner.total_purchases == 1 else
+									's' }}
 								</p>
 							</ul>
 							<p><i class="fas fa-clock fa-fw text-secondary"></i>

@@ -173,6 +173,11 @@
 									<i class="fas fa-map-marker-alt fa-fw text-secondary"></i> {{ user.location }}
 								</p>
 								<p class="mb-2">
+									<i class="fas fa-clipboard-list fa-fw text-secondary"></i>
+									{{ user.items|length }} ite{{ 'm' if user.items|length == 1 else 'ns'
+									}} à venda
+								</p>
+								<p class="mb-2">
 									<i class="fas fa-comments-dollar fa-fw text-secondary"></i>
 									{{ user.total_sales }} venda{{ '' if user.total_sales == 1 else 's' }}
 								</p>
