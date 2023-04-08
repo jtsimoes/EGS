@@ -1,9 +1,15 @@
-FROM python:3.12.0a5-slim-bullseye
+FROM node:latest
 
-COPY ./ .
+WORKDIR /app
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+COPY package*.json ./
 
-CMD [ "python", "paymentAPI.py"]
+RUN npm install
+
+COPY . .
+
+EXPOSE 4000
+
+CMD [ "npm", "run", "devStart"]
 
 # build: docker build -t payment -f deploy\DockerFile.payment ..\payment\

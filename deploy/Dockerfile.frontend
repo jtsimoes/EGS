@@ -2,19 +2,17 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
 ENV PYTHONUNBUFFERED=1
 
-COPY ./ .
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-EXPOSE 8000
-#set environment
-#ENV NUXT_HOST=0.0.0.0
+COPY ./ .
 
-#ENV NUXT_PORT=$PORT
+EXPOSE 80
 
-#ENV PROXY_API=$PROXY_API
-
-#ENTRYPOINT ["python", "main.py"]
+CMD ["python", "main.py"]
 
 # build -> docker build -t frontend -f deploy\Dockerfile.frontend .\frontend
-# run -> docker run --rm -it -p 8080:8080 frontend 
+# run -> docker run --rm -it -p 80:80 frontend:1.0

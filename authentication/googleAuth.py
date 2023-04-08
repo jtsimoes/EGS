@@ -17,7 +17,7 @@ GOOGLE_CLIENT_ID = '1090206121272-thig8rckgnrt36io53a125dr8ptd03vg.apps.googleus
 CLIENT_SECRETS_FILE = "client_secret.json"
 SCOPES = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid']
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Disable OAuthlib's HTTPS verification in development environment
-flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri="http://localhost:8000/authorize/oauth2callback")
+flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri="http://localhost:5000/oauth2callback")
 
 def login_is_required(function):
     def wrapper(*args, **kwargs):
@@ -32,7 +32,7 @@ def index():
     # return "Hello World <a href='/login'><button>Login</button></a>"
 
 @app.route("/login")
-def authorize():
+def login():
     # Generate the Google OAuth2 authorization URL
     authorization_url, state = flow.authorization_url()
     session["state"] = state
@@ -52,7 +52,8 @@ def oauth2callback():
     
     id_info = id_token.verify_oauth2_token(
         id_token=credentials.id_token,
-        request = token_request
+        request = token_request,
+        clock_skew_in_seconds=1
     )
     
     session["name"] = id_info["name"]
@@ -89,4 +90,4 @@ def user_info():
     # logout <a href='/logout'><button>Logout</button></a>"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
