@@ -1,8 +1,8 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
 
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
+WORKDIR /frontend
 
 COPY requirements.txt requirements.txt
 
@@ -14,5 +14,5 @@ EXPOSE 80
 
 CMD ["python", "main.py"]
 
-# build -> docker build -t frontend -f deploy\Dockerfile.frontend .\frontend
-# run -> docker run --rm -it -p 80:80 frontend:1.0
+# build -> docker build -t frontend:1.0 -f deploy\Dockerfile.frontend .\frontend
+# run -> docker run --rm -p 80:80 frontend:1.0
