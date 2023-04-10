@@ -80,6 +80,34 @@ form.addEventListener('submit', (event) => {
   messageInput.value = '';
 });
 
+// ------------------------------------
+//this script is listening to the form and posts to /messages without the need for page reloading
+// ------------------------------------
+
+const deleteForm = document.getElementById('delete-conv');
+deleteForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const url = deleteForm.getAttribute('action');
+  fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({conversationId: convId})
+  })
+  .then(response => {
+    if(response.ok) {
+      console.log('Delete request successful');
+    } else {
+      console.log('Delete request failed');
+    }
+    window.location.href = '/messages';
+  })
+  .catch(error => {
+    console.log('Error:', error);
+  });
+});
+
 // create a receiver message HTML element
 function receiverMessage(msg){
   // create the outer div element
