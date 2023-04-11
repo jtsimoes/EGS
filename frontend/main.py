@@ -194,6 +194,30 @@ async def cart(request: Request):
 async def checkout(request: Request):
     return templates.TemplateResponse("checkout.html", {"request": request})
 
+
+@app.get("/payment/{cart_json}")
+async def payment(cart_json: str):
+
+    cart_json = cart_json.replace("product_id", "id").replace(
+        "product_price", "price").replace("product_name", "name")
+    cart_json = json.loads(cart_json)
+
+    try:
+        # TODO: Endpoint to send to paypal
+        # payload = dict(key1='value1', key2='value2')
+        response = requests.post(
+            "http://localhost:4000/create-order", data=cart_json)
+
+        response.close()
+    except:
+        raise HTTPException(status_code=504)
+
+    # Check if API call was successful
+    if not response.ok:
+        raise HTTPException(status_code=502)
+
+    return "SUCCESS!"
+
 if __name__ == "__main__":
     # TODO: using 'reload=True' for development environment only, remove for production
     uvicorn.run("main:app", host="127.0.0.1", port=80, reload=True)
