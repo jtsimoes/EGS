@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List, Union
 from pydantic import BaseModel
 
 
@@ -8,9 +9,9 @@ from pydantic import BaseModel
 # Common values shared by each Item
 class ItemBase(BaseModel):
     title: str
-    description: str | None = None
+    description: Union[str, None] = None
     price: float
-    old_price: float | None = None
+    old_price: Union[float, None] = None
     image: str
     location: str
     condition: str
@@ -42,7 +43,7 @@ class UserBase(BaseModel):
     username: str
     name: str
     email: str
-    avatar: str | None = None
+    avatar: Union[str, None] = None
     phone: int
     location: str
 
