@@ -62,7 +62,7 @@ class User(UserBase):
     total_reviews: int
     registration: datetime
     is_active: bool
-    items: list[Item] = []
+    items: List[Item] = []
 
     class Config:
         orm_mode = True
