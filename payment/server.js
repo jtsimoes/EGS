@@ -23,7 +23,7 @@ app.post('/create-order/:orderId', async (req, res) => {
     const request = new paypal.orders.OrdersCreateRequest()
     const storeItems = req.params.orderId
     const total = req.body.items.reduce((sum, item) => {
-        return sum + storeItems.get(item.id).price * item.quantity
+        return sum + storeItems.get(item.id).price
     }, 0)
     request.prefer("return=representation")
     request.requestBody({
@@ -31,11 +31,11 @@ app.post('/create-order/:orderId', async (req, res) => {
         purchase_units: [
             {
                 amount: {
-                    currency_code: 'USD',
+                    currency_code: 'EUR',
                     value: total,
                     breakdown: {
                         item_total: {
-                            currency_code: "USD",
+                            currency_code: "EUR",
                             value: total
                         }
                     }
@@ -45,7 +45,7 @@ app.post('/create-order/:orderId', async (req, res) => {
                     return{
                         name: storeItem.name,
                         unit_amount: {
-                            currency_code: "USD",
+                            currency_code: "EUR",
                             value: storeItem.price
                         },
                         quantity: item.quantity

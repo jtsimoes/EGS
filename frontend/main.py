@@ -287,4 +287,4 @@ async def payment(cart_json: str):
 
 if __name__ == "__main__":
     # TODO: using 'reload=True' for development environment only, remove for production
-    uvicorn.run("main:app", host="127.0.0.1", port=80, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=80, reload=True)

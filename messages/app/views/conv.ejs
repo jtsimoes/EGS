@@ -96,5 +96,26 @@
     </div>
   </div>
 
+  <% if (conversationId == -1) { %>
+  <form method="POST" id="new-conv" class="bg-light">
+    <div class="input-group">
+      <div class="input-group-append">
+        <button id="button-addon2" type="submit" class="btn btn-link">NEW CONVERSATION</button>
+      </div>
+    </div>
+  </form>
+  <% } %>
+
+
+  <% if (conversationId != -1) { %>
+    <form method="DELETE" id="delete-conv" class="bg-light">
+      <div class="input-group">
+        <div class="input-group-append">
+          <button id="button-addon2" type="submit" value="Delete" class="btn btn-link">DELETE CONVERSATION</button>
+        </div>
+      </div>
+    </form>
+  <% } %>
+
   <script src="../messageSending.js"></script>
 </body>

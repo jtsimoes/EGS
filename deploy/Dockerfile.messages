@@ -1,11 +1,15 @@
-FROM node:latest
+FROM ubuntu:latest
 
 WORKDIR /app
 
-COPY package-lock.json /app
+RUN apt update && apt install -y nodejs && apt install -y mysql-server && apt install -y npm
+
+COPY . .
+
+RUN service mysql start
+RUN mysql
+RUN source ../db/dbInit.sql
 
 RUN npm install
-
-COPY . /app
 
 CMD [ "npm", "start" ]

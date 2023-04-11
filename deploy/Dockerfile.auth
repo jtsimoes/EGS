@@ -13,3 +13,6 @@ COPY ./ .
 EXPOSE 5000
 
 CMD [ "python", "googleAuth.py"]
+
+# build -> docker build -t auth:1.0 -f deploy\Dockerfile.auth .\authentication
+# run -> docker run --rm -p 5000:5000 auth:1.0
