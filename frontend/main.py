@@ -38,6 +38,47 @@ def get_db():
         db.close()
 
 
+def get_all_categories():
+    try:
+        # TODO: Endpoint to get all categories
+        response = requests.get("http://localhost:8000/v1/categories")
+        response.close()
+    except:
+        raise HTTPException(status_code=504)
+
+    # Check if API call was successful
+    if not response.ok:
+        raise HTTPException(status_code=502)
+
+    # Convert API response to JSON
+    categories = response.json()
+
+    return categories
+
+
+def get_category(category_id: int):
+    try:
+        # TODO: Endpoint to get one subcategory
+        response = requests.get(
+            "http://localhost:8000/v1/subcategories/" + str(category_id))
+        response.close()
+    except:
+        raise HTTPException(status_code=504)
+
+    # Check if API call was successful
+
+    if response.status_code == 404:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    if not response.ok:
+        raise HTTPException(status_code=502)
+
+    # Convert API response to JSON
+    category = response.json()
+
+    return category
+
+
 # TODO: Testing POST new user
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -49,8 +90,8 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 # TODO: Testing GET all users
 @app.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_all_users(db, skip=skip, limit=limit)
+def read_users(page: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_all_users(db, page, limit)
     return users
 
 
@@ -86,7 +127,41 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.get("/login")
+@app.get("/login", summary="LOOOOL", responses={
+    403: {"description": "Not enough privileges"},
+    404: {"description": "Item not found"},
+    200: {
+        "description": "Item requested by ID",
+        "content": {
+            "application/json": {
+                "example": {
+                    "id": "bar",
+                    "value": "The bar tenders"
+                },
+                "schema": {
+                    "$ref": "#/components/schemas/Item"
+                }
+            },
+            "text/plain": {
+                "schema": {
+                    "type": "string",
+                    "example": 'whoa!'
+                }
+            },
+            "image/png": {}
+        }
+    },
+    422: {
+        "description": "Validation Error (default behavior)",
+        "content": {
+            "application/json": {
+                "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                }
+            }
+        }
+    }
+})
 async def login():
     return RedirectResponse(url="//localhost:8000/authorize")
 
@@ -118,22 +193,12 @@ async def items(request: Request, category: int = None, view: str = "grid", page
     items = crud.get_all_items(db, category, page, limit, sort, order)
     total = crud.count_items(db)
 
-    # API call to get all items
-    # try:
-    # TODO: Endpoint to get all items on stock database
-    #   callAPI = requests.get("http://localhost:8000/products")
-    #   callAPI.close()
-    # except:
-    #   raise HTTPException(status_code=504)
+    categories = get_all_categories()
 
-    # Check if API call was successful
-    # if not callAPI.ok:
-    #   raise HTTPException(status_code=502)
+    if category is not None:
+        category = get_category(category)
 
-    # Convert API response to JSON
-    # items = callAPI.json()
-
-    return templates.TemplateResponse("items.html", {"request": request, "items": items, "category": category, "view": view, "page": page, "limit": limit, "total": total})
+    return templates.TemplateResponse("items.html", {"request": request, "items": items, "category": category, "view": view, "page": page, "limit": limit, "total": total, "categories": categories})
 
 
 @app.get("/items/{item_id}", response_class=HTMLResponse)
@@ -168,7 +233,9 @@ async def profile(request: Request, user_username: str, db: Session = Depends(ge
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return templates.TemplateResponse("profile.html", {"request": request, "user": user})
+    categories = get_all_categories()
+
+    return templates.TemplateResponse("profile.html", {"request": request, "user": user, "categories": categories})
 
 
 @app.get("/messages", response_class=HTMLResponse)
