@@ -2,6 +2,7 @@ import uvicorn
 import json  # TODO: necessary?
 import requests  # TODO: necessary?
 from functools import lru_cache  # TODO: for cache
+from typing import List
 from fastapi import FastAPI, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -89,7 +90,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 # TODO: Testing GET all users
-@app.get("/users/", response_model=list[schemas.User])
+@app.get("/users/", response_model=List[schemas.User])
 def read_users(page: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_all_users(db, page, limit)
     return users
