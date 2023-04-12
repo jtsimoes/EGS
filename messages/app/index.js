@@ -42,7 +42,7 @@ app.get('/messages', async (req, res) => {
 
     const filteredConvTable = await filterConvTable(connection);
 
-    connection.close();
+    await connection.close();
 
     res.render('conv', {currentUserId: user, conversationId: -1, filteredConvTable: filteredConvTable});
 });
@@ -53,7 +53,7 @@ app.post('/messages', async (req, res) => {
     // create database connection
     const connection = await mysql.createConnection(config);
 
-    const otherUserId = Math.floor(1 + Math.random()*(numSysUsers-1));
+    const otherUserId = Math.floor(1 + Math.random()*(numSysUsers));
 
     // check if conversation already exists
     var sql = 'SELECT * FROM ConvTable WHERE ( userId1 = ' + user + ' AND userId2 = ' + otherUserId + ' ) '
@@ -76,14 +76,14 @@ app.post('/messages', async (req, res) => {
             lastMessage: null,
         }
 
-        connection.execute('INSERT INTO ConvTable (userId1, userName1, userHidden1, userId2, userName2, userHidden2, lastMessage) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        await connection.execute('INSERT INTO ConvTable (userId1, userName1, userHidden1, userId2, userName2, userHidden2, lastMessage) VALUES (?, ?, ?, ?, ?, ?, ?)',
                 [convData.userId1, convData.userName1, convData.userHidden1, convData.userId2, convData.userName2, convData.userHidden2, convData.lastMessage]);
         
         // get the conversation to get its automatically created id
         var sql = 'SELECT * FROM ConvTable WHERE userId1 = ' + user + ' AND userId2 = ' + otherUserId;
         var [rows, fields] = await connection.execute(sql);
 
-        connection.close();
+        await connection.close();
 
         // check for any errors during creation
         if(rows.length == 0){
@@ -111,25 +111,25 @@ app.get('/messages/:conversationId', async (req, res) => {
 
     // check if it is an existing conversation
     if(rows.length == 0){
-        connection.close();
+        await connection.close();
         res.redirect('/messages');
     }
     // if so, check if the current user has access to it
     else if(rows[0].userId1 != user && rows[0].userId2 != user){
-        connection.close();
+        await connection.close();
         res.redirect('/messages');
     }
     // if so, check if the user doesnt have this conversation hidden
     else if((rows[0].userId1 == user && rows[0].userHidden1 == true) ||
                     (rows[0].userId2 == user && rows[0].userHidden2 == true)){
-        connection.close();
+        await connection.close();
         res.redirect('/messages');         
     }
     // if so, render the page
     else{
         const filteredConvTable = await filterConvTable(connection);        
         const filteredMsgTable = await filterMsgTable(connection, conversationId);
-        connection.close();
+        await connection.close();
 
         res.render('conv', {currentUserId: user, conversationId: conversationId, 
                                 filteredConvTable: filteredConvTable, filteredMsgTable: filteredMsgTable});
@@ -158,10 +158,10 @@ app.post('/messages/:conversationId', async (req, res) => {
     }
 
     // UNCOMMENT THIS TO MAKE INSERTS INTO DATABASE
-    //connection.execute('INSERT INTO MsgTable (conversationId, senderId, timestamp, content) VALUES (?, ?, ?, ?)',
+    //await connection.execute('INSERT INTO MsgTable (conversationId, senderId, timestamp, content) VALUES (?, ?, ?, ?)',
     //                                    [msgData.conversationId, msgData.senderId, msgData.timestamp, msgData.content]);
     
-    connection.close();
+    await connection.close();
 
     res.sendStatus(200);
 });
@@ -180,12 +180,12 @@ app.delete('/messages/:conversationId', async (req, res) => {
 
     // check if it is an existing conversation
     if(rows.length == 0){
-        connection.close();
+        await connection.close();
         res.redirect('/messages');
     }
     // if so, check if the current user has access to it
     else if(rows[0].userId1 != user && rows[0].userId2 != user){
-        connection.close();
+        await connection.close();
         res.redirect('/messages');
     }
     // if so, delete the conversation (hide it for this user's view)
@@ -197,7 +197,7 @@ app.delete('/messages/:conversationId', async (req, res) => {
         else if(convInfo.userId2 == user){
             await connection.execute('UPDATE ConvTable SET userHidden2 = true WHERE id = ?', [conversationId]);
         }
-        connection.close();
+        await connection.close();
         res.redirect('/messages');
     }
 });

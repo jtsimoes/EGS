@@ -47,8 +47,7 @@ app.post('/create-order/:orderId', async (req, res) => {
                         unit_amount: {
                             currency_code: "EUR",
                             value: storeItem.price
-                        },
-                        quantity: item.quantity
+                        }
                     }
                 })
             }
