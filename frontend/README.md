@@ -6,6 +6,10 @@ To install all the requirements, simply type in the terminal:
 
 To run, simply type in the terminal:
 
-    $ python main.py
+    $ uvicorn main:app --reload 
 
-After that, the app should be running on browser `localhost` at port 80 (default for HTTP)
+After that, the app should be running on browser `localhost` at port 8000.
+
+For a production environment, you should remove the flag `--reload` and, if needed, you can custom the host and the port where you want to run the app:
+
+    $ uvicorn main:app --host 0.0.0.0 --port 80

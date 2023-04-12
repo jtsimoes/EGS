@@ -285,7 +285,3 @@ async def payment(cart_json: str):
         raise HTTPException(status_code=502)
 
     return "SUCCESS!"
-
-if __name__ == "__main__":
-    # TODO: using 'reload=True' for development environment only, remove for production
-    uvicorn.run("main:app", host="0.0.0.0", port=80, reload=True)
