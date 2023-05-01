@@ -1,15 +1,11 @@
-FROM ubuntu:latest
+FROM node:latest
 
 WORKDIR /app
 
-RUN apt update && apt install -y nodejs && apt install -y mysql-server && apt install -y npm
-
-COPY . .
-
-RUN service mysql start
-RUN mysql
-RUN source ../db/dbInit.sql
+COPY ./app .
 
 RUN npm install
+
+EXPOSE 3000
 
 CMD [ "npm", "start" ]

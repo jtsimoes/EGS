@@ -22,7 +22,7 @@ Run the following commands from the /EGS/ folder to see the APIs running
 ## Payment
 
 **build** -> docker build -t payment:1.0 -f deploy\Dockerfile.payment .\payment
-**run** -> docker run --rm -p 3000:3000 payment:1.0
+**run** -> docker run --rm -p 4000:4000 payment:1.0
 
 ## Stock
 
