@@ -1,62 +1,42 @@
-version: '1.0'
-
+version: '3.7'
+networks:
+  frontend_network:
+    driver: bridge
 services:
   frontend:
-    build: Dockerfile.frontend
-    ports:
-      - "80:80"
+    image: frontend:1.0
+    hostname: frontend
+    container_name: frontend
+    environment:
+      MYSQL_DATABASE: frontend
+      MYSQL_USER: frontend
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: frontend
     depends_on:
       - frontend_DB
-      - messages
-      - stock
-      - payment
-      - authentication
-  
-  authentication:
-    build: Dockerfile.auth
-    ports:
-      - "5000:5000"
-  messages:
-    build: Dockerfile.messages
-    ports:
-      - "3000:3000"
-    depends_on:
-      - messages_DB
-
-  payment:
-    build: Dockerfile.payment
-    ports:
-      - "4000:4000"
-    
-
-  stock:
-    build: Dockerfile.stock
-    ports:
-      - "8080:8080"
+    ports:  
+      - "80:80"
+    networks:
+      - frontend_network
+    volumes:
+      - ./:/app
 
   frontend_DB:
-    image: frontenddb
+    image: mysql:latest
+    hostname: frontend_DB
+    container_name: frontend_DB
     restart: always
+    environment:
+      MYSQL_DATABASE: frontend
+      MYSQL_USER: frontend
+      MYSQL_PASSWORD: frontend
+      MYSQL_ROOT_PASSWORD: root
     volumes: 
-      - ./data:/data
+      - ../frontend:/var/lib/mysql
     ports:
       - "3306:3306"
-     
-
-  messages_DB:
-    build: Dockerfile.messagesDB
-
-  stock_DB:
-    build: Dockerfile.stockDB
-
-secrets:
-  cert:
-    file: ./config/ssl_cert/certificate.pem
-  
-  key:
-    file: ./config/ssl_cert/privatekey.pem
+    networks:
+      - frontend_network
 
 volumes:
-  frontenddb:
-  messagesdb:
-  stockdb:
+  frontend_data:

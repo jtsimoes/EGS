@@ -1,11 +1,11 @@
 FROM alpine:latest
 
-RUN apk add --no-cache sqlite
+RUN apk update && apk add mysql mysql-client
 
-WORKDIR /data
+COPY database.db /tmp/database.db
 
-COPY database.db .
+RUN /etc/init.d/mysqld start && mysql -u root -e "CREATE DATABASE mydb" && mysql -u root mydb < /tmp/database.db
 
 EXPOSE 3306
 
-CMD ["sqlite3", "database.db"]
+CMD ["mysqld", "--user=mysql", "--datadir=/var/lib/mysql", "--port=3306", "--bind-address=0.0.0.0"]

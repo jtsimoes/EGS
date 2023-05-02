@@ -1,0 +1,94 @@
+frontend:
+    image: frontend_api
+    build: 
+      context: ../frontend
+      network: host
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend_DB
+      - messages
+      - stock
+      - payment
+      - authentication
+  
+  authentication:
+    image: authentication_api
+    build: 
+      context: ../authentication
+      network: host
+      dockerfile: Dockerfile.auth
+    ports:
+      - "5000:5000"
+
+  messages:
+    image: messages_api
+    build: 
+      context: ../messages
+      network: host
+      dockerfile: Dockerfile.messages
+    ports:
+      - "3000:3000"
+    depends_on:
+      - messages_DB
+
+  payment:
+    image: payment_api
+    build: 
+      context: ../payment
+      network: host
+      dockerfile: Dockerfile.payment
+    ports:
+      - "4000:4000"
+    
+
+  stock:
+    image: stock_api
+    build: 
+      context: ../stock
+      network: host
+      dockerfile: Dockerfile.stock
+    ports:
+      - "8080:8080"
+    depends_on:
+      - stock_DB
+      
+  frontend_DB:
+    image: frontenddb
+    restart: always
+    volumes: 
+      - data:/data/frontend
+    ports:
+      - "3306:3306"
+     
+
+  messages_DB:
+    image: messagesdb
+    restart: always
+    volumes: 
+      - data:/data/messages
+    ports:
+      - "3306:3306"
+      
+
+  stock_DB:
+    image: stockdb
+    restart: always
+    volumes: 
+      - data:/data/stock
+    ports:
+      - "3306:3306"
+
+secrets:
+  cert:
+    file: ./config/ssl_cert/certificate.pem
+  
+  key:
+    file: ./config/ssl_cert/privatekey.pem
+
+volumes:
+  data:
+  frontenddb:
+  messagesdb:
+  stockdb:
