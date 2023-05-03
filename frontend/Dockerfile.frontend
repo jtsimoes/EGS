@@ -4,11 +4,11 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /frontend
 
-COPY requirements.txt requirements.txt
+COPY ./app/requirements.txt requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY ./ .
+COPY ./app .
 
 EXPOSE 80
 

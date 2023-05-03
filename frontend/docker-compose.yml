@@ -8,33 +8,33 @@ services:
     hostname: frontend
     container_name: frontend
     environment:
-      MYSQL_DATABASE: frontend
-      MYSQL_USER: frontend
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_PASSWORD: frontend
+      MARIADB_DATABASE: 'project'
+      MARIADB_USER: 'username'
+      MARIADB_PASSWORD: 'password'
+      MARIADB_ROOT_PASSWORD: 'toor'
     depends_on:
       - frontend_DB
     ports:  
       - "80:80"
     networks:
       - frontend_network
+    links:
+      - frontend_DB
     volumes:
       - ./:/app
 
   frontend_DB:
-    image: mysql:latest
+    image: mariadb:10.7
+    restart: always
     hostname: frontend_DB
     container_name: frontend_DB
-    restart: always
     environment:
-      MYSQL_DATABASE: frontend
-      MYSQL_USER: frontend
-      MYSQL_PASSWORD: frontend
-      MYSQL_ROOT_PASSWORD: root
-    volumes: 
-      - ../frontend:/var/lib/mysql
-    ports:
-      - "3306:3306"
+      MARIADB_DATABASE: 'project'
+      MARIADB_USER: 'username'
+      MARIADB_PASSWORD: 'password'
+      MARIADB_ROOT_PASSWORD: 'toor'
+    volumes:
+      - ./db:/var/lib/mysql
     networks:
       - frontend_network
 
