@@ -9,7 +9,8 @@
 
 ## About <a name = "about"></a>
 
-Stock API 
+The Stock API is a powerful tool that enables seamless management of products, categories, and subcategories within a stock or inventory system. Designed to simplify and streamline stock management processes, this API provides a robust set of features for organizing and tracking products across various categories and subcategories.
+
 ## Getting Started <a name = "getting_started"></a>
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
@@ -22,37 +23,27 @@ Python 3.7+
 FastAPI
 Uvicorn
 SQLAlchemy
+MariaDB
+Docker
+Docker Compose
 ```
 
 ### Installing 
 
 
 ```
-pip install -r requirements.txt
+sudo docker-compose build
 ```
 
 ## Usage <a name = "usage"></a>
-- Create the database
 ```
-python3 database.py
+sudo docker-compose up
 ```
-
-- Run the server
-
-```
-uvicorn stockAPI:app --reload 
-```
-
-To change the port use --port
-```
-uvicorn stockAPI:app --reload --port 8080
-```
-
-To change the host use --host
-```
-uvicorn stpckAPI:app --reload --host 0.0.0.0
-```
-
 ## Test Data <a name = "test_data"></a>
 
-If you want to test with my data use the [Database Client](https://database-client.com/) visual studio extension and import the json files
+- Choose a SQL client tool in my case I use the [Database Client](https://database-client.com/) visual studio extension
+- Connect to the remote database using the credentials listed in the [docker-compose](docker-compose.yml) file
+  - To get the host, run the following command to see the container's IP
+  ```docker inspect stockapi_db_1 | grep IPAddress ```
+- Execute the SQL query presented in [data](data.sql) file
+

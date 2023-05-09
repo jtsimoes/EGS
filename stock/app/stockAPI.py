@@ -5,6 +5,7 @@ from database import SessionLocal, engine
 from sqlalchemy.exc import IntegrityError
 import models, schemas
 import logging
+import pymysql
 
 logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
@@ -39,7 +40,7 @@ async def get_categories(limit: int = Query(50, ge=1, le=50), offset: int = Quer
     categories = db.query(models.Category)
     total_categories = categories.count()
     if offset >= total_categories:
-        raise HTTPException(status_code=404, detail="Offset is greater than total catefories")    
+        raise HTTPException(status_code=404, detail="Offset is greater than total categories")    
     return categories.offset(offset).limit(limit).all()
 
 
@@ -78,10 +79,11 @@ async def delete_category(category_id: int, db: Session = Depends(get_db)):
 async def update_category(category_id: int, updated_category: schemas.NewCategory, db: Session = Depends(get_db)):
     category = db.query(models.Category).filter(models.Category.id == category_id).first()
     if category:
+        category.id = category_id
         category.name = updated_category.name
         category.image = updated_category.image
         db.commit()
-        return updated_category
+        return category
     raise HTTPException(status_code=404, detail="Category not found")
 
 
@@ -132,9 +134,12 @@ async def delete_subcategory(subcategoryId: int, db: Session = Depends(get_db)):
 async def update_subcategory(subcategoryId: int, updated_subcategory: schemas.NewSubCategory, db: Session = Depends(get_db)):
     subcategory = db.query(models.SubCategory).filter(models.SubCategory.id == subcategoryId).first()
     if subcategory:
-        subcategory = updated_subcategory
+        subcategory.id = subcategoryId
+        subcategory.name = updated_subcategory.name
+        subcategory.category_id = updated_subcategory.category_id
+        subcategory.image = updated_subcategory.image
         db.commit()
-        return updated_subcategory
+        return subcategory
     raise HTTPException(status_code=404, detail="SubCategory not found")
 
 # Products

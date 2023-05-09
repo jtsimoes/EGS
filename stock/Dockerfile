@@ -1,14 +1,14 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
+FROM python:3.9-slim-buster
 
 WORKDIR /stock
 
-COPY ./app/requirements.txt requirements.txt
+COPY app/requirements.txt .
 
-RUN pip3 install --upgrade -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./app .
+COPY app/. .
 
-CMD [ "uvicorn", "stockAPI:app", "--reload", "--port", "6000", "--host", "0.0.0.0"]
+EXPOSE 8000
 
-# build -> docker build -t stock:1.0 -f deploy\Dockerfile.stock .\stock
-# run -> docker run --rm -p 8080:8080 stock:1.0
+CMD ["uvicorn", "stockAPI:app", "--host", "0.0.0.0", "--port", "8000"] 
+
