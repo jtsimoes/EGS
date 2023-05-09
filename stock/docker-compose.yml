@@ -1,0 +1,42 @@
+version: "3.0"
+
+networks:
+  stock_network:
+    driver: bridge
+
+services:
+  stock:
+    image: stock:1.0
+    hostname: stock
+    restart: on-failure
+    container_name: stock
+    networks:
+      - stock_network
+    environment:
+      MARIADB_DATABASE: stock
+      MARIADB_USER: stock
+      MARIADB_PASSWORD: stock
+      MARIADB_ROOT_PASSWORD: stock
+    ports:
+      - 6000:6000
+    volumes:
+      - ./stock:/var/www/html
+    depends_on:
+      - stock_DB
+    links:
+      - stock_DB
+    
+  stock_DB:
+    image: mariadb:10.5
+    hostname: stock_DB
+    container_name: stock_DB
+    networks:
+      - stock_network
+    environment:
+      MARIADB_DATABASE: stock
+      MARIADB_USER: stock
+      MARIADB_PASSWORD: stock
+      MARIADB_ROOT_PASSWORD: stock~
+    volumes:
+      - ./db:/var/lib/mysql
+

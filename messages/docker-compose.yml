@@ -1,0 +1,45 @@
+version: '3.7'
+
+networks:
+  messages_network:
+    driver: bridge
+  
+services:
+  messages:
+    image: messages:1.0
+    hostname: messages 
+    container_name: messages
+    command: npm run dev
+    environment:
+      MARIADB_DATABASE: 'messages'
+      MARIADB_USER: 'messages'
+      MARIADB_PASSWORD: 'messages'
+      MARIADB_ROOT_PASSWORD: 'messages'
+    restart: on-failure
+    depends_on:
+      - messages_DB
+    networks:
+      - messages_network
+    ports:
+      - 3000:3000
+    links:
+      - messages_DB
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+  
+  messages_DB:
+    image: mariadb:10.7
+    hostname: messages_DB
+    container_name: messages_DB
+    environment:
+      MARIADB_DATABASE: 'messages'
+      MARIADB_USER: 'messages'
+      MARIADB_PASSWORD: 'messages'
+      MARIADB_ROOT_PASSWORD: 'messages'
+    networks:
+      - messages_network
+    restart: always
+    volumes:
+      - ./db:/var/lib/mysql
+
