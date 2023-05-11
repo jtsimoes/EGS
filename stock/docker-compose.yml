@@ -1,4 +1,8 @@
 version: '3.3'
+
+networks:
+  stock-network:
+    driver: bridge
 services:
   db:
     image: mariadb
@@ -28,4 +32,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - db
+    links:
       - db

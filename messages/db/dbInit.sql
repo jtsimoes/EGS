@@ -1,6 +1,11 @@
 -- Create the ResellrMessages database
 DROP DATABASE IF EXISTS ResellrMessages;
+
 CREATE DATABASE ResellrMessages;
+
+-- Create new user and grant permissions
+CREATE OR REPLACE USER 'user'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON ResellrMessages.* TO 'user'@'localhost';
 
 -- Switch to the ResellrMessages database
 USE ResellrMessages;
@@ -48,6 +53,3 @@ VALUES
   (3, 2, '2023-03-05 17:30:00', 'Boa tarde, o meu nome é José Silva.'),
   (3, 2, '2023-03-05 18:20:00', 'Como está?');
 
--- Create new user and grant permissions
-CREATE USER 'user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON ResellrMessages.* TO 'user'@'localhost';

@@ -4,14 +4,15 @@ networks:
     driver: bridge
 services:
   frontend:
-    image: frontend:2.0
+    build: .
     hostname: frontend
     container_name: frontend
     environment:
-      MARIADB_DATABASE: 'project'
-      MARIADB_USER: 'username'
-      MARIADB_PASSWORD: 'password'
-      MARIADB_ROOT_PASSWORD: 'toor'
+      DB_HOST: frontend_DB
+      DB_NAME: frontenddb
+      DB_USER: frontend
+      DB_PASSWORD: password
+      DB_PORT: 3306
     depends_on:
       - frontend_DB
     ports:  
@@ -22,19 +23,20 @@ services:
       - frontend_DB
     volumes:
       - ./:/app
+    restart: on-failure
 
   frontend_DB:
-    image: mariadb:10.7
+    image: mariadb
     restart: always
-    hostname: frontend_DB
     container_name: frontend_DB
     environment:
-      MARIADB_DATABASE: 'project'
-      MARIADB_USER: 'username'
-      MARIADB_PASSWORD: 'password'
-      MARIADB_ROOT_PASSWORD: 'toor'
+      MYSQL_DATABASE: frontenddb
+      MYSQL_USER: frontend
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./db:/var/lib/mysql
+      - ./data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - frontend_network
 

@@ -1,45 +1,26 @@
 version: '3.7'
 
-networks:
-  messages_network:
-    driver: bridge
-  
 services:
   messages:
-    image: messages:1.0
-    hostname: messages 
-    container_name: messages
-    command: npm run dev
+    build: .
     environment:
-      MARIADB_DATABASE: 'messages'
-      MARIADB_USER: 'messages'
-      MARIADB_PASSWORD: 'messages'
-      MARIADB_ROOT_PASSWORD: 'messages'
-    restart: on-failure
+      DB_HOST: messages_DB
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: ResellrMessages
     depends_on:
       - messages_DB
-    networks:
-      - messages_network
     ports:
-      - 3000:3000
-    links:
-      - messages_DB
-    volumes:
-      - .:/usr/app/
-      - /usr/app/node_modules
-  
+      - "3000:3000"
+
   messages_DB:
     image: mariadb:10.7
-    hostname: messages_DB
-    container_name: messages_DB
     environment:
-      MARIADB_DATABASE: 'messages'
-      MARIADB_USER: 'messages'
-      MARIADB_PASSWORD: 'messages'
-      MARIADB_ROOT_PASSWORD: 'messages'
-    networks:
-      - messages_network
-    restart: always
+      MYSQL_DATABASE: 'ResellrMessages'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'root'
     volumes:
-      - ./db:/var/lib/mysql
-
+      - ./data:/var/lib/mysql
+      - ./db/dbInit.sql:/docker-entrypoint-initdb.d/dbInit.sql

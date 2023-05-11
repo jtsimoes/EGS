@@ -24,10 +24,11 @@ app.set('view engine', 'ejs');
 
 // database connection config
 const pool = mariadb.createPool({
-    host: 'localhost',
+    host: 'messages_DB',
     user: 'user',
     password: 'password',
-    database: 'ResellrMessages'
+    database: 'ResellrMessages',
+    port: 3306
   });
 
 // define userId (while no auth is implemented)
