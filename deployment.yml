@@ -1,0 +1,558 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: egs-Ressellr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: registry.deti:5000/egs-Ressellr/frontend:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: egs-Ressellr
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  selector:
+    app: frontend
+  
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication
+  namespace: egs-Ressellr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication
+  template:
+    metadata:
+      labels:
+        app: authentication
+    spec:
+      containers:
+      - name: authentication
+        image: registry.deti:5000/egs-Ressellr/authentication:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentication
+  namespace: egs-Ressellr
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  selector:
+    app: authentication
+  
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messages
+  namespace: egs-Ressellr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messages
+  template:
+    metadata:
+      labels:
+        app: messages
+    spec:
+      containers:
+      - name: messages
+        image: registry.deti:5000/egs-Ressellr/messages:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: messages
+  namespace: egs-Ressellr
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+  selector:
+    app: messages
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock
+  namespace: egs-Ressellr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock
+  template:
+    metadata:
+      labels:
+        app: stock
+    spec:
+      containers:
+      - name: stock
+        image: registry.deti:5000/egs-Ressellr/stock:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 6000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock
+  namespace: egs-Ressellr
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 6000
+  selector:
+    app: stock
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  namespace: egs-Ressellr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+      - name: payment
+        image: registry.deti:5000/egs-Ressellr/payment:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 4000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  namespace: egs-Ressellr
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 4000
+  selector:
+    app: payment
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+  namespace: egs-Ressellr
+  annotations:
+    kubernetes.io/ingress.class: "kong"
+spec:
+  rules:
+  - host: Ressellr.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /authentication
+        backend:
+          service:
+            name: authentication
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /messages
+        backend:
+          service:
+            name: messages
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /stock
+        backend:
+          service:
+            name: stock
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /payment
+        backend:
+          service:
+            name: payment
+            port:
+              number: 80
+
+
+---
+# KONG
+
+# Frontend Service
+apiVersion: configuration.konghq.com/v1
+kind: KongIngress
+metadata:
+  name: frontend-route
+  namespace: egs-Ressellr
+  annotations:
+    plugins.konghq.com: oauth2-plugin
+route:
+  methods:
+  - GET
+  - POST
+  strip_path: true
+  protocols:
+  - http
+  - https
+
+---
+
+apiVersion: configuration.konghq.com/v1
+kind: KongService
+metadata:
+  name: frontend-service
+  namespace: egs-Ressellr
+proxy:
+  protocol: http
+  path: /
+route:
+  name: frontend-route
+
+---
+# Frontend Route
+apiVersion: configuration.konghq.com/v1
+kind: KongRoute
+metadata:
+  name: frontend-route
+  namespace: egs-Ressellr
+spec:
+  methods:
+  - GET
+  - POST
+  paths:
+  - /
+  strip_path: true
+  protocols:
+  - http
+  - https
+  service:
+    name: frontend-service
+
+---
+
+# Authentication Service
+apiVersion: configuration.konghq.com/v1
+kind: KongIngress
+metadata:
+  name: authentication-route
+  namespace: egs-Ressellr
+  annotations:
+    plugins.konghq.com: oauth2-plugin
+route:
+  methods:
+  - GET
+  - POST
+  strip_path: true
+  protocols:
+  - http
+  - https
+
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongService
+metadata:
+  name: authentication-service
+  namespace: egs-Ressellr
+proxy:
+  protocol: http
+  path: /authentication
+route:
+  name: authentication-route
+
+---  
+# Authentication Route
+apiVersion: configuration.konghq.com/v1
+kind: KongRoute
+metadata:
+  name: authentication-route
+  namespace: egs-Ressellr
+spec:
+  methods:
+  - GET
+  - POST
+  paths:
+  - /authentication
+  strip_path: true
+  protocols:
+  - http
+  - https
+  service:
+    name: authentication-service
+
+---
+# Messages Service
+apiVersion: configuration.konghq.com/v1
+kind: KongIngress
+metadata:
+  name: messages-route
+  namespace: egs-Ressellr
+  annotations:
+    plugins.konghq.com: oauth2-plugin
+route:
+  methods:
+  - GET
+  - POST
+  strip_path: true
+  protocols:
+  - http
+  - https
+
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongService
+metadata:
+  name: messages-service
+  namespace: egs-Ressellr
+proxy:
+  protocol: http
+  path: /messages
+route:
+  name: messages-route
+
+---
+# Messages Route
+apiVersion: configuration.konghq.com/v1
+kind: KongRoute
+metadata:
+  name: messages-route
+  namespace: egs-Ressellr
+spec:
+  methods:
+  - GET
+  - POST
+  paths:
+  - /messages
+  strip_path: true
+  protocols:
+  - http
+  - https
+  service:
+    name: messages-service
+
+
+
+---
+# Stock Service
+apiVersion: configuration.konghq.com/v1
+kind: KongIngress
+metadata:
+  name: stock-route
+  namespace: egs-Ressellr
+  annotations:
+    plugins.konghq.com: oauth2-plugin
+route:
+  methods:
+  - GET
+  - POST
+  strip_path: true
+  protocols:
+  - http
+  - https
+
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongService
+metadata:
+  name: stock-service
+  namespace: egs-Ressellr
+proxy:
+  protocol: http
+  path: /stock
+route:
+  name: stock-route
+
+---
+# Stock Route
+apiVersion: configuration.konghq.com/v1
+kind: KongRoute
+metadata:
+  name: stock-route
+  namespace: egs-Ressellr
+spec:
+  methods:
+  - GET
+  - POST
+  paths:
+  - /stock
+  strip_path: true
+  protocols:
+  - http
+  - https
+  service:
+    name: stock-service
+
+---
+# Payment Service
+apiVersion: configuration.konghq.com/v1
+kind: KongIngress
+metadata:
+  name: payment-route
+  namespace: egs-Ressellr
+  annotations:
+    plugins.konghq.com: oauth2-plugin
+route:
+  methods:
+  - GET
+  - POST
+  strip_path: true
+  protocols:
+  - http
+  - https
+
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongService
+metadata:
+  name: payment-service
+  namespace: egs-Ressellr
+proxy:
+  protocol: http
+  path: /payment
+route:
+  name: payment-route
+
+---
+# Payment Route
+apiVersion: configuration.konghq.com/v1
+kind: KongRoute
+metadata:
+  name: payment-route
+  namespace: egs-Ressellr
+spec:
+  methods:
+  - GET
+  - POST
+  paths:
+  - /payment
+  strip_path: true
+  protocols:
+  - http
+  - https
+  service:
+    name: payment-service
+
+---
+# Kong Oauth2 Plugin
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: oauth2-plugin
+  namespace: egs-Ressellr
+config:
+  scopes:
+  - read
+  - write
+  mandatory_scope: true
+  token_expiration: 3600
+  enable_password_grant: true
+  provision_key: "your_provision_key_here"
+plugin: oauth2
+
+---
+# Kong Consumer
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+metadata:
+  name: my-consumer
+  namespace: egs-Ressellr
+username: my-consumer
+
+---
+# Kong Credential
+apiVersion: configuration.konghq.com/v1
+kind: KongCredential
+metadata:
+  name: my-oauth2-credential
+  namespace: egs-Ressellr
+consumerRef: my-consumer
+type: oauth2
+config:
+  client_id: my-client-id
+  client_secret: my-client-secret
+  redirect_uris:
+  - http://Ressellr.com/oauth2/callback
+
+

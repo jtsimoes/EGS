@@ -1,7 +1,8 @@
 version: '3.7'
 networks:
-  frontend_network:
+  frontend-network:
     driver: bridge
+
 services:
   frontend:
     build: .
@@ -18,11 +19,9 @@ services:
     ports:  
       - "80:80"
     networks:
-      - frontend_network
+      - frontend-network
     links:
       - frontend_DB
-    volumes:
-      - ./:/app
     restart: on-failure
 
   frontend_DB:
@@ -38,7 +37,7 @@ services:
       - ./data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - frontend_network
+      - frontend-network
 
 volumes:
   frontend_data:

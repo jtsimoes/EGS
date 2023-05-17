@@ -34,12 +34,12 @@ class Item(Base):
     date = Column(DateTime, default=datetime.now)
     description = Column(String(500))
     price = Column(Float)
-    old_price = Column(Float, default=None)  # optional
+    old_price = Column(Float, default=None)  
     image = Column(String(500))
     location = Column(String(500))
     condition = Column(String(500))
     is_available = Column(Boolean, default=True)
-    owner_id = Column(String(500), ForeignKey("users.id"))
+    owner_id = Column(Integer, ForeignKey("users.id")) 
     # ForeignKey("categories.id")) external database/table
     category_id = Column(Integer)
     # ForeignKey("products.id")) external database/table

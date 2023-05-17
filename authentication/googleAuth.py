@@ -1,12 +1,13 @@
 import os
 import requests
 import json
-from flask import Flask, request, redirect, session, url_for, abort
+from flask import Flask, request, redirect, session, url_for, abort, Response
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 import google
 from pip._vendor import cachecontrol
+import jsonify
 
 app = Flask(__name__)
 app.secret_key = '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'
@@ -86,8 +87,13 @@ def logout():
 @app.route("/user_info")
 @login_is_required
 def user_info():
-    return f"user: {session['name']}<BR>email: {session['email']}<BR>google_id: {session['google_id']}<BR>token: {session['token']}"
-    # logout <a href='/logout'><button>Logout</button></a>"
+    user_info = {
+        "user": session['name'],
+        "email": session['email'],
+        "google_id": session['google_id'],
+        "token": session['token']
+    }
+    return Response(json.dumps(user_info), mimetype='application/json')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=False)

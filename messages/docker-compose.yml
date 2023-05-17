@@ -12,7 +12,7 @@ services:
     depends_on:
       - messages_DB
     ports:
-      - "3000:3000"
+      - "4000:3000"
 
   messages_DB:
     image: mariadb:10.7

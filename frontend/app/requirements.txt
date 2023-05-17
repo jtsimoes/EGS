@@ -4,3 +4,4 @@ requests==2.21.0
 SQLAlchemy==1.4.35
 uvicorn==0.22.0
 pymysql
+tenacity
