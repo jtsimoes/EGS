@@ -1,8 +1,10 @@
+# Frontend Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: egs-Ressellr
+  labels:
+    app: frontend
 spec:
   replicas: 1
   selector:
@@ -15,38 +17,50 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: registry.deti:5000/egs-Ressellr/frontend:latest
+        image: registry.deti:5000/egs-ressellr/frontend:latest # replace with the location of your built image
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
         ports:
         - containerPort: 80
-
+        env:
+        - name: DB_HOST
+          value: frontend-db
+        - name: DB_NAME
+          value: frontenddb
+        - name: DB_USER
+          value: frontend
+        - name: DB_PASSWORD
+          value: password
+        - name: DB_PORT
+          value: "3306"
+      
 ---
-
+# Frontend Service
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend
-  namespace: egs-Ressellr
 spec:
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
   selector:
     app: frontend
-  
-
-
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
 ---
 
+
+
+
+# Authentication Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: authentication
-  namespace: egs-Ressellr
+  labels:
+    app: authentication
 spec:
   replicas: 1
   selector:
@@ -59,35 +73,37 @@ spec:
     spec:
       containers:
       - name: authentication
-        image: registry.deti:5000/egs-Ressellr/authentication:latest
+        image: registry.deti:5000/egs-ressellr/authentication:latest # replace with the location of your built image
+        ports:
+        - containerPort: 5000
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
-        ports:
-        - containerPort: 5000
 
 ---
 
+# Authentication Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: authentication
-  namespace: egs-Ressellr
+  name: googleauth-app
 spec:
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 5000
   selector:
-    app: authentication
-  
+    app: googleauth-app
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+
+
 ---
+
+# Messages App Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: messages
-  namespace: egs-Ressellr
 spec:
   replicas: 1
   selector:
@@ -100,36 +116,49 @@ spec:
     spec:
       containers:
       - name: messages
-        image: registry.deti:5000/egs-Ressellr/messages:latest
+        image: registry.deti:5000/egs-ressellr/messages:latest
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
-        ports:
-        - containerPort: 3000
+        env:
+        - name: DB_HOST
+          value: messages-db
+        - name: DB_PORT
+          value: '3306'
+        - name: DB_USER
+          value: 'user'
+        - name: DB_PASSWORD
+          value: 'password'
+        - name: DB_NAME
+          value: 'ResellrMessages'
 
 ---
+
+# Messages App Service
 apiVersion: v1
 kind: Service
 metadata:
   name: messages
-  namespace: egs-Ressellr
 spec:
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 3000
+  type: NodePort
   selector:
     app: messages
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
 
 ---
 
 
+
+
+# Stock DB Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stock
-  namespace: egs-Ressellr
+  name: stock-deployment
 spec:
   replicas: 1
   selector:
@@ -141,50 +170,126 @@ spec:
         app: stock
     spec:
       containers:
-      - name: stock
-        image: registry.deti:5000/egs-Ressellr/stock:latest
+      - name: app-container
+        image: registry.deti:5000/egs-ressellr/messages:latest
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
+        env:
+        - name: DB_HOST
+          value: "db-service"
+        - name: DB_NAME
+          value: "stockdb"
+        - name: DB_USER
+          value: "stock"
+        - name: DB_PASSWORD
+          value: "password"
+        - name: DB_PORT
+          value: "3306"
         ports:
-        - containerPort: 6000
+        - containerPort: 8000
+
+---
+
+# Stock DB Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-service
+spec:
+  selector:
+    app: stock
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: NodePort
+
+---
+
+# Stock DB StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stock-db-statefulset
+spec:
+  serviceName: "db-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock-db
+  template:
+    metadata:
+      labels:
+        app: stock-db
+    spec:
+      containers:
+      - name: db-container
+        image: mariadb #replace if you have a custom image
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: MYSQL_DATABASE
+          value: "stockdb"
+        - name: MYSQL_USER
+          value: "stock"
+        - name: MYSQL_PASSWORD
+          value: "password"
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: db-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Mi
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: stock
-  namespace: egs-Ressellr
+  name: stock-db-service
 spec:
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 6000
+  - port: 3306
+  clusterIP: None
   selector:
-    app: stock
+    app: db
 
 ---
 
+
+
+
+# Payment App Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment
-  namespace: egs-Ressellr
+  name: payment-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: payment
+      app: payment-app
   template:
     metadata:
       labels:
-        app: payment
+        app: payment-app
     spec:
       containers:
-      - name: payment
-        image: registry.deti:5000/egs-Ressellr/payment:latest
+      - name: payment-app
+        image: registry.deti:5000/egs-ressellr/payment:latest #replace with your payment application image
         resources:
           limits:
             memory: "128Mi"
@@ -194,18 +299,20 @@ spec:
 
 ---
 
+# Payment App Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: payment
-  namespace: egs-Ressellr
+  name: payment-app
 spec:
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 4000
+  type: NodePort
   selector:
-    app: payment
+    app: payment-app
+  ports:
+    - protocol: TCP
+      port: 4000
+      targetPort: 4000
+      nodePort: 30001 # select an available port from 30000-32767
 
 ---
 
@@ -213,12 +320,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: my-ingress
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
   annotations:
     kubernetes.io/ingress.class: "kong"
 spec:
   rules:
-  - host: Ressellr.com
+  - host: ressellr.com
     http:
       paths:
       - pathType: Prefix
@@ -234,29 +341,28 @@ spec:
           service:
             name: authentication
             port:
-              number: 80
+              number: 5000
       - pathType: Prefix
         path: /messages
         backend:
           service:
             name: messages
             port:
-              number: 80
+              number: 3000
       - pathType: Prefix
         path: /stock
         backend:
           service:
             name: stock
             port:
-              number: 80
+              number: 8000
       - pathType: Prefix
         path: /payment
         backend:
           service:
             name: payment
             port:
-              number: 80
-
+              number: 4000
 
 ---
 # KONG
@@ -266,7 +372,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongIngress
 metadata:
   name: frontend-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
   annotations:
     plugins.konghq.com: oauth2-plugin
 route:
@@ -284,7 +390,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongService
 metadata:
   name: frontend-service
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 proxy:
   protocol: http
   path: /
@@ -297,7 +403,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongRoute
 metadata:
   name: frontend-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 spec:
   methods:
   - GET
@@ -318,7 +424,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongIngress
 metadata:
   name: authentication-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
   annotations:
     plugins.konghq.com: oauth2-plugin
 route:
@@ -335,7 +441,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongService
 metadata:
   name: authentication-service
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 proxy:
   protocol: http
   path: /authentication
@@ -348,7 +454,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongRoute
 metadata:
   name: authentication-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 spec:
   methods:
   - GET
@@ -368,7 +474,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongIngress
 metadata:
   name: messages-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
   annotations:
     plugins.konghq.com: oauth2-plugin
 route:
@@ -385,7 +491,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongService
 metadata:
   name: messages-service
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 proxy:
   protocol: http
   path: /messages
@@ -398,7 +504,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongRoute
 metadata:
   name: messages-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 spec:
   methods:
   - GET
@@ -420,7 +526,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongIngress
 metadata:
   name: stock-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
   annotations:
     plugins.konghq.com: oauth2-plugin
 route:
@@ -437,7 +543,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongService
 metadata:
   name: stock-service
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 proxy:
   protocol: http
   path: /stock
@@ -450,7 +556,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongRoute
 metadata:
   name: stock-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 spec:
   methods:
   - GET
@@ -470,7 +576,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongIngress
 metadata:
   name: payment-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
   annotations:
     plugins.konghq.com: oauth2-plugin
 route:
@@ -487,7 +593,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongService
 metadata:
   name: payment-service
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 proxy:
   protocol: http
   path: /payment
@@ -500,7 +606,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongRoute
 metadata:
   name: payment-route
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 spec:
   methods:
   - GET
@@ -520,7 +626,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongPlugin
 metadata:
   name: oauth2-plugin
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 config:
   scopes:
   - read
@@ -537,7 +643,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongConsumer
 metadata:
   name: my-consumer
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 username: my-consumer
 
 ---
@@ -546,13 +652,36 @@ apiVersion: configuration.konghq.com/v1
 kind: KongCredential
 metadata:
   name: my-oauth2-credential
-  namespace: egs-Ressellr
+  namespace: egs-ressellr
 consumerRef: my-consumer
 type: oauth2
 config:
   client_id: my-client-id
   client_secret: my-client-secret
   redirect_uris:
-  - http://Ressellr.com/oauth2/callback
+  - http://ressellr.com/oauth2/callback
 
-
+# Configure Traefik
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-k3s
+  namespace: egs-ressellr
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+spec:
+  rules:
+  - host: app-ressellr.k3s
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx
+            port: 
+              number: 80

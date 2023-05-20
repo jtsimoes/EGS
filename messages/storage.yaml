@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: egs-ressellr
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+  storageClassName: longhorn
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messages-db
+  namespace: egs-ressellr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messages-db
+  template:
+    metadata:
+      labels:
+        app: messages-db
+    spec:
+      containers:
+      - name: messages-db
+        image: mariadb:latest
+        ports:
+        - containerPort: 3306
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "10m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "root"
+        - name: MYSQL_USER
+          value: "user"
+        - name: MYSQL_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "ResellrMessages"
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: messages-db-service
+spec:
+  selector:
+    app: messages-db
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306

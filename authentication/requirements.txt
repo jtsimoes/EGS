@@ -6,4 +6,5 @@ requests==2.28.1
 oauthlib==3.0.1
 pyOpenSSL==19.0.0
 Flask-Login==0.4.1
+jsonify
 google_auth_oauthlib
