@@ -10,56 +10,81 @@ const paypal = require('@paypal/checkout-server-sdk')
 const Environment = process.env.NODE_ENV === 'production' ? paypal.core.LiveEnvironment : paypal.core.SandboxEnvironment
 const paypalClient = new paypal.core.PayPalHttpClient(new Environment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_CLIENT_SECRET))
 
-// const storeItems = new Map([
-    // [1, { price: 1, name: "yeet"}],
-    // [2, { price: 2, name: "yeeeeeet"}],
-// ])
-
 app.get('/', (req, res) => {
     res.render('index', { paypalClientId: process.env.PAYPAL_CLIENT_ID,})
 })
 
-app.post('/create-order/:orderId', async (req, res) => {
-    const request = new paypal.orders.OrdersCreateRequest()
-    const storeItems = req.params.orderId
-    const total = req.body.items.reduce((sum, item) => {
-        return sum + storeItems.get(item.id).price
-    }, 0)
-    request.prefer("return=representation")
-    request.requestBody({
-        intent: 'CAPTURE',
-        purchase_units: [
-            {
-                amount: {
-                    currency_code: 'EUR',
-                    value: total,
-                    breakdown: {
-                        item_total: {
-                            currency_code: "EUR",
-                            value: total
-                        }
-                    }
-                },
-                items: req.body.items.map(item => {
-                    const storeItem = storeItems.get(item.id)
-                    return{
-                        name: storeItem.name,
-                        unit_amount: {
-                            currency_code: "EUR",
-                            value: storeItem.price
-                        }
-                    }
-                })
-            }
-        ]
-    })
+app.post('/create-order', async (req, res) => {
+    const { items } = req.body;
 
-    try{
-        const order = await paypalClient.execute(request)
-        res.json({ id: order.result.id})
-    } catch(e) {
-        res.status(500).json({ error: e.message })
-    }
+    const itemList = items.map((item) => ({
+        name: item.name,
+        sku: item.sku,
+        price: item.price,
+        currency: item.currency,
+        quantity: item.quantity,
+    }));
+
+    const totalAmount = items.reduce((total, item) => {
+        const itemAmount = parseFloat(item.price) * parseInt(item.quantity);
+        return total + itemAmount
+    }, 0);
+    
+    const createPaymentJson = {
+        intent: 'sale',
+        payer: {
+            payment_method: 'paypal',   // ?? talvez obriga a meter pagamento com paypal
+        },
+        redirect_urls: {
+            return_url: '/success',
+            cancel_url: '/cancel',
+        },
+        transactions: [
+            {
+                item_list: {
+                    items: itemList,
+                },
+                amonut: {
+                    currency: 'EUR',
+                    total: totalAmount.toFixed(2),
+                },
+                description: 'Payment description',
+            },
+        ],
+    };
+
+    paypal.payment.create(createPaymentJson, (error, payment) => {
+        if (error) {
+          throw error;
+        } else {
+          // Redirect user to PayPal for approval
+          res.redirect(payment.links[1].href);
+        }
+      });
 })
+    
+app.get('/success', (req, res) => {
+    const payerId = req.query.PayerID;
+    const paymentId = req.query.paymentId;
+      
+    const executePaymentJson = {
+        payer_id: payerId,
+    };
+      
+    paypal.payment.execute(paymentId, executePaymentJson, (error, payment) => {
+        if (error) {
+            throw error;
+        } else {
+            // Payment successful, handle the transaction
+            res.send('Payment successful!');
+
+        }
+    });
+});
+      
+app.get('/cancel', (req, res) => {
+    // Handle cancellation
+    res.send('Payment cancelled!');
+});
 
 app.listen(4000)
