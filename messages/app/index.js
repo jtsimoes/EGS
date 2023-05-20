@@ -37,7 +37,7 @@ const numSysUsers = 3;
 const user = 2;
 
 // GET - responds with the list of conversation of a specific user, defined above
-app.get('/messages', async (req, res) => {
+app.get('/', async (req, res) => {
     // create database connection
     const connection = await pool.getConnection();
 
@@ -49,7 +49,7 @@ app.get('/messages', async (req, res) => {
 });
 
 // POST - adds a new conversation to the database
-app.post('/messages', async (req, res) => {
+app.post('/', async (req, res) => {
     
     // create database connection
     const connection = await pool.getConnection();
@@ -62,7 +62,7 @@ app.post('/messages', async (req, res) => {
     var rows = await connection.query(sql);
     if(rows.length > 0){
         const conversationId = rows[0].id;
-        res.redirect('/messages/' + conversationId);
+        res.redirect('/' + conversationId);
     }
     // if it doesn't, then
     else{
@@ -88,18 +88,18 @@ app.post('/messages', async (req, res) => {
 
         // check for any errors during creation
         if(rows.length == 0){
-            res.redirect('/messages');
+            res.redirect('/');
         }
         // if not, redirect to newly created conversation
         else{
             const conversationId = rows[0].id;
-            res.redirect('/messages/' + conversationId);
+            res.redirect('/' + conversationId);
         }
     }
 });
 
 // GET - responds with the list of messages of a specific conversation
-app.get('/messages/:conversationId', async (req, res) => {
+app.get('/:conversationId', async (req, res) => {
     // create database connection
     const connection = await pool.getConnection();
 
@@ -113,18 +113,18 @@ app.get('/messages/:conversationId', async (req, res) => {
     // check if it is an existing conversation
     if(rows.length == 0){
         connection.end();
-        res.redirect('/messages');
+        res.redirect('/');
     }
     // if so, check if the current user has access to it
     else if(rows[0].userId1 != user && rows[0].userId2 != user){
         connection.end();
-        res.redirect('/messages');
+        res.redirect('/');
     }
     // if so, check if the user doesnt have this conversation hidden
     else if((rows[0].userId1 == user && rows[0].userHidden1 == true) ||
                     (rows[0].userId2 == user && rows[0].userHidden2 == true)){
         connection.end();
-        res.redirect('/messages');         
+        res.redirect('/');         
     }
     // if so, render the page
     else{
@@ -138,7 +138,7 @@ app.get('/messages/:conversationId', async (req, res) => {
 });
 
 // POST - takes a message ,sends it using Pusher and adds it to the database
-app.post('/messages/:conversationId', async (req, res) => {
+app.post('/:conversationId', async (req, res) => {
     
     channelName = "chat"+req.params.conversationId;
     
@@ -168,7 +168,7 @@ app.post('/messages/:conversationId', async (req, res) => {
 });
 
 // DELETE - deletes a conversation (hides it from a user's view)
-app.delete('/messages/:conversationId', async (req, res) => {
+app.delete('/:conversationId', async (req, res) => {
 
     const conversationId = parseInt(req.body.conversationId);
 
@@ -182,12 +182,12 @@ app.delete('/messages/:conversationId', async (req, res) => {
     // check if it is an existing conversation
     if(rows.length == 0){
         connection.end();
-        res.redirect('/messages');
+        res.redirect('/');
     }
     // if so, check if the current user has access to it
     else if(rows[0].userId1 != user && rows[0].userId2 != user){
         connection.end();
-        res.redirect('/messages');
+        res.redirect('/');
     }
     // if so, delete the conversation (hide it for this user's view)
     else{
@@ -199,7 +199,7 @@ app.delete('/messages/:conversationId', async (req, res) => {
             await connection.query('UPDATE ConvTable SET userHidden2 = true WHERE id = ?', [conversationId]);
         }
         connection.end();
-        res.redirect('/messages');
+        res.redirect('/');
     }
 });
 

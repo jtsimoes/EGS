@@ -41,7 +41,7 @@ channel.bind('message', function(data) {
 });
   
 // ------------------------------------
-//this script is listening to the form and posts to /messages without the need for page reloading
+//this script is listening to the form and posts to / without the need for page reloading
 // ------------------------------------
 
 const form = document.getElementById('message-form');
@@ -55,7 +55,7 @@ form.addEventListener('submit', (event) => {
 
   // Send a POST request to the server with the message data
   var convId = document.getElementById('chatbox').getAttribute("value");
-  var path = '/messages/' + convId;
+  var path = '/' + convId;
   fetch(path, {
     method: 'POST',
     headers: {
@@ -81,7 +81,7 @@ form.addEventListener('submit', (event) => {
 });
 
 // ------------------------------------
-//this script is listening to the form and posts to /messages without the need for page reloading
+//this script is listening to the form and posts to / without the need for page reloading
 // ------------------------------------
 
 const deleteForm = document.getElementById('delete-conv');
@@ -101,7 +101,7 @@ deleteForm.addEventListener('submit', (event) => {
     } else {
       console.log('Delete request failed');
     }
-    window.location.href = '/messages';
+    window.location.href = '/';
   })
   .catch(error => {
     console.log('Error:', error);
