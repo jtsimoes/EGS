@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: payment-app
+  namespace: egs-ressellr
 spec:
   replicas: 1
   selector:
@@ -14,7 +15,7 @@ spec:
     spec:
       containers:
       - name: payment-app
-        image: registry.deti:5000/egs-ressellr/payment:latest #replace with your payment application image
+        image: registry.deti:5000/egs-ressellr/payment:v1 #replace with your payment application image
         resources:
           limits:
             memory: "128Mi"
@@ -29,15 +30,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: payment-app
+  namespace: egs-ressellr
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: payment-app
   ports:
     - protocol: TCP
       port: 4000
       targetPort: 4000
-      nodePort: 30001 # select an available port from 30000-32767
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -55,7 +56,7 @@ spec:
   - host: app-ressellr.k3s
     http:
       paths:
-      - path: /
+      - path: /payment
         pathType: Prefix
         backend:
           service:
