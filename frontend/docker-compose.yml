@@ -38,6 +38,3 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - frontend-network
-
-volumes:
-  frontend_data:

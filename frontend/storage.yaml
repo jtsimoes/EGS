@@ -17,20 +17,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: messages-db
+  name: frontend-db
   namespace: egs-ressellr
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: messages-db
+      app: frontend-db
   template:
     metadata:
       labels:
-        app: messages-db
+        app: frontend-db
     spec:
       containers:
-      - name: messages-db
+      - name: frontend-db
         image: mariadb:latest
         ports:
         - containerPort: 3306
@@ -49,7 +49,7 @@ spec:
         - name: MYSQL_PASSWORD
           value: "password"
         - name: MYSQL_DATABASE
-          value: "ResellrMessages"
+          value: "Resellrfrontend"
         volumeMounts:
         - name: mysql-storage
           mountPath: /var/lib/mysql
@@ -66,7 +66,7 @@ spec:
           claimName: mysql-pvc
       - name: mysql-initdb
         configMap:
-          name: mysql-initdb
+          name: mysql-initdb-frontend
         persistentVolumeClaim:
           claimName: mysql-pvc
 
@@ -75,10 +75,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: messages-db-service
+  name: frontend-db-service
 spec:
   selector:
-    app: messages-db
+    app: frontend-db
   ports:
   - protocol: TCP
     port: 3306
