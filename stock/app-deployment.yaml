@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-deployment
+  namespace: egs-ressellr
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock
+  template:
+    metadata:
+      labels:
+        app: stock
+    spec:
+      containers:
+      - name: stock
+        image: registry.deti:5000/egs-ressellr/stock:v1   
+        env:
+        - name: DB_HOST
+          value: stockdb
+        - name: DB_NAME
+          value: stockdb
+        - name: DB_USER
+          value: stock
+        - name: DB_PASSWORD
+          value: password
+        - name: DB_PORT
+          value: "3306"
+        ports:
+        - containerPort: 6000
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "10m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-service
+  namespace: egs-ressellr
+spec:
+  selector:
+    app: stock
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 6000
+   
+  
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ressellr
+  namespace: egs-ressellr
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+spec:
+  rules:
+  - host: app-ressellr.k3s
+    http:
+      paths:
+      - path: /stock
+        pathType: Prefix
+        backend:
+          service:
+            name: stock-service
+            port: 
+              number: 80

@@ -1,0 +1,14 @@
+# Use the MariaDB 10.8.2 base image
+FROM mariadb:10.8.2
+
+
+
+# Copy the SQL initialization script to the container
+COPY ./db/init.sql /docker-entrypoint-initdb.d/init.sql
+
+# Mount the data volume for persistent storage
+VOLUME ./data:/var/lib/mysql
+
+
+
+

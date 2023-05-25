@@ -6,6 +6,7 @@
 - [Getting Started](#getting_started)
 - [Usage](#usage)
 - [Test Data](#test_data)
+- [Deployment] (#Deployment)
 
 ## About <a name = "about"></a>
 
@@ -47,3 +48,28 @@ sudo docker-compose up
   ```docker inspect stockapi_db_1 | grep IPAddress ```
 - Execute the SQL query presented in [data](data.sql) file
 
+
+## Deployment
+```bash
+
+# The rest of the deployment is done with the following commands
+docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/stockdb:v1 -f Dockerfile.db .
+docker push registry.deti:5000/egs-ressellr/stockdb:v1
+
+docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/stock:v1 -f Dockerfile.app .
+docker push registry.deti:5000/egs-ressellr/stock:v1
+
+kubectl apply -f db-deployment.yaml
+kubectl apply -f app-deployment.yaml
+
+#Delete deployment
+kubectl delete -f db-deployment.yaml
+kubectl delete -f app-deployment.yaml
+
+# Get all the pods in the namespace
+kubectl get pods -n egs-ressellr
+
+# Get all the services in the namespace
+kubectl get services -n egs-ressellr
+
+```
