@@ -10,6 +10,6 @@ RUN pip install --upgrade -r requirements.txt
 
 COPY ./ .
 
-EXPOSE 5000
+EXPOSE 7000
 
 CMD [ "python", "googleAuth.py"]

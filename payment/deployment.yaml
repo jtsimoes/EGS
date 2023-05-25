@@ -37,29 +37,5 @@ spec:
     app: payment-app
   ports:
     - protocol: TCP
-      port: 4000
+      port: 80
       targetPort: 4000
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: app-ressellr
-  namespace: egs-ressellr
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
-    traefik.ingress.kubernetes.io/redirect-entry-point: https
-    traefik.ingress.kubernetes.io/redirect-permanent: "true"
-spec:
-  rules:
-  - host: app-ressellr.k3s
-    http:
-      paths:
-      - path: /payment
-        pathType: Prefix
-        backend:
-          service:
-            name: payment-service
-            port: 
-              number: 4000

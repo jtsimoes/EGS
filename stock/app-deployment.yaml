@@ -53,28 +53,3 @@ spec:
     port: 80
     targetPort: 6000
    
-  
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: app-ressellr
-  namespace: egs-ressellr
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
-    traefik.ingress.kubernetes.io/redirect-entry-point: https
-    traefik.ingress.kubernetes.io/redirect-permanent: "true"
-spec:
-  rules:
-  - host: app-ressellr.k3s
-    http:
-      paths:
-      - path: /stock
-        pathType: Prefix
-        backend:
-          service:
-            name: stock-service
-            port: 
-              number: 80

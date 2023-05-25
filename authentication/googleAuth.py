@@ -23,77 +23,81 @@ flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirec
 def login_is_required(function):
     def wrapper(*args, **kwargs):
         if "google_id" not in session:
-            return redirect("authorize")
+            return redirect("/authorize")
         return function()
     return wrapper
 
-@app.route("/")
+@app.route("/authorize", methods = ['GET'])
 def index():
-    return redirect("login")
+    return redirect("/authorize/login")
     # return "Hello World <a href='/login'><button>Login</button></a>"
 
-@app.route("/login")
+@app.route("/authorize/login", methods = ['GET'])
 def login():
-    # Generate the Google OAuth2 authorization URL
-    authorization_url, state = flow.authorization_url()
-    session["state"] = state
-    return redirect(authorization_url)
+    if request.method == 'GET':
+        # Generate the Google OAuth2 authorization URL
+        authorization_url, state = flow.authorization_url()
+        session["state"] = state
+        return redirect(authorization_url)
 
 
-@app.route("/oauth2callback")
+@app.route("/authorize/oauth2callback", methods = ['GET'])
 def oauth2callback():
-    # Handle the Google OAuth2 response
-    flow.fetch_token(authorization_response=request.url)
+    if request.method == 'GET':
+        # Handle the Google OAuth2 response
+        flow.fetch_token(authorization_response=request.url)
 
-    credentials = flow.credentials
-    request_session = requests.session()
-    cached_session = cachecontrol.CacheControl(request_session)
-    token_request = google.auth.transport.requests.Request(session=cached_session)
-    
-    
-    id_info = id_token.verify_oauth2_token(
-        id_token=credentials.id_token,
-        request = token_request,
-        clock_skew_in_seconds=1
-    )
-    
-    session["name"] = id_info["name"]
-    session["email"] = id_info["email"]
-    session["google_id"] = id_info["sub"]
-    session["token"] = credentials.token
-    session["refresh_token"] = credentials.refresh_token
-    session["token_uri"] = credentials.token_uri
-    session["client_id"] = credentials.client_id
-    session["client_secret"] = credentials.client_secret
-    session["scopes"] = credentials.scopes
-    
-    
-    return redirect("user_info")
+        credentials = flow.credentials
+        request_session = requests.session()
+        cached_session = cachecontrol.CacheControl(request_session)
+        token_request = google.auth.transport.requests.Request(session=cached_session)
 
-@app.route("/logout")
+
+        id_info = id_token.verify_oauth2_token(
+            id_token=credentials.id_token,
+            request = token_request,
+            clock_skew_in_seconds=1
+        )
+
+        session["name"] = id_info["name"]
+        session["email"] = id_info["email"]
+        session["google_id"] = id_info["sub"]
+        session["token"] = credentials.token
+        session["refresh_token"] = credentials.refresh_token
+        session["token_uri"] = credentials.token_uri
+        session["client_id"] = credentials.client_id
+        session["client_secret"] = credentials.client_secret
+        session["scopes"] = credentials.scopes
+
+
+        return redirect("user_info")
+
+@app.route("/authorize/logout", methods = ['GET'])
 def logout():
-    credentials = Credentials.from_authorized_user_info(session, SCOPES)
+    if request.method == 'GET':
+        credentials = Credentials.from_authorized_user_info(session, SCOPES)
 
-    # Revoke token
-    requests.post('https://oauth2.googleapis.com/revoke',
-                    params={'token': credentials.token},
-                    headers={'content-type': 'application/x-www-form-urlencoded'})
+        # Revoke token
+        requests.post('https://oauth2.googleapis.com/revoke',
+                        params={'token': credentials.token},
+                        headers={'content-type': 'application/x-www-form-urlencoded'})
 
-    # Clear session
-    session.clear()
-      
-    return redirect("/")
+        # Clear session
+        session.clear()
+        
+        return redirect("/authorize")
 
-@app.route("/user_info")
+@app.route("/authorize/user_info", methods = ['POST'])
 @login_is_required
 def user_info():
-    user_info = {
-        "user": session['name'],
-        "email": session['email'],
-        "google_id": session['google_id'],
-        "token": session['token']
-    }
-    return Response(json.dumps(user_info), mimetype='application/json')
+    if request.method == 'POST':
+        user_info = {
+            "user": session['name'],
+            "email": session['email'],
+            "google_id": session['google_id'],
+            "token": session['token']
+        }
+        return Response(json.dumps(user_info), mimetype='application/json')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=7000, debug=False)
