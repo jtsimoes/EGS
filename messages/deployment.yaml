@@ -13,9 +13,13 @@ spec:
       labels:
         app: messages
     spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
       containers:
       - name: messages
-        image: registry.deti:5000/egs-ressellr/messages:v1
+        image: registry.deti:5000/egs-ressellr/messages:v1.2
         ports:
         - containerPort: 3000
         resources:
@@ -39,7 +43,7 @@ spec:
       volumes:
       - name: messages-storage
         persistentVolumeClaim:
-          claimName: mysql-pvc
+          claimName: mysql-pvc-messages
 ---
 
 apiVersion: v1

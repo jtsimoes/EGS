@@ -3,11 +3,11 @@
 ## DEPLOYMENT
 ```bash
 #create the configmap for the messages database
-kubectl create configmap mysql-initdb --from-file=./db/dbinit.sql
+kubectl create configmap mysql-initdb-messages -n egs-ressellr --from-file=./db/dbInit.sql
 
 # The rest of the deployment is done with the following commands
-docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/messages:v1 .
-docker push registry.deti:5000/egs-ressellr/messages:v1
+docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/messages:v1.2 .
+docker push registry.deti:5000/egs-ressellr/messages:v1.2
 
 kubectl apply -f storage.yaml
 kubectl apply -f deployment.yaml

@@ -2,14 +2,14 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pvc
+  name: mysql-pvc-messages
   namespace: egs-ressellr
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Mi
+      storage: 300Mi
   storageClassName: longhorn
 
 ---
@@ -53,22 +53,15 @@ spec:
         volumeMounts:
         - name: mysql-storage
           mountPath: /var/lib/mysql
-      ports:
-        - containerPort: 3306
-      volumeMounts:
-        - name: mysql-storage
-          mountPath: /var/lib/mysql
         - name: mysql-initdb
           mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: mysql-storage
         persistentVolumeClaim:
-          claimName: mysql-pvc
+          claimName: mysql-pvc-messages
       - name: mysql-initdb
         configMap:
-          name: mysql-initdb
-        persistentVolumeClaim:
-          claimName: mysql-pvc
+          name: mysql-initdb-messages
 
 ---
 
@@ -76,6 +69,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: messages-db-service
+  namespace: egs-ressellr
 spec:
   selector:
     app: messages-db
