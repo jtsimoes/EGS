@@ -51,15 +51,15 @@ spec:
         - name: MYSQL_DATABASE
           value: "ResellrMessages"
         volumeMounts:
-        - name: mysql-storage
+        - name: mysql-storage-messages
           mountPath: /var/lib/mysql
-        - name: mysql-initdb
+        - name: mysql-initdb-messages
           mountPath: /docker-entrypoint-initdb.d
       volumes:
-      - name: mysql-storage
+      - name: mysql-storage-messages
         persistentVolumeClaim:
           claimName: mysql-pvc-messages
-      - name: mysql-initdb
+      - name: mysql-initdb-messages
         configMap:
           name: mysql-initdb-messages
 
