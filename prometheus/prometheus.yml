@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+  external_labels:
+    monitor: 'codelab-monitor'
+
+scrape_configs:
+  - job_name: 'resellr'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['app-ressellr.k3s:80']
+        labels:
+          group: 'messages'
+    metrics_path: '/messages'
