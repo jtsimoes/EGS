@@ -10,11 +10,11 @@ const paypal = require('@paypal/checkout-server-sdk')
 const Environment = process.env.NODE_ENV === 'production' ? paypal.core.LiveEnvironment : paypal.core.SandboxEnvironment
 const paypalClient = new paypal.core.PayPalHttpClient(new Environment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_CLIENT_SECRET))
 
-app.get('/', (req, res) => {
+app.get('/payment/', (req, res) => {
     res.render('index', { paypalClientId: process.env.PAYPAL_CLIENT_ID,})
 })
 
-app.post('/create-order', async (req, res) => {
+app.post('/payment/create-order', async (req, res) => {
     const { items } = req.body;
 
     const itemList = items.map((item) => ({
