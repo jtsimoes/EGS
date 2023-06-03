@@ -12,7 +12,7 @@
       paypal
   .Buttons({
     createOrder: function(){
-      return fetch('/create-order', {
+      return fetch('/payment/create-order', {
         method: "POST",
         headers:{
           "Content-Type": 'application/json',

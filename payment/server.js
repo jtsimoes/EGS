@@ -15,11 +15,11 @@ const paypalClient = new paypal.core.PayPalHttpClient(new Environment(process.en
 //     [2, { price: 20, name: "yeeeeeet"}],
 // ])
 
-app.get('/', (req, res) => {
+app.get('/payment', (req, res) => {
     res.render('index', { paypalClientId: process.env.PAYPAL_CLIENT_ID,})
 })
 
-app.post('/create-order', async (req, res) => {
+app.post('/payment/create-order', async (req, res) => {
     const request = new paypal.orders.OrdersCreateRequest()
     const total = req.body.items.reduce((sum, item) => {
         return sum + item.price * item.quantity
