@@ -12,20 +12,27 @@
       paypal
   .Buttons({
     createOrder: function(){
-      return fetch('/create-order', {
+      return fetch('payment/create-order', {
         method: "POST",
         headers:{
           "Content-Type": 'application/json',
         },
-        body: ({
+        body: JSON.stringify({
           items: [
             {
-              id: 1,
-              quantity: 2
+              name: "produto 1",
+              sku: 1,
+              price: 20,
+              currency: "EUR",
+      		    quantity: 1
             },
             { 
-              id: 2,
-              quantity: 3},
+              name: "produto 2",
+              sku: 3,
+              price: 15,
+              currency: "EUR",
+      		    quantity: 2
+            },
           ],
         }),
       }).then(res => {
