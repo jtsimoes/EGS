@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: payment-service
-        image: registry.deti:5000/egs-ressellr/payment:v6.4 #replace with your payment application image
+        image: registry.deti:5000/egs-ressellr/payment:v6.5 #replace with your payment application image
         resources:
           limits:
             memory: "128Mi"

@@ -42,6 +42,7 @@ app.post('/payment/create-order', async (req, res) => {
                 items: req.body.items.map(item => {
                     //const storeItem = storeItems.get(item.id)
                     return{
+                        id: item.id,
                         name: item.name,
                         unit_amount: {
                             currency_code: "USD",
