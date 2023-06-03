@@ -4,16 +4,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: mariadb-pv-claim
   namespace: egs-ressellr
-
-  labels:
-    app: mariadb
-    tier: database
 spec:
   accessModes:
     - ReadWriteOnce   
   resources:
     requests:
-      storage: 100Mi    
+      storage: 500Mi    
   storageClassName: longhorn
 
 ---
@@ -21,56 +17,53 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stockdb-deployment
+  name: stockdb
   namespace: egs-ressellr
-
-  labels:
-    app: stockdb
-    tier: database
 spec:
+  replicas: 1
   selector: 
     matchLabels:
       app: stockdb
-      tier: database
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels: 
         app: stockdb
-        tier: database
     spec:
       containers:
       - name: stockdb
-        image: registry.deti:5000/egs-ressellr/stockdb:v1
-        imagePullPolicy: Never
+        image: mariadb:latest
+        ports:
+        - containerPort: 3306
         resources:
+          requests:
+            memory: "32Mi"
+            cpu: "10m"
           limits:
             memory: "128Mi"
             cpu: "500m"
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: password
+          value: "password"
         - name: MYSQL_USER
-          value: stock
+          value: "stock"
         - name: MYSQL_PASSWORD
-          value: password
+          value: "password"
         - name: MYSQL_DATABASE 
-          value: stockdb
-        #volumeMounts:
-        # - name: data-volume
-        #   mountPath: /var/lib/mysql
-        # - name : init-script
-        #   mountPath: /docker-entrypoint-initdb.d/init.sql
+          value: "stockdb"
+        volumeMounts:
+        - name : init-script-stock
+          mountPath: /docker-entrypoint-initdb.d
+        - name: mariadb-persistent-storage-stock
+          mountPath: /var/lib/mysql
   
       volumes:
-      # # - name: init-script
-      # #   hostPath:
-      # #     path: /home/miguel/Documents/stockAPI/db/init.sql
+      - name: init-script-stock
+        configMap:
+          name: mariadb-init-map
       # - name: data-volume # Mounting 'volume' to the container
       #   hostPath:
       #     path: /home/miguel/Documents/stockAPI/data/mysql
-      - name: mariadb-persistent-storage # Obtaining 'volume' from PVC
+      - name: mariadb-persistent-storage-stock # Obtaining 'volume' from PVC
         persistentVolumeClaim:
           claimName: mariadb-pv-claim
 
@@ -79,15 +72,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: stockdb 
+  name: stockdb-service
   namespace: egs-ressellr
-  labels:
-    app: stockdb
-    tier: database
 spec:
-  ports:
-  - port: 3306
-    targetPort: 3306
-  selector: 
+  selector:
     app: stockdb
-    tier: database
+  ports:
+  - protocol: TCP
+    targetPort: 3306
+    port: 3306
