@@ -13,9 +13,13 @@ spec:
       labels:
         app: payment-service
     spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
       containers:
       - name: payment-service
-        image: registry.deti:5000/egs-ressellr/payment:v6.6 #replace with your payment application image
+        image: registry.deti:5000/egs-ressellr/payment:v6.19 #replace with your payment application image
         resources:
           limits:
             memory: "128Mi"
