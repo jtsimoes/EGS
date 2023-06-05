@@ -1,0 +1,80 @@
+# Define a 'Persistent Volume Claim' (PVC) for MariaDB Storage, dynamically provisioned by cluster
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ressellr-pv-claim
+  namespace: egs-ressellr
+spec:
+  accessModes:
+    - ReadWriteOnce   
+  resources:
+    requests:
+      storage: 500Mi    
+  storageClassName: longhorn
+
+---
+# Configure 'Deployment' of MariaDB server
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ressellrdb
+  namespace: egs-ressellr
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: ressellrdb
+  template:
+    metadata:
+      labels: 
+        app: ressellrdb
+    spec:
+      containers:
+      - name: ressellrdb
+        image: mariadb:latest
+        ports:
+        - containerPort: 3306
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "10m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        - name: MYSQL_USER
+          value: "user"
+        - name: MYSQL_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE 
+          value: "ressellr"
+        volumeMounts:
+        - name : init-script
+          mountPath: /docker-entrypoint-initdb.d
+        - name: ressellr-persistent-storage
+          mountPath: /var/lib/mysql
+  
+      volumes:
+      - name: init-script
+        configMap:
+          name: ressellr-init-map
+      - name: ressellr-persistent-storage # Obtaining 'volume' from PVC
+        persistentVolumeClaim:
+          claimName: ressellr-pv-claim
+
+---
+# Define a 'Service' to expose MySQL to other services
+apiVersion: v1
+kind: Service
+metadata:
+  name: ressellr-database-service
+  namespace: egs-ressellr
+spec:
+  selector:
+    app: ressellrdb
+  ports:
+  - protocol: TCP
+    targetPort: 3306
+    port: 3306
