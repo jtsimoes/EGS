@@ -14,9 +14,13 @@ spec:
       labels:
         app: authentication-service
     spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
       containers:
       - name: authentication-service
-        image: registry.deti:5000/egs-ressellr/authentication:v2
+        image: registry.deti:5000/egs-ressellr/authentication:v3.10
         resources:
           limits:
             memory: "128Mi"
@@ -27,7 +31,7 @@ spec:
 
 ---
 
-# Authentication Service
+#Authentication Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -38,6 +42,5 @@ spec:
   - port: 80
     protocol: TCP
     targetPort: 7000
-    # nodePort: 32001 # acede a este endereço de fora do cluster
   selector:
     app: authentication-service

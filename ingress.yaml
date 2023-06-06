@@ -20,13 +20,6 @@ spec:
             name: frontend-service
             port: 
               number: 80
-      - path: /authorize
-        pathType: Prefix
-        backend:
-          service:
-            name: authentication-service
-            port: 
-              number: 80
       - path: /messages
         pathType: Prefix
         backend:
@@ -48,3 +41,14 @@ spec:
             name: stock-service
             port: 
               number: 80
+  - host: googleauth.duckdns.org
+    http:
+      paths:
+      - path: /authorize
+        pathType: Prefix
+        backend:
+          service:
+            name: authentication-service
+            port: 
+              number: 80
+              
