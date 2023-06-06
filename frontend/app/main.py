@@ -1,7 +1,6 @@
 import uvicorn
 import json  # TODO: necessary?
 import requests  # TODO: necessary?
-from functools import lru_cache  # TODO: for cache
 from typing import List
 from fastapi import FastAPI, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -9,7 +8,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-# import config  # TODO: for cache
 import crud
 import models
 import schemas
@@ -22,12 +20,6 @@ app = FastAPI(title="Resellr", description="Buy & Sell", version="1.0")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
-
-
-@lru_cache()
-def get_settings():
-    # return config.Settings()
-    return None
 
 
 # Dependency
@@ -122,9 +114,6 @@ async def gateway_timeout_error(request: Request, exc: HTTPException):
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    # async def index(request: Request, settings: config.Settings = Depends(get_settings)):
-    # test = settings.HELLO_WORLD
-    # print("-------------->"+test)
     return templates.TemplateResponse("index.html", {"request": request})
 
 
