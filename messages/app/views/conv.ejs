@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-  <title>Chatbox Example</title>
+  <title>Messages</title>
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -29,7 +29,18 @@
                     <div class="media"><img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
                       <div class="media-body ml-4">
                         <div class="d-flex align-items-center justify-content-between mb-1">
-                          <h6 class="mb-0"><%=filteredConvTable[key]["otherUserName"]%></h6><small class="small font-weight-bold">14 Dec</small>
+                          <h6 class="mb-0"><%=filteredConvTable[key]["otherUserName"]%></h6>
+                            <% if (conversationId != -1) { %>
+                              <div class="col-6 pr-0">
+                                <form method="DELETE" id="delete-conv" class="bg-light">
+                                  <div class="input-group">
+                                    <div class="input-group-append" style="padding-left: 120px">
+                                      <button id="button-addon2" type="submit" value="Delete" style="width: 25%;" class="btn btn-danger btn-block rounded-0 position-absolute top-0 right-0">X</button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            <% } %>
                         </div>
                         <p class="font-italic mb-0 text-small">Lorem ipsum dolor sit amet, consectetur. incididunt ut labore.</p>
                       </div>
@@ -40,7 +51,7 @@
                     <div class="media"><img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
                       <div class="media-body ml-4">
                         <div class="d-flex align-items-center justify-content-between mb-1">
-                          <h6 class="mb-0"><%=filteredConvTable[key]["otherUserName"]%></h6><small class="small font-weight-bold">14 Dec</small>
+                          <h6 class="mb-0"><%=filteredConvTable[key]["otherUserName"]%></h6>
                         </div>
                         <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet, consectetur. incididunt ut labore.</p>
                       </div>
@@ -53,11 +64,11 @@
           </div>
         </div>
       </div>
+      <% if (conversationId != -1) { %>
       <!-- Chat Box-->
       <div class="col-7 px-0">
         <input type="hidden" id="userid" value=<%=currentUserId%>></input>
-        <div id="chatbox" class="px-4 py-5 chat-box bg-white" value=<%=conversationId%>>
-          <% if (conversationId != -1) { %>
+        <div id="chatbox" class="px-4 py-5 chat-box bg-white overflow-auto" style="margin-top: 46px; height: calc(400px - 46px);" value=<%=conversationId%>>
             <% Object.keys(filteredMsgTable).forEach(function(key) { %>
               <% if (filteredMsgTable[key]["senderId"] == currentUserId) { %>
                 <div class="media w-50 ml-auto mb-3">
@@ -65,7 +76,7 @@
                     <div class="bg-primary rounded py-2 px-3 mb-2">
                       <p class="text-small mb-0 text-white"><%= filteredMsgTable[key]["content"] %></p>
                     </div>
-                    <p class="small text-muted">12:00 PM | Aug 13</p>
+                    <p class="small text-muted"><%= filteredMsgTable[key]["timestamp"].toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', second: 'numeric' }) %></p>
                   </div>
                 </div>
               <% } else { %>
@@ -79,7 +90,6 @@
                 </div>
               <% } %>              
             <% }); %>
-          <% } %>
         </div>
   
         <!-- Typing area -->
@@ -93,29 +103,19 @@
         </form>
   
       </div>
+      <% } %>
     </div>
   </div>
 
   <% if (conversationId == -1) { %>
-  <form method="POST" id="new-conv" class="bg-light">
-    <div class="input-group">
-      <div class="input-group-append">
-        <button id="button-addon2" type="submit" class="btn btn-link">NEW CONVERSATION</button>
+    <div class="col-7 px-0">
+      <div class="text-right mt-3">
+        <form method="POST" id="new-conv" class="bg-light d-inline-block">
+          <button id="button-addon2" type="submit" class="btn btn-primary rounded-pill">NEW CONVERSATION</button>
+        </form>
       </div>
     </div>
-  </form>
-  <% } %>
-
-
-  <% if (conversationId != -1) { %>
-    <form method="DELETE" id="delete-conv" class="bg-light">
-      <div class="input-group">
-        <div class="input-group-append">
-          <button id="button-addon2" type="submit" value="Delete" class="btn btn-link">DELETE CONVERSATION</button>
-        </div>
-      </div>
-    </form>
-  <% } %>
+  <% } %>  
 
   <script>
     // ------------------------------------
@@ -173,28 +173,30 @@
       const messageInput = document.getElementById('message-input');
       const message = messageInput.value;
 
-      // Send a POST request to the server with the message data
-      var convId = document.getElementById('chatbox').getAttribute("value");
-      var path = '/messages/' + convId;
-      fetch(path, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: message
+      if(message != ''){
+        // Send a POST request to the server with the message data
+        var convId = document.getElementById('chatbox').getAttribute("value");
+        var path = '/messages/' + convId;
+        fetch(path, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: message
+          })
         })
-      })
-      .then(response => {
-        if (response.ok) {
-          console.log('Message sent successfully');
-        } else {
-          console.error('Error sending message');
-        }
-      })
-      .catch(error => {
-        console.error('Error sending message', error);
-      });
+        .then(response => {
+          if (response.ok) {
+            console.log('Message sent successfully');
+          } else {
+            console.error('Error sending message');
+          }
+        })
+        .catch(error => {
+          console.error('Error sending message', error);
+        });
+      }
 
       // Clear the message input field
       messageInput.value = '';
@@ -250,10 +252,15 @@
       // append the paragraph element to the second inner div
       innerDiv2.appendChild(pElement);
 
+      const currentTime = new Date();
+  
+      // format the timestamp
+      const timestamp = currentTime.toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', second: 'numeric' });
+
       // create the second paragraph element inside the media-body div
       const pElement2 = document.createElement('p');
       pElement2.classList.add('small', 'text-muted');
-      pElement2.textContent = '12:00 PM | Aug 13';
+      pElement2.textContent = timestamp
 
       // append the second inner div and the second paragraph element to the media-body div
       innerDiv1.appendChild(innerDiv2);

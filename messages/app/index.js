@@ -30,8 +30,8 @@ const pool = mariadb.createPool({
   });
 
 // define userId (while no auth is implemented)
-const userNames = ['João Ferreira', 'José Silva', 'Amélia Rodrigues'];
-const numSysUsers = 3;
+const userNames = ['João Ferreira', 'José Silva', 'Amélia Rodrigues', 'Francisco Pereira', 'Rui Santos', 'Inês Teixeira'];
+const numSysUsers = 6;
 const user = 2;
 
 // GET - responds with the list of conversation of a specific user, defined above
@@ -54,45 +54,54 @@ app.post('/messages', async (req, res) => {
 
     const otherUserId = Math.floor(1 + Math.random()*(numSysUsers));
 
-    // check if conversation already exists
-    var sql = 'SELECT * FROM ConvTable WHERE ( userId1 = ' + user + ' AND userId2 = ' + otherUserId + ' ) '
-                                        + 'OR ( userId1 = ' + otherUserId + ' AND userId2 = ' + user + ' )';
-    var rows = await connection.query(sql);
+    console.log(otherUserId);
 
-    if(rows.length > 0){
-        const conversationId = rows[0].id;
-        res.redirect('/messages/' + conversationId);
+    if(otherUserId == user){
+        connection.end()
+        res.redirect('/messages');
     }
-    // if it doesn't, then
     else{
-        // add the message to the database
-        const convData = {
-            userId1: user,
-            userName1: userNames[user-1],
-            userHidden1: false,
-            userId2: otherUserId,
-            userName2: userNames[otherUserId-1],
-            userHidden2: false,
-            lastMessage: null,
-        }
-
-        await connection.query('INSERT INTO ConvTable (userId1, userName1, userHidden1, userId2, userName2, userHidden2, lastMessage) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                [convData.userId1, convData.userName1, convData.userHidden1, convData.userId2, convData.userName2, convData.userHidden2, convData.lastMessage]);
-        
-        // get the conversation to get its automatically created id
-        var sql = 'SELECT * FROM ConvTable WHERE userId1 = ' + user + ' AND userId2 = ' + otherUserId;
+        // check if conversation already exists
+        var sql = 'SELECT * FROM ConvTable WHERE ( userId1 = ' + user + ' AND userId2 = ' + otherUserId + ' ) '
+                                            + 'OR ( userId1 = ' + otherUserId + ' AND userId2 = ' + user + ' )';
         var rows = await connection.query(sql);
 
-        connection.end();
-
-        // check for any errors during creation
-        if(rows.length == 0){
-            res.redirect('/messages');
-        }
-        // if not, redirect to newly created conversation
-        else{
+        if(rows.length > 0){
             const conversationId = rows[0].id;
+            connection.end()
             res.redirect('/messages/' + conversationId);
+        }
+        // if it doesn't, then
+        else{
+            // add the message to the database
+            const convData = {
+                userId1: user,
+                userName1: userNames[user-1],
+                userHidden1: false,
+                userId2: otherUserId,
+                userName2: userNames[otherUserId-1],
+                userHidden2: false,
+                lastMessage: null,
+            }
+
+            await connection.query('INSERT INTO ConvTable (userId1, userName1, userHidden1, userId2, userName2, userHidden2, lastMessage) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    [convData.userId1, convData.userName1, convData.userHidden1, convData.userId2, convData.userName2, convData.userHidden2, convData.lastMessage]);
+            
+            // get the conversation to get its automatically created id
+            var sql = 'SELECT * FROM ConvTable WHERE userId1 = ' + user + ' AND userId2 = ' + otherUserId;
+            var rows = await connection.query(sql);
+
+            connection.end();
+
+            // check for any errors during creation
+            if(rows.length == 0){
+                res.redirect('/messages');
+            }
+            // if not, redirect to newly created conversation
+            else{
+                const conversationId = rows[0].id;
+                res.redirect('/messages/' + conversationId);
+            }
         }
     }
 });
@@ -123,15 +132,16 @@ app.get('/messages/:conversationId', async (req, res) => {
         else if(rows[0].userId1 != user && rows[0].userId2 != user){
             connection.end();
             res.redirect('/messages');
-        }
-        // if so, check if the user doesnt have this conversation hidden
-        else if((rows[0].userId1 == user && rows[0].userHidden1 == true) ||
-                        (rows[0].userId2 == user && rows[0].userHidden2 == true)){
-            connection.end();
-            res.redirect('/messages');         
-        }
+        }  
         // if so, render the page
         else{
+            // if so, check if the user doesnt have this conversation hidden
+            if((rows[0].userId1 == user && rows[0].userHidden1 == true) ||
+            (rows[0].userId2 == user && rows[0].userHidden2 == true)){
+                await connection.query('UPDATE ConvTable SET userHidden1 = ?, userHidden2 = ? WHERE userId1 = ? AND userId2 = ?;',
+                    [false, false, rows[0].userId1, rows[0].userId2]);
+            }
+            
             const filteredConvTable = await filterConvTable(connection);        
             const filteredMsgTable = await filterMsgTable(connection, conversationId);
             connection.end();
