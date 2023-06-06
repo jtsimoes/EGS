@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ressellr-pv-claim
+  name: mysql-pvc-frontend
   namespace: egs-ressellr
 spec:
   accessModes:
@@ -17,20 +17,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ressellrdb
+  name: frontend-db
   namespace: egs-ressellr
 spec:
   replicas: 1
   selector: 
     matchLabels:
-      app: ressellrdb
+      app: frontend-db
   template:
     metadata:
       labels: 
-        app: ressellrdb
+        app: frontend-db
     spec:
       containers:
-      - name: ressellrdb
+      - name: frontend-db
         image: mariadb:latest
         ports:
         - containerPort: 3306
@@ -51,18 +51,17 @@ spec:
         - name: MYSQL_DATABASE 
           value: "ressellr"
         volumeMounts:
-        - name : init-script
-          mountPath: /docker-entrypoint-initdb.d
-        - name: ressellr-persistent-storage
+        - name: mysql-storage-frontend
           mountPath: /var/lib/mysql
-  
+        - name: mysql-initdb-frontend
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
-      - name: init-script
-        configMap:
-          name: ressellr-init-map
-      - name: ressellr-persistent-storage # Obtaining 'volume' from PVC
+      - name: mysql-storage-frontend
         persistentVolumeClaim:
-          claimName: ressellr-pv-claim
+          claimName: mysql-pvc-frontend
+      - name: mysql-initdb-frontend
+        configMap:
+          name: mysql-initdb-frontend
 
 ---
 # Define a 'Service' to expose MySQL to other services
@@ -73,7 +72,7 @@ metadata:
   namespace: egs-ressellr
 spec:
   selector:
-    app: ressellrdb
+    app: frontend-db
   ports:
   - protocol: TCP
     targetPort: 3306
