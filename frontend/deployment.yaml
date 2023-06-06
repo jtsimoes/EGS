@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: registry.deti:5000/egs-ressellr/frontend:v1
+        image: registry.deti:5000/egs-ressellr/frontend:v1.1
         ports:
         - containerPort: 3000
         resources:
@@ -27,7 +27,7 @@ spec:
             cpu: "500m"
         env:
         - name: DB_HOST
-          value: frontend-db-service
+          value: "frontend-db-service"
         - name: DB_PORT
           value: "3306"
         - name: DB_USER
@@ -35,11 +35,11 @@ spec:
         - name: DB_PASSWORD
           value: "password"
         - name: DB_NAME
-          value: "Resellrfrontend"
+          value: "ressellr"
       volumes:
       - name: frontend-storage
         persistentVolumeClaim:
-          claimName: mysql-pvc
+          claimName: ressellr-pv-claim
 ---
 
 apiVersion: v1

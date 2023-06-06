@@ -7,37 +7,37 @@ GRANT ALL PRIVILEGES ON ressellr.* TO 'user'@'localhost';
 USE ressellr;
 
 CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    token VARCHAR(500),
-    username VARCHAR(500) UNIQUE,
-    name VARCHAR(500),
-    email VARCHAR(500) UNIQUE,
-    avatar VARCHAR(500) DEFAULT NULL,
-    rating FLOAT DEFAULT 0.0,
-    total_sales INT DEFAULT 0,
-    total_purchases INT DEFAULT 0,
-    total_reviews INT DEFAULT 0,
-    phone INT UNIQUE ,
-    registration DATETIME DEFAULT CURRENT_TIMESTAMP,
-    location VARCHAR(500),
-    is_active BOOLEAN DEFAULT TRUE
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `token` VARCHAR(500),
+    `username` VARCHAR(500) UNIQUE,
+    `name` VARCHAR(500),
+    `email` VARCHAR(500) UNIQUE,
+    `avatar` VARCHAR(500) DEFAULT NULL,
+    `rating` FLOAT DEFAULT 0.0,
+    `total_sales` INT DEFAULT 0,
+    `total_purchases` INT DEFAULT 0,
+    `total_reviews` INT DEFAULT 0,
+    `phone` INT UNIQUE,
+    `registration` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `location` VARCHAR(500),
+    `is_active` BOOLEAN DEFAULT TRUE
 );
 
 
 CREATE TABLE items (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(500) ,
-    date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    description VARCHAR(500),
-    price FLOAT,
-    old_price FLOAT DEFAULT NULL,
-    image VARCHAR(500),
-    location VARCHAR(500),
-    condition VARCHAR(500),
-    is_available BOOLEAN DEFAULT TRUE,
-    owner_id INT,
-    category_id INT,
-    product_id INT,
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `title` VARCHAR(500) ,
+    `date` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `description` VARCHAR(500),
+    `price` FLOAT,
+    `old_price` FLOAT DEFAULT NULL,
+    `image` VARCHAR(500),
+    `location` VARCHAR(500),
+    `condition` VARCHAR(500),
+    `is_available` BOOLEAN DEFAULT TRUE,
+    `owner_id` INT,
+    `category_id` INT,
+    `product_id` INT,
     FOREIGN KEY (owner_id) REFERENCES users(id)
     -- FOREIGN KEY (category_id) REFERENCES categories(id) -- uncomment for external database/table
     -- FOREIGN KEY (product_id) REFERENCES products(id) -- uncomment for external database/table

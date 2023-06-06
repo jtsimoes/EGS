@@ -1,36 +1,36 @@
----
+# Define a 'Persistent Volume Claim' (PVC) for MariaDB Storage, dynamically provisioned by cluster
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pvc
+  name: ressellr-pv-claim
   namespace: egs-ressellr
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce   
   resources:
     requests:
-      storage: 10Mi
+      storage: 500Mi    
   storageClassName: longhorn
 
 ---
-
+# Configure 'Deployment' of MariaDB server
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-db
+  name: ressellrdb
   namespace: egs-ressellr
 spec:
   replicas: 1
-  selector:
+  selector: 
     matchLabels:
-      app: frontend-db
+      app: ressellrdb
   template:
     metadata:
-      labels:
-        app: frontend-db
+      labels: 
+        app: ressellrdb
     spec:
       containers:
-      - name: frontend-db
+      - name: ressellrdb
         image: mariadb:latest
         ports:
         - containerPort: 3306
@@ -48,38 +48,33 @@ spec:
           value: "user"
         - name: MYSQL_PASSWORD
           value: "password"
-        - name: MYSQL_DATABASE
-          value: "Resellrfrontend"
+        - name: MYSQL_DATABASE 
+          value: "ressellr"
         volumeMounts:
-        - name: mysql-storage
-          mountPath: /var/lib/mysql
-      ports:
-        - containerPort: 3306
-      volumeMounts:
-        - name: mysql-storage
-          mountPath: /var/lib/mysql
-        - name: mysql-initdb
+        - name : init-script
           mountPath: /docker-entrypoint-initdb.d
+        - name: ressellr-persistent-storage
+          mountPath: /var/lib/mysql
+  
       volumes:
-      - name: mysql-storage
-        persistentVolumeClaim:
-          claimName: mysql-pvc
-      - name: mysql-initdb
+      - name: init-script
         configMap:
-          name: mysql-initdb-frontend
+          name: ressellr-init-map
+      - name: ressellr-persistent-storage # Obtaining 'volume' from PVC
         persistentVolumeClaim:
-          claimName: mysql-pvc
+          claimName: ressellr-pv-claim
 
 ---
-
+# Define a 'Service' to expose MySQL to other services
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend-db-service
+  namespace: egs-ressellr
 spec:
   selector:
-    app: frontend-db
+    app: ressellrdb
   ports:
   - protocol: TCP
-    port: 3306
     targetPort: 3306
+    port: 3306
