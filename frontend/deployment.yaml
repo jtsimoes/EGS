@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: registry.deti:5000/egs-ressellr/frontend:v1.1
+        image: registry.deti:5000/egs-ressellr/frontend:v1.3
         ports:
         - containerPort: 3000
         resources:
@@ -36,10 +36,6 @@ spec:
           value: "password"
         - name: DB_NAME
           value: "ressellr"
-      volumes:
-      - name: frontend-storage
-        persistentVolumeClaim:
-          claimName: ressellr-pv-claim
 ---
 
 apiVersion: v1
