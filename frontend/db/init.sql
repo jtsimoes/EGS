@@ -3,6 +3,9 @@ CREATE DATABASE ressellr;
 
 CREATE OR REPLACE USER 'user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON ressellr.* TO 'user'@'localhost';
+
+USE ressellr;
+
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     token VARCHAR(500),
