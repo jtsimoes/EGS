@@ -19,7 +19,7 @@ spec:
           value: "1"
       containers:
       - name: messages
-        image: registry.deti:5000/egs-ressellr/messages:v1.2
+        image: registry.deti:5000/egs-ressellr/messages:v1.5
         ports:
         - containerPort: 3000
         resources:
