@@ -6,11 +6,11 @@
 - [Getting Started](#getting_started)
 - [Usage](#usage)
 - [Test Data](#test_data)
-- [Deployment] (#Deployment)
+- [Deployment](#deployment)
 
 ## About <a name = "about"></a>
 
-The Stock API is a powerful tool that enables seamless management of products, categories, and subcategories within a stock or inventory system. Designed to simplify and streamline stock management processes, this API provides a robust set of features for organizing and tracking products across various categories and subcategories.
+The Stock API is a powerful tool that enables seamless management of products, categories, and subcategories within a stock or inventory system. Designed to simplify and streamline stock management processes, this API provides a set of features for organizing and tracking products across various categories and subcategories.
 
 ## Getting Started <a name = "getting_started"></a>
 
@@ -49,15 +49,16 @@ sudo docker-compose up
 - Execute the SQL query presented in [data](data.sql) file
 
 
-## Deployment
+## Deployment <a name = "deployment"></a> 
+
 ```bash
+#create the configmap for the stock database
+kubectl create configmap mariadb-init-map -n egs-ressellr --from-file=./db/init.sql
 
 # The rest of the deployment is done with the following commands
-docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/stockdb:v1 -f Dockerfile.db .
-docker push registry.deti:5000/egs-ressellr/stockdb:v1
 
-docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/stock:v1 -f Dockerfile.app .
-docker push registry.deti:5000/egs-ressellr/stock:v1
+docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/stock:v3 -f Dockerfile.app .
+docker push registry.deti:5000/egs-ressellr/stock:v3
 
 kubectl apply -f db-deployment.yaml
 kubectl apply -f app-deployment.yaml

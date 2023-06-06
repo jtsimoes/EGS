@@ -1,5 +1,12 @@
-from uuid import UUID
 from pydantic import BaseModel, Field
+
+class Company(BaseModel):
+    name: str = Field(..., description="The name of the company")
+    id: int = Field(..., description="The ID of the company")
+    image: str = Field("", description="The image url of the company")
+    api_key: str = Field(..., description="The API key of the company")
+    class Config:
+        orm_mode = True
 
 class Category(BaseModel):
     name: str = Field(..., description="The name of the category")

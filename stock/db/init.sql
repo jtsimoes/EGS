@@ -1,9 +1,17 @@
-CREATE DATABASE IF NOT EXISTS stockdb;
+DROP DATABASE IF EXISTS stockdb;
+CREATE DATABASE stockdb;
 CREATE OR REPLACE USER 'stock'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON stockdb.* TO 'stock'@'localhost';
 
 USE stockdb;
 -- Tables
+CREATE TABLE IF NOT EXISTS companies (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(200) NOT NULL,
+    image VARCHAR(500),
+    api_key VARCHAR(200) UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS categories (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(200) NOT NULL,
@@ -27,6 +35,9 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (subcategory_id) REFERENCES subcategories(id)
 );
 
+-- Companies
+INSERT INTO companies (name, image, api_key) VALUES ('Ressellr', 'ressellr.jpg', '123456789');
+INSERT INTO companies (name, image, api_key) VALUES ('Fnac', 'fnac.jpg', '987654321');
 -- Lazer
 INSERT INTO categories (name, image) VALUES ('Lazer', 'lazer.jpg');
 INSERT INTO subcategories (name, category_id, image) VALUES ('Brinquedos e Jogos', 1, 'brinquedos.jpg');
