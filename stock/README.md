@@ -5,8 +5,8 @@
 - [About](#about)
 - [Getting Started](#getting_started)
 - [Usage](#usage)
-- [Test Data](#test_data)
 - [Deployment](#deployment)
+- [Documentation](#documentation)
 
 ## About <a name = "about"></a>
 
@@ -40,16 +40,11 @@ sudo docker-compose build
 ```
 sudo docker-compose up
 ```
-## Test Data <a name = "test_data"></a>
-
-- Choose a SQL client tool in my case I use the [Database Client](https://database-client.com/) visual studio extension
-- Connect to the remote database using the credentials listed in the [docker-compose](docker-compose.yml) file
-  - To get the host, run the following command to see the container's IP
-  ```docker inspect stockapi_db_1 | grep IPAddress ```
-- Execute the SQL query presented in [data](data.sql) file
 
 
 ## Deployment <a name = "deployment"></a> 
+
+This instruction is to use in a private server so you probably don't have access to that, change the commands to your requisits.
 
 ```bash
 #create the configmap for the stock database
@@ -74,3 +69,6 @@ kubectl get pods -n egs-ressellr
 kubectl get services -n egs-ressellr
 
 ```
+
+## Documentation <a name = "documentation"></a>
+<a href="https://app.swaggerhub.com/apis-docs/Resellr/StockAPI/1.0.0"> SwaggerHub</a>
