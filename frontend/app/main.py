@@ -227,21 +227,6 @@ async def profile(request: Request, user_username: str, db: Session = Depends(ge
 
     return templates.TemplateResponse("profile.html", {"request": request, "user": user, "categories": categories})
 
-
-@app.get("/messages", response_class=HTMLResponse)
-async def messages(request: Request):
-    messages = "TODO"
-
-    return templates.TemplateResponse("messages.html", {"request": request, "messages": messages})
-
-
-@app.get("/messages/{id}", response_class=HTMLResponse)
-async def message(request: Request, id: str):
-    message = "TODO"
-
-    return templates.TemplateResponse("message.html", {"request": request, "message": message})
-
-
 @app.get("/cart", response_class=HTMLResponse)
 async def cart(request: Request):
     return templates.TemplateResponse("cart.html", {"request": request})
