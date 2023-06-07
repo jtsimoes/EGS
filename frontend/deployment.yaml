@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: registry.deti:5000/egs-ressellr/frontend:v1.4
+        image: registry.deti:5000/egs-ressellr/frontend:v1.7
         ports:
         - containerPort: 3000
         resources:
@@ -31,11 +31,11 @@ spec:
         - name: DB_PORT
           value: "3306"
         - name: DB_USER
-          value: "user"
+          value: frontend
         - name: DB_PASSWORD
-          value: "password"
+          value: password
         - name: DB_NAME
-          value: "ressellr"
+          value: ressellr
       volumes:
       - name: frontend-storage
         persistentVolumeClaim:

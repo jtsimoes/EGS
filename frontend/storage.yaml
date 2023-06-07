@@ -45,7 +45,7 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           value: "root"
         - name: MYSQL_USER
-          value: "user"
+          value: "frontend"
         - name: MYSQL_PASSWORD
           value: "password"
         - name: MYSQL_DATABASE 
