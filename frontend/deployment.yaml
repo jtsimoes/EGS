@@ -15,9 +15,9 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: registry.deti:5000/egs-ressellr/frontend:v2.8
+        image: registry.deti:5000/egs-ressellr/frontend:v2.9
         ports:
-        - containerPort: 3000
+        - containerPort: 80
         resources:
           requests:
             memory: "32Mi"
@@ -53,6 +53,6 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 3000
+    targetPort: 80
 
 
