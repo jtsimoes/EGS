@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Sucesso{% endblock %}
+
+{% block body %}
+
+
+<!-- ========================= SECTION PAGETOP ========================= -->
+<section class="section-pagetop bg-primary border-bottom">
+	<div class="container">
+		<h2 class="title-page text-white">Encomenda concluída</h2>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb text-white">
+				<li class="breadcrumb-item"><a href="/" class="text-white">Página inicial</a></li>
+				<li class="breadcrumb-item"><a href="/cart" class="text-white">Carrinho de compras</a></li>
+				<li class="breadcrumb-item active" aria-current="page">Checkout</li>
+			</ol>
+		</nav>
+	</div>
+</section>
+<!-- ========================= SECTION PAGETOP END// ========================= -->
+
+
+<!-- ============================ MODAL #SUCCESS ================================= -->
+<div class="modal fade" id="success" tabindex="-1" aria-labelledby="successful_order" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="successful_order">Encomenda paga com sucesso</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body text-center">
+				<i class="fas fa-check-circle fa-7x text-success my-3"></i>
+				<h4 class="title mt-4">Obrigado por escolher a Resellr <br>para as suas compras!</h4>
+				<h5 class="my-4 font-weight-normal">Receberá o seu pedido em breve!</h5>
+				<p class="text-muted my-3">Pode acompanhar a sua encomenda na página "Encomendas" no menu de utilizador.</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ============================ MODAL #SUCCESS END// ================================= -->
+
+
+
+<section class="section-content padding-y bg">
+	<div class="container">
+
+	</div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#success').modal('show');
+    });
+</script>
+{% endblock %}

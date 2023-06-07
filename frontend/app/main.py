@@ -1,6 +1,6 @@
 import uvicorn
-import json  # TODO: necessary?
-import requests  # TODO: necessary?
+import json
+import requests
 from typing import List
 from fastapi import FastAPI, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -22,7 +22,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-# Dependency
+STOCK_API_KEY = "123456789"
+
+
+# Database dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -30,18 +33,40 @@ def get_db():
     finally:
         db.close()
 
+# Login dependency
+def get_auth():
+    try:
+        response = requests.get("http://googleauth.duckdns.org/authorize/user_info")
+        response.close()
+    except:
+        raise HTTPException(status_code=504, detail="Authentication service is down")
+
+    # Check if API call was successful
+
+    if response.status_code == 404:
+        #raise HTTPException(status_code=404, detail="User is not logged in")
+        RedirectResponse(url="/login")
+
+    if not response.ok:
+        raise HTTPException(status_code=502, detail="Error retrieving authentication data")
+
+    # Convert API response to JSON
+    auth_data = response.json()
+
+    return auth_data
+
 
 def get_all_categories():
     try:
-        # TODO: Endpoint to get all categories
-        response = requests.get("http://localhost:8000/v1/categories")
+        response = requests.get("http://app-ressellr.k3s/stock/v1/categories?api_key=" + STOCK_API_KEY, verify=False)
+        print(response.url)
         response.close()
     except:
-        raise HTTPException(status_code=504)
+        raise HTTPException(status_code=504, detail="Stock service is down")
 
     # Check if API call was successful
     if not response.ok:
-        raise HTTPException(status_code=502)
+        raise HTTPException(status_code=502, detail="Error retrieving categories")
 
     # Convert API response to JSON
     categories = response.json()
@@ -51,12 +76,11 @@ def get_all_categories():
 
 def get_category(category_id: int):
     try:
-        # TODO: Endpoint to get one subcategory
         response = requests.get(
-            "http://localhost:8000/v1/subcategories/" + str(category_id))
+            "http://app-ressellr.k3s/stock/v1/subcategories/" + str(category_id)+"?api_key=" + STOCK_API_KEY)
         response.close()
     except:
-        raise HTTPException(status_code=504)
+        raise HTTPException(status_code=504, detail="Stock service is down")
 
     # Check if API call was successful
 
@@ -64,7 +88,7 @@ def get_category(category_id: int):
         raise HTTPException(status_code=404, detail="Category not found")
 
     if not response.ok:
-        raise HTTPException(status_code=502)
+        raise HTTPException(status_code=502, detail="Error retrieving category")
 
     # Convert API response to JSON
     category = response.json()
@@ -96,7 +120,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-
+"""
 @app.exception_handler(404)
 async def not_found_error(request: Request, exc: HTTPException):
     return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
@@ -110,55 +134,21 @@ async def bad_gateway_error(request: Request, exc: HTTPException):
 @app.exception_handler(504)
 async def gateway_timeout_error(request: Request, exc: HTTPException):
     return templates.TemplateResponse("502.html", {"request": request}, status_code=504)
-
+"""
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "user_not_logged_in": True})
 
 
-@app.get("/login", summary="LOOOOL", responses={
-    403: {"description": "Not enough privileges"},
-    404: {"description": "Item not found"},
-    200: {
-        "description": "Item requested by ID",
-        "content": {
-            "application/json": {
-                "example": {
-                    "id": "bar",
-                    "value": "The bar tenders"
-                },
-                "schema": {
-                    "$ref": "#/components/schemas/Item"
-                }
-            },
-            "text/plain": {
-                "schema": {
-                    "type": "string",
-                    "example": 'whoa!'
-                }
-            },
-            "image/png": {}
-        }
-    },
-    422: {
-        "description": "Validation Error (default behavior)",
-        "content": {
-            "application/json": {
-                "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                }
-            }
-        }
-    }
-})
+@app.get("/login")
 async def login():
-    return RedirectResponse(url="//localhost:8000/authorize")
+    return RedirectResponse(url="//googleauth.duckdns.org/authorize")
 
 
 @app.get("/logout")
 async def logout():
-    return RedirectResponse(url="//localhost:8000/logout")
+    return RedirectResponse(url="//googleauth.duckdns.org/authorize/logout")
 
 
 @app.post("/items")
@@ -166,7 +156,7 @@ async def new_item(title: str = Form(...), description: str = Form(...), price: 
                    location: str = Form(...), condition: str = Form(...), category_id: str = Form(...), db: Session = Depends(get_db)):
     try:
         item = schemas.ItemCreate(title=title, description=description, price=price, image=image, location=location, condition=condition,
-                                  owner_id=3,               # TODO: Obtain owner/user ID from login session
+                                  owner_id=1,               # TODO: Obtain owner/user ID from login session
                                   category_id=category_id,  # TODO: Obtain category ID from categories API
                                   product_id=99999999999)   # TODO: Obtain product ID from products API
 
@@ -209,10 +199,16 @@ async def delete_item(item_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/profiles")
-async def profiles():
-    # TODO: Instead of showing all users, this endpoint will redirect to the profile of the logged in user
-    # user = current_user.username
-    user = "Username"
+async def profiles(db: Session = Depends(get_db)):
+
+    #auth_data = get_auth()
+    #user_email = auth_data["email"]
+
+    #user = crud.get_user_by_email(db, user_email=user_email)
+    #if user is None:
+    #    raise HTTPException(status_code=404, detail="User not found")
+
+    user = "jtsimoes"
 
     return RedirectResponse(url="/profiles/"+user)
 
@@ -237,25 +233,11 @@ async def checkout(request: Request):
     return templates.TemplateResponse("checkout.html", {"request": request})
 
 
-@app.get("/payment/{cart_json}")
-async def payment(cart_json: str):
+@app.get("/pay")
+async def pay():
+    return RedirectResponse(url="/payment/")
 
-    cart_json = cart_json.replace("product_id", "id").replace(
-        "product_price", "price").replace("product_name", "name")
-    cart_json = json.loads(cart_json)
+@app.get("/success", response_class=HTMLResponse)
+async def success(request: Request):
+    return templates.TemplateResponse("success.html", {"request": request})
 
-    try:
-        # TODO: Endpoint to send to paypal
-        # payload = dict(key1='value1', key2='value2')
-        response = requests.post(
-            "http://localhost:4000/create-order", data=cart_json)
-
-        response.close()
-    except:
-        raise HTTPException(status_code=504)
-
-    # Check if API call was successful
-    if not response.ok:
-        raise HTTPException(status_code=502)
-
-    return "SUCCESS!"

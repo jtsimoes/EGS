@@ -53,7 +53,7 @@
 		<div class="row">
 			<main class="col-md-8">
 
-				<form action="#" id="checkout">
+				<form action="pay" id="checkout">
 					<article class="card mb-4 mt-3">
 						<div class="card-body">
 							<!-- SMARTCART PLUGIN -->
@@ -401,8 +401,6 @@
 
 		// If form is submitted successfully, show success modal and remove all items from cart
 		$('#checkout').submit(function (e) {
-			e.preventDefault();
-			$('#success').modal('show');
 			$('#smartcart').smartCart('clear');
 		});
 
