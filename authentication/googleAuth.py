@@ -70,7 +70,7 @@ def oauth2callback():
         session["scopes"] = credentials.scopes
 
 
-        return redirect("user_info")
+        return redirect("http://app-ressellr.k3s/items")
 
 @app.route("/authorize/logout", methods = ['GET'])
 def logout():
@@ -85,7 +85,7 @@ def logout():
         # Clear session
         session.clear()
         
-        return redirect("/authorize")
+        return redirect("http://app-ressellr.k3s/")
 
 @app.route("/authorize/user_info", methods=['POST', 'GET'])
 @login_is_required
