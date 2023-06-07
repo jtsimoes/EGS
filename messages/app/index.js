@@ -54,8 +54,6 @@ app.post('/messages', async (req, res) => {
 
     const otherUserId = Math.floor(1 + Math.random()*(numSysUsers));
 
-    console.log(otherUserId);
-
     if(otherUserId == user){
         connection.end()
         res.redirect('/messages');
