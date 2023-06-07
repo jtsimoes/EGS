@@ -18,7 +18,7 @@ GOOGLE_CLIENT_ID = '1090206121272-thig8rckgnrt36io53a125dr8ptd03vg.apps.googleus
 CLIENT_SECRETS_FILE = "client_secret.json"
 SCOPES = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid']
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Disable OAuthlib's HTTPS verification in development environment
-flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri="http://app-ressellr.k3s/authorize/oauth2callback")
+flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri="http://googleauth.duckdns.org/authorize/oauth2callback")
 
 def login_is_required(function):
     def wrapper(*args, **kwargs):
@@ -87,10 +87,10 @@ def logout():
         
         return redirect("/authorize")
 
-@app.route("/authorize/user_info", methods = ['POST'])
+@app.route("/authorize/user_info", methods=['POST', 'GET'])
 @login_is_required
 def user_info():
-    if request.method == 'POST':
+    if request.method == 'GET':
         user_info = {
             "user": session['name'],
             "email": session['email'],
@@ -98,6 +98,7 @@ def user_info():
             "token": session['token']
         }
         return Response(json.dumps(user_info), mimetype='application/json')
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=7000, debug=False)
