@@ -1,0 +1,70 @@
+openapi: 3.0.0
+info:
+  title: Payment API
+  version: 1.0.0
+paths:
+  /payment:
+    get:
+      summary: Get payment page
+      responses:
+        '200':
+          description: Success
+          content:
+            text/html:
+              schema:
+                type: string
+  /payment/create-order:
+    post:
+      summary: Create a payment order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      price:
+                        type: number
+                      quantity:
+                        type: number
+              example:
+                items:
+                  - name: telefone
+                    id: 1
+                    quantity: 1
+                    price: 10
+                  - name: caderno
+                    id: 2
+                    quantity: 2
+                    price: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
