@@ -1,0 +1,190 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/JOAOGILFERNANDES_1/Authentication/1.0.0
+info:
+  description: This is an Authentication API
+  version: "1.0.0"
+  title: Authentication
+  contact:
+    email: joaogilfernandes@ua.pt
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: user
+    description: User authentication Tool
+paths:
+  /register:
+    post:
+      summary: registrater user
+      operationId: registUser
+      description: registers a new user
+      requestBody:
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        description: User info
+      responses: 
+        '201':
+          description: User created
+        '400':
+          description: Please fill all the fields
+        '409':
+          description: User already exists
+        '500':
+          description: Internal server error
+      
+  
+  /login:
+    post:
+      summary: authenticate users
+      operationId: authUser
+      description: Authenticates users who try to login to their account
+      security: 
+        - OAuth: [validate_user]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        description: login
+        
+      responses:
+        '200':
+          description: User Logged In
+        '400':
+          description: Invalid Email or Password
+        '500':
+          description: A server error occurred during the authentication process
+  
+  /logout:
+    delete:
+      summary: logout from account
+      operationId: userLogout
+      description: user logs out from the session
+      responses:
+        '204':
+          description: "logged out successfully"
+      
+  /reset-password:
+    put:
+      summary: reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: password update successfully
+        '500':
+          description: something went wrong
+      
+  /verify-email:
+    post:
+      summary: validate user email
+      operationId: emailVerify
+      
+      requestBody:
+        content:
+          application/json:
+              schema:
+                type: string
+                example: user@user.com
+                  
+      responses:
+        '200':
+          description: email verified
+      
+      
+  /auth:
+    post:
+      summary: authenticate user
+      security: 
+        - OAuth: [validate_user]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: User authenticated
+        '500':
+          description: something went wrong
+      
+  /public:
+    get:
+      summary: get public endpoints
+      operationId: pubEndP
+      description: gets all endpoints that dont need authentication
+      
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: something went wrong
+    
+    
+components:
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://api.ressellr.com/oauth2/authorize
+          scopes:
+            validate_user: validates user
+            
+          
+  schemas:
+    UserLogin:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: user@user.com
+        password:
+          type: string
+          example: secret-password
+          
+    User:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - userName
+        - dateOfBirth
+        - nationality
+        - email
+        - password
+        
+      properties:
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        userName:
+          type: string
+          example: "jonhdoe"
+        dateOfBirth:
+          type: string
+          format: date
+          example: "2023-01-01"
+        nationality:
+          type: string
+          example: "Portugal"
+        email:
+          type: string
+          example: "user@user.com"
+        password:
+          type: string
+          example: "secret-password"
