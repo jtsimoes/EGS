@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: Resellr
+  description: Buy, Sell, Rent
+paths:
+  /messages:
+    get:
+      summary: Retrieve all conversations related to the user.
+      operationId: getConversations
+      responses:
+        '200':
+          description: A list of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+      tags:
+        - User
+    post:
+      summary: Create a new conversation
+      operationId: createConversation
+      requestBody:
+        description: The conversation to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Conversation'
+      responses:
+        '201':
+          description: The created conversation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+        '400':
+          description: Invalid request body
+      tags:
+        - User
+  /messages/{conversationId}:
+    get:
+      summary: Retrieve a list of messages from a specific conversation
+      operationId: getConvMessages
+      parameters:
+        - name: conversationId
+          in: path
+          description: The ID of the conversation
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The requested list of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '404':
+          description: Conversation not found
+      tags:
+        - User
+    post:
+      summary: Send a message
+      operationId: sendMessage
+      parameters:
+        - name: conversationId
+          in: path
+          description: The ID of the conversation
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: The message the user wants to send
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        '201':
+          description: The message that was sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Invalid request body
+      tags:
+        - User
+    delete:
+      summary: Delete (hide) a conversation
+      operationId: deleteConversation
+      parameters:
+        - name: conversationId
+          in: path
+          description: The ID of the conversation to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Conversation deleted successfully
+        '404':
+          description: Conversation not found
+      tags:
+        - User
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 549837258432
+        conversationId:
+          type: integer
+          format: int64
+          example: 123456
+        timestamp:
+          type: string
+          format: date-time
+          example: "2023-02-27T10:30:00.000Z"
+        content:
+          type: string
+          example: "Olá, tudo bem?"
+      required:
+        - id
+        - conversationId
+        - timestamp
+        - content
+    Conversation:
+      type: object
+      properties:
+        conversationId:
+          type: integer
+          format: int64
+          example: 123456
+        userId1:
+          type: integer
+          format: int64
+          example: 4378
+        userName1:
+          type: string
+          example: "José Figueiredo"
+        userHidden1:
+          type: boolean
+          example: false
+        userId2:
+          type: integer
+          format: int64
+          example: 1852
+        userName2:
+          type: string
+          example: "Amélia Rodrigues"
+        userHidden2:
+          type: boolean
+          example: true
+      required:
+        - conversationId
+        - userId1
+        - userName1
+        - userId2
+        - userName2
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/pedrocjdpereira/Resellr/1.0
+tags:
+  - name: User
+    description: Just your regular user.
