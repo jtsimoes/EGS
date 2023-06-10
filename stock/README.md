@@ -24,6 +24,7 @@ Python 3.7+
 FastAPI
 Uvicorn
 SQLAlchemy
+PyMySQL
 MariaDB
 Docker
 Docker Compose
@@ -52,8 +53,8 @@ kubectl create configmap mariadb-init-map -n egs-ressellr --from-file=./db/init.
 
 # The rest of the deployment is done with the following commands
 
-docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/stock:v3 -f Dockerfile.app .
-docker push registry.deti:5000/egs-ressellr/stock:v3
+docker buildx build --platform linux/amd64 --network=host -t registry.deti:5000/egs-ressellr/stock:v3.1 -f Dockerfile.app .
+docker push registry.deti:5000/egs-ressellr/stock:v3.1
 
 kubectl apply -f db-deployment.yaml
 kubectl apply -f app-deployment.yaml

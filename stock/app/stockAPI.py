@@ -70,6 +70,15 @@ async def delete_category(category_id: int, db: Session = Depends(get_db),api_ke
     category = db.query(models.Category).filter(models.Category.id == category_id).first()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
+    subcategories = db.query(models.SubCategory).filter(models.SubCategory.category_id == category_id).all()
+    if subcategories != None:
+        for subcategory in subcategories:
+            products = db.query(models.Product).filter(models.Product.subcategory_id == subcategory.id).all()
+            for product in products:
+                db.delete(product)
+                db.commit()
+            db.delete(subcategory)
+            db.commit()
     db.delete(category)
     db.commit()
 
@@ -102,6 +111,9 @@ async def get_subcategories(category_id: int = None, limit: int = Query(50, ge=1
 
 @app.post("/stock/v1/subcategories", response_model=schemas.SubCategory, status_code=201, tags=["subcategories"],)
 async def create_subcategory(new_subcategory: schemas.NewSubCategory, db: Session = Depends(get_db),api_key: str = Depends(get_api_key)):
+    category = db.query(models.Category).filter(models.Category.id == new_subcategory.category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
     subcategory = models.SubCategory(
          name=new_subcategory.name, category_id=new_subcategory.category_id, image=new_subcategory.image)
     db.add(subcategory)
@@ -123,6 +135,11 @@ async def delete_subcategory(subcategoryId: int, db: Session = Depends(get_db),a
     subcategory = db.query(models.SubCategory).filter(models.SubCategory.id == subcategoryId).first()
     if not subcategory:
         raise HTTPException(status_code=404, detail="SubCategory not found")
+    products = db.query(models.Product).filter(models.Product.subcategory_id == subcategoryId).all()
+    if products != None:
+        for product in products:
+            db.delete(product)
+            db.commit()
     db.delete(subcategory)
     db.commit()
 
@@ -146,16 +163,19 @@ async def update_subcategory(subcategoryId: int, updated_subcategory: schemas.Ne
 async def get_products(categoryId: int = None, subcategoryId: int = None, limit: int = Query(50, ge=1, le=50), offset: int = Query(0, ge=0), db: Session = Depends(get_db),api_key: str = Depends(get_api_key)):
     if categoryId and not subcategoryId:
         products_query = products_query = db.query(models.Product).filter(models.Product.category_id == categoryId)
-
+        if not products_query:
+            raise HTTPException(status_code=404, detail="Category not found")
     if subcategoryId and not categoryId:
         products_query = products_query = db.query(models.Product).filter(models.Product.subcategory_id == subcategoryId)
+        if not products_query:
+            raise HTTPException(status_code=404, detail="Subcategory not found")
 
     if subcategoryId and categoryId:
         products_query = products_query = db.query(models.Product).filter(models.Product.subcategory_id == subcategoryId).filter(models.Product.category_id == categoryId)
-    
+        if not products_query:
+            raise HTTPException(status_code=404, detail="Category or Subcategory not found")
     if not subcategoryId and not categoryId:
         products_query = db.query(models.Product)
-
 
     products = products_query.offset(offset).limit(limit).all()
 
@@ -167,6 +187,12 @@ async def get_products(categoryId: int = None, subcategoryId: int = None, limit:
 
 @app.post("/stock/v1/products", response_model=schemas.Product, status_code=201, tags=["products"])
 async def create_product(new_product: schemas.NewProduct, db: Session = Depends(get_db),api_key: str = Depends(get_api_key)):
+    category = db.query(models.Category).filter(models.Category.id == new_product.category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    subcategory = db.query(models.SubCategory).filter(models.SubCategory.id == new_product.subcategory_id).first()
+    if not subcategory:
+        raise HTTPException(status_code=404, detail="Subcategory not found")
     product = models.Product(name=new_product.name, description=new_product.description,
                       category_id=new_product.category_id, subcategory_id=new_product.subcategory_id, image=new_product.image)
     db.add(product)
