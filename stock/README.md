@@ -45,7 +45,7 @@ sudo docker-compose up
 
 ## Deployment <a name = "deployment"></a> 
 
-This instruction is to use in a private server so you probably don't have access to that, change the commands to your requisits.
+These commands are to be used on a private server, which you probably don't have access to, change them according to your needs.
 
 ```bash
 #create the configmap for the stock database
